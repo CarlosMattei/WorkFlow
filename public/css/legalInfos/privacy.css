@@ -1,0 +1,17 @@
+@import "../globals/globals.css";
+
+.contentTerms, .content {
+    padding-inline: 30px;
+}
+
+.containerHeader {
+background: #251D59;
+background: radial-gradient(at center bottom, #251D59, #161617);
+border: 1px solid var(--gray-25);
+}
+
+@media (max-width: 768px) {
+    .contentTerms, .content {
+        padding-inline: 10px;
+    }
+}

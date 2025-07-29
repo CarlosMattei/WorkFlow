@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda</title>
+    <link rel="stylesheet" href="/css/legalInfos/help.css" />
+</head>
+<body>
+    <section class="header pd-y-4">
+        <div class="containerHeader text-center pd-y-8 mg-x-6 rounded-xl">
+            <img src="/assets/image/logoWorkFlow-com-nome.svg" alt="logotipo workflow">
+            <h1 class="text-3xl text-white mg-0">Está com alguma dúvida?</h1>
+        </div>
+    </section>
+    <section class="content w-full text-white pd-5">
+      <div class="accordion flex flex-col gap-3">
+        <div class="accordion-item rounded-xl pd-2 bg-gray-75 border border-solid border-gray-25">
+          <div class="accordion-title text-2xl bold text-white">Como criar um projeto?</div>
+          <div class="accordion-content text-white">
+            Para criar seu projeto siga os seguintes passos:
+            <ol>
+                <li>Faça login ou cadastre-se em uma conta de freelancers.</li>
+                <li>Clique em "Criar Projeto".</li>
+                <li>Construa seu projeto, adicionando imagens, textos e cores.</li>
+                <li>Revise as informações e clique em "Salvar Projeto".</li>
+            </ol>
+          </div>
+        </div>   
+        <div class="accordion-item rounded-xl pd-2 bg-gray-75 border border-solid border-gray-25">
+          <div class="accordion-title text-2xl bold text-white">Como funcionam os projetos?</div>
+          <div class="accordion-content text-white">
+            Os projetos são feitos para mostrar seu projeto para outros usuários, crie bons projetos que demonstrem seu potencial e suas habilidades na área preferida, os projetos são mostrados a diferentes usuários, freelancers ou contratantes, por meio deles, os usuários podem te conhecer melhor.
+          </div>
+        </div>   
+        <div class="accordion-item rounded-xl pd-2 bg-gray-75 border border-solid border-gray-25">
+          <div class="accordion-title text-2xl bold text-white">O que são os contratantes?</div>
+          <div class="accordion-content text-white">
+            Contratantes são usuários que buscam freelancers para realizar projetos, eles podem ser pessoas físicas ou jurídicas. Os contratantes podem visualizar os projetos dos freelancers e entrar em contato para discutir possíveis colaborações.
+          </div>
+        </div>   
+      </div>
+    </section>
+
+    <script>
+        const titles = document.querySelectorAll(".accordion-title");
+
+titles.forEach((title) => {
+  title.addEventListener("click", () => {
+    const content = title.nextElementSibling;
+    const isOpen = content.classList.contains("open");
+
+    document
+      .querySelectorAll(".accordion-content")
+      .forEach((c) => c.classList.remove("open"));
+    document
+      .querySelectorAll(".accordion-title")
+      .forEach((t) => t.classList.remove("active"));
+
+    if (!isOpen) {
+      content.classList.add("open");
+      title.classList.add("active");
+    }
+  });
+});
+
+    </script>
+</body>
+</html>

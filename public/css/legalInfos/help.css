@@ -1,0 +1,48 @@
+@import "../globals/globals.css";
+
+.containerHeader {
+    background: #251D59;
+    background: radial-gradient(at center bottom, #251D59, #161617);
+    border: 1px solid var(--gray-25);
+    }
+      
+    p.description {
+        text-align: center;
+      }
+      
+      .accordion {
+        margin: 0 auto;
+      }
+      
+      .accordion-title {
+        cursor: pointer;
+        padding: 15px;
+        position: relative;
+      }
+      
+      .accordion-title::after {
+        content: "+";
+        position: absolute;
+        right: 20px;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+      }
+      
+      .accordion-title.active::after {
+        transform: rotate(45deg);
+      }
+      
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.3s ease;
+      }
+      
+      .accordion-content.open {
+        padding-inline: 15px;
+        max-height: 300px; /* adjust as needed */
+      }
+      
+      ul, li {
+            list-style-position: inside;
+      }
