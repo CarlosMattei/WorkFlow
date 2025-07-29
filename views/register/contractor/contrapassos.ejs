@@ -2,6 +2,8 @@
     <title>Primeiros Passos</title>
     <link rel="stylesheet" href="/css/cadastro/passos.css">
     <link rel="icon" type="image/x-icon" href="/assets/icons/icon.ico">
+
+
     <style>
         * {
             margin: 0;
@@ -26,30 +28,20 @@
 
         <div class="contratante flex flex-1 h-full items-center pd-5 sm:pd-2 sm:w-full">
             <form method="post" id="formcontratante" class="w-full flex text-left flex-col items-end sm:items-center">
+                <label class="w-full text-left sm:text-center">Imagem de perfil</label>
+                <div id="uploadContainer"
+                class="upload-container flex flex-col w-full justify-center pd-5 items-center text-center border-dashed border-2 bg-gray-75 border-gray-50 rounded-lg cursor-pointer">
+                <p class="mg-0">Clique para escolher a imagem de perfil</p>
+                <img id="previewProfilePic" style="display: none; max-width: 100%; border-radius: 6px;" />
+                </div>
                 <label class="w-full text-left sm:text-center">Nome</label>
                 <input type="text" name="nome" id="nome" class="form-control sm w-full" placeholder="" maxlength="50" minlength="5"/>
 
-                <label class="w-full text-left sm:text-center">O que você busca?</label>
-                <input type="text" name="tprofissao" id="tprofissao" class="form-control sm w-full" placeholder="Ex: Designer, Programador..." maxlength="50" minlength="5"/>
-
+                <label class="w-full text-left sm:text-center">Descrição</label>
+                <textarea name="descricao" id="descricao" class="form-control sm w-full" placeholder="Descreva suas habilidades e experiências" maxlength="500" minlength="10"></textarea>
 
                 <label class="w-full text-left sm:text-center">Qual seu segmento?</label>
                 <input type="text" name="tramo" id="tramo" class="form-control sm w-full" placeholder="Ex: automobilístico, lobístico..." maxlength="50" minlength="5"/>
-
-                <label class="w-full text-left sm:text-center">Qual o tamanho da sua empresa?</label>
-                <select class="sm" name="tamanho" id="tamanhoEmpresa">
-                    <option value="Micro">Micro (1 funcionários)</option>
-                    <option value="pequena">Pequena (2 a 50 funcionários)</option>
-                    <option value="Média">Média (50 a 1000 funcionários)</option>
-                    <option value="Grande">Grande (mais de 1000 funcionários)</option>
-                </select>
-
-                <label class="w-full text-left sm:text-center">Que tipo de freelancer você busca?</label>
-                <select name="tipoFreelancer" id="tipoFreelancer" class="sm">
-                    <option value="iniciante">Iniciante</option>
-                    <option value="mediano">Mediano</option>
-                    <option value="Profissional">Profissional</option>
-                </select>
 
                 <input type="submit" name="btnproximo" id="btnproximo" class="btn btn-purple btn-block mg-t-4 sm:mg-t-2" value="Próximo" />
             </form>
@@ -81,8 +73,33 @@ const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get('userId');
 
 if (!userId) {
-    alert('Usuário não identificado. Faça login.');
-    window.location.href = '/login';
+    // Criar overlay
+    const overlay = document.createElement('div');
+    overlay.className = "modal-overlay";
+    overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 999;";
+    
+    const modal = document.createElement('dialog');
+    modal.className = "modalComponentes bg-gray-100 pd-3 border border-solid rounded-lg border-gray";
+    modal.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;";
+    modal.innerHTML = `
+        <div class="modal-content text-center">
+            <div class="icon-container  bg-alert-dark border border-solid border-alert pd-5 rounded-xl">
+            <ion-icon name="warning-outline" style="font-size: 50px; color: var(--alert);"></ion-icon>
+            </div>
+            <p class="text-white text-xl mg-0 bold mg-t-2">Você não está Logado</p>
+            <p class="text-gray">Usuário não encontrado. Por favor, faça login.</p>
+            <button class="btn btn-purple" onclick="window.location.href='/login'">Voltar ao Login</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+    modal.showModal();
+    
+    // Remover overlay quando o modal for fechado
+    modal.addEventListener('close', () => {
+        overlay.remove();
+    });
 }
 
 form.addEventListener('submit', async (event) => {
@@ -109,3 +126,8 @@ form.addEventListener('submit', async (event) => {
     }
 });
 </script>
+
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
