@@ -17,6 +17,8 @@ app.use((req,res,next) => {
     next();
 })
 
+const suspensaoRouter = require('./routes/suspensao')
+app.use('/suspensao', suspensaoRouter)
 const indexRouter = require('./routes/index')
 app.use('/', indexRouter)
 const freelancerRouter = require('./routes/Freelancer/freelancer')

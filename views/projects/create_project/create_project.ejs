@@ -233,12 +233,12 @@
                 <label for="">Tags</label>
                 <div id="tagsInputBox" class="form-control mg-0 pd-0 w-full flex flex-row flex-wrap items-center gap-0">
                     <div id="tagsWrapper" class="flex items-center flex-row flex-wrap mg-0 pd-1">
-                        <input type="text" class="tagsInput form-control sm bg-gray-100 flex-1 text-white"
-                            id="tagsInput" style="margin-bottom: 0px; box-shadow: none; border: none; outline: none;">
+                        
                     </div>
                 </div>
+                <input type="hidden" id="tagsFinal" name="tagsFinal" />
                 <label for="tagsInput" class="text-xs pd-b-3 text-gray-25 mg-0">
-                    Deixe as tags separadas por vírgula ou Enter (ex: design, app, ui, ux)
+                    Selecione até 5 tags relacionadas ao projeto
                 </label>
             </div>
             <input type="hidden" id="tagsFinal" name="tagsFinal" />
@@ -257,3 +257,4 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script type="module" src="/js/projects/criarProjeto/criarComponente.js"></script>
+<script type="module" src="/js/projects/criarProjeto/tagsSelect.js"></script>

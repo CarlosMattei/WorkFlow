@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conta Suspensa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #3C38A6;
+            --secundary: #251D59;
+            --tertiary: #5274D9;
+            --quaternary: #30BFA5;
+            --gray: #404040;
+            --darkgray: #1E1E1E;
+            --background: #171616;
+            --white: #D9D9D9;
+
+            --gray-100: #161617;
+            --gray-75: #1E1E1E;
+            --gray-50: #2C2C2C;
+            --gray-25: #414141;
+
+            --base-100: #3C38A6;
+            --base-70: #463FC3;
+            --base-50: #514DDE;
+
+            --primary-color: #4276FE;
+            --primary-dark: #35436A;
+            --success: #35436A;
+            --warning: #FF8E0C;
+            --alert: #F84241;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .box {
+            background: var(--gray-75);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            user-select: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--alert);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            margin-top: 1rem;
+            color: var(--white);
+            line-height: 1.5;
+        }
+
+        .support {
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: var(--tertiary);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        /* Para links de email */
+        .support a {
+            color: var(--tertiary);
+            text-decoration: none;
+        }
+
+        .support a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h1>🚫 Conta Suspensa</h1>
+        <p>Seu acesso foi temporariamente bloqueado.</p>
+        <p>Entre em contato com o suporte para resolver esta situação.</p>
+        <div class="support">
+            <a href="mailto:workflow-suport@gmail.com">workflow-suport@gmail.com</a>
+        </div>
+    </div>
+
+    <script type="module" src="/js/suspensao.js"></script>
+</body>
+
+</html>

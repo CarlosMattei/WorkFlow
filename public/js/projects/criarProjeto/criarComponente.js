@@ -436,68 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagsFinal = document.getElementById('tagsFinal');
     let tags = [];
 
-    function renderTags() {
-        tagsWrapper.innerHTML = '';
-        tags.forEach((tag, idx) => {
-            const tagEl = document.createElement('span');
-            tagEl.className = 'form-tag sm mg-b-1 flex h-full items-center gap-1';
-            tagEl.textContent = tag;
-
-            const removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'tag-remove items-center text-xs bg-gray-50 text-white rounded-full flex items-center pd-0 justify-center mg-l-1';
-            removeBtn.style.width = '18px';
-            removeBtn.style.height = '18px';
-            removeBtn.style.marginLeft = '4px';
-            removeBtn.innerHTML = '&times;';
-            removeBtn.onclick = () => {
-                tags.splice(idx, 1);
-                renderTags();
-            };
-
-            tagEl.appendChild(removeBtn);
-            tagsWrapper.appendChild(tagEl);
-        });
-        tagsWrapper.appendChild(tagsInput);
-        tagsFinal.value = tags.join(',');
-    }
-
-    function addTagFromInput() {
-        let value = tagsInput.value.trim();
-        if (value.endsWith(',')) value = value.slice(0, -1);
-        if (value && !tags.includes(value)) {
-            tags.push(value);
-            renderTags();
-        }
-        tagsInput.value = '';
-        tagsInput.focus();
-    }
-
-    tagsInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            addTagFromInput();
-        } else if (e.key === 'Backspace' && tagsInput.value === '') {
-            tags.pop();
-            renderTags();
-        }
-    });
-
-    tagsInput.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        text.split(',').forEach(tag => {
-            const t = tag.trim();
-            if (t && !tags.includes(t)) tags.push(t);
-        });
-        renderTags();
-        tagsInput.value = '';
-    });
-
-    if (tagsFinal.value) {
-        tags = tagsFinal.value.split(',').map(t => t.trim()).filter(Boolean);
-        renderTags();
-    }
 
     verificarProjetoVazio();
 

@@ -635,24 +635,54 @@ function carregarDoCache() {
 carregarDoCache()
 carregarProjetos('tudo', 'curtidas');
 
-const filtroOrdenacao = document.getElementById("filtro-ordenacao");
-filtroOrdenacao.addEventListener("change", () => {
-    const tipoOrdenacao = filtroOrdenacao.value;
-    const tagAtiva = document.querySelector(".button_categoria.active");
-    const tagFiltro = tagAtiva ? tagAtiva.textContent.trim().toLowerCase() : "tudo";
+const containerCategorias = document.querySelector('.categorias-container .categorias');
 
-    carregarProjetos(tagFiltro, tipoOrdenacao);
-});
 
-document.querySelectorAll(".button_categoria").forEach(tagEl => {
-    tagEl.addEventListener("click", () => {
-        document.querySelectorAll(".button_categoria").forEach(el => el.classList.remove("active"));
-        tagEl.classList.add("active");
+async function carregarCategoriasComContagem() {
+    const db = getDatabase();
+    const categoriasSnap = await get(ref(db, 'Categoria'));
+    const projetosSnap = await get(ref(db, 'Projetos'));
 
-        const tagSelecionada = tagEl.textContent.trim().toLowerCase();
-        carregarProjetos(tagSelecionada);
+    if (!categoriasSnap.exists()) return;
 
+    const categorias = categoriasSnap.val();
+    const projetos = projetosSnap.exists() ? Object.values(projetosSnap.val()) : [];
+
+    containerCategorias.innerHTML = '';
+    let categoriaSelecionada = null;
+
+    Object.entries(categorias).forEach(([id, categoria]) => {
+        const count = projetos.filter(p => Array.isArray(p.tags) && p.tags.includes(id)).length;
+
+        const card = document.createElement('div');
+        card.className = 'pd-2 noWrap cardCategoria bg-gray-100 rounded-xl cursor-pointer transition-all';
+        card.dataset.categoriaId = id;
+        card.innerHTML = `
+        <h1 class="text-lg font-bold mg-0">${categoria.nome}</h1>
+        <p class="mg-0 text-xs text-gray-25">${count} projeto${count !== 1 ? 's' : ''}</p>
+    `;
+
+        card.addEventListener('click', () => {
+            const estaSelecionado = categoriaSelecionada === id;
+
+            document.querySelectorAll('.cardCategoria').forEach(c => {
+                c.classList.remove('bg-primary', 'text-white', 'bg-tertiary');
+                c.classList.add('bg-gray-100', 'text-black');
+            });
+
+            if (estaSelecionado) {
+                categoriaSelecionada = null;
+                carregarProjetos("tudo");
+            } else {
+                categoriaSelecionada = id;
+                card.classList.remove('bg-gray-100', 'text-black');
+                card.classList.add('bg-tertiary', 'text-white');
+                carregarProjetos(id);
+            }
+        });
+
+        containerCategorias.appendChild(card);
     });
-});
+}
 
-
+carregarCategoriasComContagem();
