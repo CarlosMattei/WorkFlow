@@ -10,19 +10,9 @@ const db = getDatabase();
 const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.href = "/";
-        return;
-    }
-
     const userRef = ref(db, `Freelancer/${user.uid}`);
 
     onValue(userRef, (snapshot) => {
-        if (!snapshot.exists()) {
-            window.location.href = "/";
-            return;
-        }
-
         const userData = snapshot.val();
 
         if (userData.suspended && window.location.pathname !== '/suspensao') {
