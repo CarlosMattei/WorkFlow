@@ -1,0 +1,18 @@
+@import "../../globals/globals.css";
+
+.gridcontatos {
+display: grid;
+grid-template-columns: repeat(2, 100fr);
+grid-template-rows: repeat(100%, 100px);
+gap: 5px 5px;
+transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 425px) {
+    .gridcontatos {
+        grid-template-columns: repeat(1, 100fr);
+        grid-template-rows: repeat(100%, 100px);
+        gap: 5px 5px;
+        transition: all 0.3s ease-in-out;
+    }
+}
