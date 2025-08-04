@@ -11,7 +11,7 @@
         <h1 class="text-white text-3xl mg-0">Criar Proposta</h1>
         <p class="text-gray-25 text-sm">Preencha os campos a seguir para criar sua proposta.</p>
         <div class="steps flex flex-row gap-2 mg-t-2">
-            <div class="step-1 flex flex-1 pd-1 mg-y-2 bg-gray rounded-xl"></div>
+            <div class="step-1 flex flex-1 pd-1 mg-y-2 bg-tertiary rounded-xl"></div>
             <div class="step-2 flex flex-1 pd-1 mg-y-2 bg-gray rounded-xl"></div>
             <div class="step-3 flex flex-1 pd-1 mg-y-2 bg-gray rounded-xl"></div>
         </div>
@@ -62,7 +62,7 @@
                 </form>
         </section>
 
-        <section class="step-2-proposta">
+        <section class="step-2-proposta" style="display: none;">
             <form id="proposal-form" class="proposal-form">
                     <label for="meiosDeContato">Meios de Contato</label>
     
@@ -147,7 +147,7 @@
             </form>
         </section>
 
-        <section class="step-3-proposta">
+        <section class="step-3-proposta" style="display: none;">
             <form id="proposal-form" class="proposal-form">
             <label for="tempoDeProposta">Tempo de proposta</label>
             <select name="tempoDeProposta" id="tempoDeProposta" class="input sm" id="">
@@ -174,5 +174,6 @@
             </form>
         </section>
     </div>
+    <script type="module" src="/js/proposals/criarPropostaSections.js"></script>
 </body>
 </html>

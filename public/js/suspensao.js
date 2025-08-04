@@ -10,17 +10,36 @@ const db = getDatabase();
 const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
-    const userRef = ref(db, `Freelancer/${user.uid}`);
+    if (!user) return;
 
-    onValue(userRef, (snapshot) => {
+    const freelancerRef = ref(db, `Freelancer/${user.uid}`);
+    const contratanteRef = ref(db, `Contratante/${user.uid}`);
+
+    onValue(freelancerRef, (snapshot) => {
         const userData = snapshot.val();
 
-        if (userData.suspended && window.location.pathname !== '/suspensao') {
-            window.location.href = "/suspensao";
-        }
+        if (userData) {
+            if (userData.suspended && window.location.pathname !== '/suspensao') {
+                window.location.href = "/suspensao";
+            }
 
-        if (!userData.suspended && window.location.pathname === '/suspensao') {
-            window.location.href = "/"; 
+            if (!userData.suspended && window.location.pathname === '/suspensao') {
+                window.location.href = "/";
+            }
+        }
+    });
+
+    onValue(contratanteRef, (snapshot) => {
+        const userData = snapshot.val();
+
+        if (userData) {
+            if (userData.suspended && window.location.pathname !== '/suspensao') {
+                window.location.href = "/suspensao";
+            }
+
+            if (!userData.suspended && window.location.pathname === '/suspensao') {
+                window.location.href = "/";
+            }
         }
     });
 });
