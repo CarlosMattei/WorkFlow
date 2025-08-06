@@ -27,6 +27,8 @@ const userPhotoDrop = document.getElementById('userPhotoDrop')
 const btnAdd = document.getElementById('btnAdd');
 const dropDownLogout = document.getElementById('dropDownLogout');
 const dropDown = document.getElementById('dropDownMenu');
+const dropDownNotificacao = document.getElementById('dropdownNotificacoes');
+const notificacoes = document.getElementById('notificacoes');
 
 const perfilLink = document.querySelector("#dropDownMenu a[href='/perfil']")
 
@@ -191,6 +193,10 @@ onAuthStateChanged(auth, async (user) => {
 userPhoto.addEventListener('click', (e) => {
     e.stopPropagation()
     dropDown.style.display = dropDown.style.display === 'block' ? 'none' : 'block'
+})
+notificacoes.addEventListener('click', (e) => {
+    e.stopPropagation()
+    dropDownNotificacao.style.display = dropDownNotificacao.style.display === 'block' ? 'none' : 'block'
 })
 document.addEventListener('click', () => {
     dropDown.style.display = 'none'

@@ -62,6 +62,9 @@ app.use('/confirmarEmail', confirmarEmail)
 const chat = require('./routes/chat')
 app.use('/Chat', chat)
 
+const notification = require('./routes/notification')
+app.use('/notification', notification)
+
 const config = require('./routes/settings')
 app.use('/configuracoes', config)
 

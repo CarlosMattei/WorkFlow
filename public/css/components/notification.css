@@ -1,0 +1,47 @@
+.info {
+    background: var(--gray-100);
+    background: radial-gradient(at left center, var(--gray-75), var(--gray-100));
+    color: var(--white);
+}
+.info:hover {
+    outline: 1px solid var(--gray-25);
+}
+
+.alert {
+    background: var(--alert-dark);
+    background: radial-gradient(at left center, var(--alert-dark), var(--gray-100));
+    background-color: var(--alert-dark);
+    color: var(--white);
+}
+.alert:hover {
+    outline: 1px solid var(--alert);
+}
+
+.alert .icon {
+    background-color: var(--alert);
+    color: var(--alert-dark);
+}
+
+
+.alert .messagecontent {
+    color: var(--alert);
+}
+
+.success {
+    background: var(--success-dark);
+    background: radial-gradient(at left center, var(--success-dark), var(--gray-100));
+    color: var(--white);
+}
+
+.success:hover {
+    outline: 1px solid var(--success);
+}
+
+.success .icon {
+    background-color: var(--success);
+    color: var(--success-dark);
+}
+
+.success .messagecontent {
+    color: var(--success);
+}

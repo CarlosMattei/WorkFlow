@@ -15,6 +15,10 @@
   line-height: 1.1;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* Botões preenchidos */
 .btn-primary {
   background: var(--primary);

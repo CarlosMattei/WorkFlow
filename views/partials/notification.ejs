@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações</title>
+    <style>
+        body {
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="notificationTitle flex flex-row items-center justify-center mg-1 text-3xl text-white mg-0">Notificações</div>
+    <div class="notficacoesContent pd-4 flex flex-col gap-2">
+        <div class="notificacaoItem info border border-solid border-gray-25 pd-y-3 rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="information-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs text-white mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+        <div class="notificacaoItem alert border border-solid border-alert pd-y-3 rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="warning-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+        <div class="notificacaoItem success border border-solid border-success pd-y-3 rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="checkmark-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -36,12 +36,14 @@
             <div id="userControls" class="userControls" style="display:none; align-items: center; gap: 12px;">
                 <button id="btnAdd" class="buttonAdd btn btn-purple" title="Adicionar novo">Criar</button>
                 <div class="mobile-only w-full flex-col gap-2">
-                    <button class="btn btn-gray w-full">Meu Perfil</button>
+                    <a href="/notification"><button class="btn btn-gray w-full">Notificações</button></a>
+                    <a onclick="window.location.href='/chat'"><button class="btn btn-gray w-full">Chat</button></a>
+                    <a href="/notification"><button class="btn btn-gray w-full">Meu Perfil</button></a>
                     <button class="btn btn-danger w-full">Sair</button>
                 </div>
-                <div class="container-row flex flex-row gap-2">
+                <div class="container-row flex-row gap-2">
                     <div class="containerNotifyChat flex flex-row gap-2">
-                        <div class="notificacoes">
+                        <div class="notificacoes" id="notificacoes">
                             <button class="btnNotificacoes btn btn-gray"><ion-icon name="notifications-outline"
                                     style="color: var(--white); font-size: 25px;"></ion-icon></button>
                         </div>
@@ -60,6 +62,40 @@
 
     </div>
 </nav>
+
+<div class="dropdownNotificacoes bg-gray-75 pd-2 rounded-lg" id="dropdownNotificacoes" style="display: none;">
+    <div class="dropdownTitle text-xl text-white mg-0">Notificações</div>
+    <div class="notficacoesContent flex flex-col gap-2">
+        <div class="notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="information-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs text-white mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+        <div class="notificacaoItem alert rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="warning-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+        <div class="notificacaoItem success rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+            <div class="icon bg-gray-50 rounded-xl pd-2">
+                <ion-icon name="checkmark-outline"></ion-icon>
+            </div>
+            <div class="notificationContent flex flex-col gap-0">
+                <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
+                <p class="messagecontent text-xs mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="dropDownMenu" class="dropDownMenu mg-t-6 mg-r-4" style="display: none;">
     <div class="user-info flex items-center">
         <img src="" id="userPhotoDrop" alt="Foto de perfil" class="profile-img">
@@ -125,6 +161,22 @@
         font-family: 'Segoe UI', sans-serif;
         animation: fadeIn 0.2s ease;
         width: 15%;
+    }
+    .dropdownNotificacoes {
+        position: absolute;
+        z-index: 1;
+        top: 85px;
+        right: 40px;
+        min-width: 300px;
+        z-index: 1000;
+        overflow: hidden;
+        font-family: 'Segoe UI', sans-serif;
+        animation: fadeIn 0.2s ease;
+        width: 15%;
+    }
+
+    .notificacaoItem:hover {
+        background-color: var(--gray-100);
     }
 
     .dropDownMenu a {
