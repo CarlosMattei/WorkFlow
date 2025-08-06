@@ -486,6 +486,26 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
     const user = auth.currentUser
     if (user) {
         await registrarVisualizacao(idProjeto, user.uid)
+
+        const likeBtn = document.getElementById('likeBtn');
+        const curtidaRef = ref(db, `Curtidas/${idProjeto}/${user.uid}`);
+
+        onValue(curtidaRef, (snapshot) => {
+            if (snapshot.exists()) {
+                likeBtn.classList.add('curtido');
+            } else {
+                likeBtn.classList.remove('curtido');
+            }
+        });
+
+        likeBtn.onclick = async () => {
+            const snapshot = await get(curtidaRef);
+            if (snapshot.exists()) {
+                await remove(curtidaRef); // Descurtir
+            } else {
+                await set(curtidaRef, true); // Curtir (sem timestamp)
+            }
+        };
     }
 }
 async function atualizarViewsCard(idProjeto) {
