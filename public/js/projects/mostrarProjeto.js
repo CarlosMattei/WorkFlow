@@ -454,6 +454,36 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
 
                     modalCreator.innerHTML = `Projeto criado por <a href="/perfil?id=${userId}" class="user-name-modal text-white no-underline font-bold link">${nomeAutor}</a>.`;
                     modalAutor.textContent = nomeAutor;
+
+                    get(child(dbRef, 'Projetos')).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const projetos = snapshot.val();
+                            let contador = 0;
+
+                            Object.values(projetos).forEach((projeto) => {
+                                if (projeto.userId === userId) {
+                                    contador++;
+                                }
+                            });
+
+                            const statProjetos = modal.querySelector('.autor-stats .stat');
+                            if (statProjetos) {
+                                statProjetos.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            ${contador} projeto${contador !== 1 ? 's' : ''}
+            `;
+                            }
+                        }
+                    });
+
                     modalUserPhoto.src = userPhoto;
                     modalTag.textContent = tagAutor;
 

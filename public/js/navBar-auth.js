@@ -211,10 +211,6 @@ const popupOverlay = document.getElementById('popupOverlay');
 const closeBtn = document.getElementById('closePopup');
 
 
-userPhoto.addEventListener('click', () => {
-    popupOverlay.style.display = 'flex';
-});
-
 async function escutarMensagensNaoLidasNavbar(uid) {
     const conversasRef = ref(db, `Conversas/${uid}`);
 
