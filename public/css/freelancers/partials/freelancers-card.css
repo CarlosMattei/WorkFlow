@@ -1,28 +1,21 @@
 .freelancers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 15px;
-  width: 100%;
-  align-items: center;
-  margin: 0 auto;
-  padding: 20px 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
 }
 
-.name {
-  transition: 0.3s ease;
+@media (max-width: 1200px) {
+  .freelancers-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
-
-.name:hover {
-  background-color: var(--base-100);
-  border-color: var(--base-50);
-  transition: 0.3s ease;
+@media (max-width: 800px) {
+  .freelancers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-
-.stat-item {
-  transition: flex 0.3s ease;
-}
-
-.stat-item:hover  {
-  flex: 2;
-  transition: flex 0.3s ease;
+@media (max-width: 500px) {
+  .freelancers-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -3,9 +3,6 @@
     background: radial-gradient(at left center, var(--gray-75), var(--gray-100));
     color: var(--white);
 }
-.info:hover {
-    outline: 1px solid var(--gray-25);
-}
 
 .alert {
     background: var(--alert-dark);

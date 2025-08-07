@@ -6,6 +6,13 @@
     width: 100%;
 }
 
+.freelancers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(3fr, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
 @media (max-width: 655px) {
     .category {
         width: 100%;

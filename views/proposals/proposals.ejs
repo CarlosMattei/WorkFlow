@@ -1,4 +1,9 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Freelancers</title>
     <link rel="stylesheet" href="/css/proposals/proposals.css">
 </head>
 
@@ -45,6 +50,59 @@
                 </div>
             </div>
         </div>
+
+        <div class="filterMobileButton"  id="btnFiltrarModal">
+            <button class="btn btn-purple flex h-full pd-y-4 justify-center items-center rounded-full" style="height: none;" id="btnFiltrarModal">
+                <ion-icon name="funnel-outline" style="font-size: 25px;"></ion-icon>
+            </button>
+        </div>
+
+        <!-- Faça isso funcionar Yago -->
+        <dialog id="filterMobileModal" class="filterMobileModal bg-gray-100 pd-3 border border-solid rounded-lg border-gray">
+            <div
+            class="top flex flex-row flex items-center pd-b-2 border-b border-t-0 border-r-0 border-l-0 mg-b-2 border-solid border-gray">
+            <h1 class="text-xl flex flex-1 mg-0 text-white">Filtrar</h1>
+            <button id="close" class="closemodal" style="background-color: var(--background); border: 0px;"><ion-icon
+                    name="close-outline" size="large" style="color: var(--white);"></ion-icon></button>
+        </div>
+        <div class="container-area mg-1">
+            <label for="area" class="mg-0">Área</label>
+            <select class="sm" class="mg-0" name="area" id="area">
+                <option value="Todos">Todos</option>
+                <option value="Design">Design</option>
+                <option value="UI design">UI Design</option>
+                <option value="3D design">3D Design</option>
+                <option value="Canva design">Canva design</option>
+                <option value="UX">UX</option>
+                <option value="Web design">Web design</option>
+                <option value="Interior design">interior design</option>
+                <option value="Poster design">Poster Design</option>
+            </select>
+        </div>
+        <div class="container-periodo mg-1">
+            <label for="periodo" class="mg-0">Periodo</label>
+            <select class="mg-0 sm" name="periodo" id="periodo">
+                <option value="indefinido">Indefinido</option>
+                <option value="hoje">hoje</option>
+                <option value="ultimaSemana">Ultima semana</option>
+                <option value="ultimoMes">Ultimo mês</option>
+            </select>
+        </div>
+        <div class="container-preco mg-1">
+            <div class="min">
+                <label for="min" class="mg-0">Preço Min.</label>
+                <input class="form-control sm" type="text" name="min" id="precomin">
+            </div>
+            <div class="max">
+                <label for="max" class="mg-0">Preço Max.</label>
+                <input type="text" class="form-control sm" name="max" id="precomax">
+            </div>
+        </div>
+        <div class="container-botao">
+            <button type="submit" id="btnFiltrar">Filtrar</button>
+        </div>
+        </dialog>
+        <div id="FilterModalOverlay" class="FilterModalOverlay"></div>
 
         <div class="propostas w-full pd-3" style="height: calc(100vh - 80px - 30px); overflow: auto;">
         </div>
@@ -368,5 +426,30 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        const buttonOpen = document.getElementById("btnFiltrarModal");
+        const modal = document.getElementById("filterMobileModal");
+        const overlay = document.getElementById("FilterModalOverlay");
+        const buttonClose = document.getElementById("close");
+
+        buttonOpen.addEventListener('click', () => {
+            modal.showModal();
+            overlay.classList.add('active');
+        setTimeout(() => modal.classList.add('open'), 10);
+    });
+
+    function closeModal() {
+        modal.classList.remove("open");
+        modal.classList.add("closing");
+        overlay.classList.remove("active");
+        setTimeout(() => {
+            modal.classList.remove("closing");
+            modal.close();
+        }, 300);
+    }
+
+    buttonClose.onclick = closeModal;
     </script>
 </body>

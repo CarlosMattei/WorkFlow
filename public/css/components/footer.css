@@ -39,16 +39,26 @@ body {
 @media (max-width: 990px) {
 
     .footer {
-        flex-direction: column;
+        display: block;
+        flex-direction: row;
         height: auto;
         padding: 10px 0;
+    }
+
+    .footer .logo-footer img {
+        width: 5rem;
     }
 
     .footer .links-footer {
         text-align: center;
     }
+
+    .footer .links-footer a {
+        font-size: 10px;
+    }
     .container-footer {
         flex-direction: column;
         height: auto;
+        gap: 0px;
     }
 }
