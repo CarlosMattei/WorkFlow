@@ -45,13 +45,32 @@
                     <div class="containerNotifyChat flex flex-row gap-2">
                         <div class="notificacoes" id="notificacoes">
                             <button class="btnNotificacoes btn btn-gray"><ion-icon name="notifications-outline"
-                                    style="color: var(--white); font-size: 25px;"></ion-icon></button>
+                                    style="color: var(--white); font-size: 25px;"></ion-icon>
+                            </button>
                         </div>
                         <div class="linhaDivisoria"></div>
                         <div class="chat">
                             <button class="btn btn-gray" onclick="window.location.href='/chat'"
                                 style="position: relative;"><ion-icon name="chatbubbles-outline"
-                                    style="color: var(--white); font-size: 25px;"></ion-icon></button>
+                                    style="color: var(--white); font-size: 25px; position: relative;"></ion-icon>
+
+                                <span id="badge-mensagens" style="
+                                    position: absolute;
+                                    bottom: 2px;
+                                    left: 2px;
+                                    background: #f44336;
+                                    color: white;
+                                    font-size: 9px;
+                                    border-radius: 50%;
+                                    width: 12px;
+                                    height: 12px;
+                                    display: none; 
+                                    justify-content: center;
+                                    align-items: center;
+                                    font-weight: initial;
+                                    z-index: 2;
+                                "></span>
+                            </button>
                         </div>
                     </div>
                     <div id="userPhoto" class="userPhoto"></div>
@@ -66,16 +85,19 @@
 <div class="dropdownNotificacoes bg-gray-75 pd-2 rounded-lg" id="dropdownNotificacoes" style="display: none;">
     <div class="dropdownTitle text-xl text-white mg-0">Notificações</div>
     <div class="notficacoesContent flex flex-col gap-2">
-        <div class="notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+        <div
+            class="notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
             <div class="icon bg-gray-50 rounded-xl pd-2">
                 <ion-icon name="information-outline"></ion-icon>
             </div>
             <div class="notificationContent flex flex-col gap-0">
                 <h1 class="text-base text-white mg-0 text-bold">Titulo da notificação</h1>
-                <p class="messagecontent text-xs text-white mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
+                <p class="messagecontent text-xs text-white mg-0 text-regular">Conteudo na notificação abreviado, bla
+                    bla bla</p>
             </div>
         </div>
-        <div class="notificacaoItem alert rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+        <div
+            class="notificacaoItem alert rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
             <div class="icon bg-gray-50 rounded-xl pd-2">
                 <ion-icon name="warning-outline"></ion-icon>
             </div>
@@ -84,7 +106,8 @@
                 <p class="messagecontent text-xs mg-0 text-regular">Conteudo na notificação abreviado, bla bla bla</p>
             </div>
         </div>
-        <div class="notificacaoItem success rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
+        <div
+            class="notificacaoItem success rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2">
             <div class="icon bg-gray-50 rounded-xl pd-2">
                 <ion-icon name="checkmark-outline"></ion-icon>
             </div>
@@ -162,6 +185,7 @@
         animation: fadeIn 0.2s ease;
         width: 15%;
     }
+
     .dropdownNotificacoes {
         position: absolute;
         z-index: 1;
