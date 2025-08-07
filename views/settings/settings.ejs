@@ -6,153 +6,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WorkFlow - Configurações</title>
   <link rel="stylesheet" href="/css/settings/settings.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/assets/icons/icon.ico">
 </head>
 
 <body>
-  <aside class="menu-lateral">
-    <h2>Configurações</h2>
-    <nav>
-      <ul>
-        <li class="menuitem">
-          <a href="#conta" class="active">
-            <span class="material-symbols-outlined">account_circle</span>
-            Conta
-          </a>
-        </li>
-        <li class="menuitem">
-          <a href="#personalizar">
-            <span class="material-symbols-outlined">edit</span>
-            Personalizar
-          </a>
-        </li>
-        <li class="menuitem">
-          <a href="#dados">
-            <span class="material-symbols-outlined">encrypted</span>
-            Privacidade e Dados
-          </a>
-        </li>
-        <li class="menuitem">
-          <a href="#notifications">
-            <span class="material-symbols-outlined">notifications_active</span>
-            Notificações
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <main class="config-container">
-    <section id="conta" class="config-section">
-      <h2>Conta</h2>
-
-      <div class="form-group">
-        <p><strong>E-mail:</strong> usuario@email.com</p>
-        <label for="senha">Senha</label>
-        <div class="input-with-icon">
-          <input type="password" id="senha" value="********" readonly>
-          <button type="button" class="toggle-visibility" title="Mostrar senha">
-            <span class="material-symbols-outlined">visibility</span>
+  <div class="display flex flex-row">
+    <aside class="menu-lateral bg-gray-75 border border-solid border-gray-25 pd-3 gap-3">
+      <h2 class="text-white text-3xl mg-0">Configurações</h2>
+      <nav>
+        <ul class="flex flex-col gap-3">
+          <li class="menuitem">
+            <a href="#conta" class="active text-white text-xl no-underline">
+              Conta
+            </a>
+          </li>
+          <li class="menuitem">
+            <a href="#personalizar" class="active text-white text-xl no-underline">
+              Personalizar
+            </a>
+          </li>
+          <li class="menuitem">
+            <a href="#dados" class="active text-white text-xl no-underline">
+              Privacidade e Dados
+            </a>
+          </li>
+          <li class="menuitem">
+            <a href="#notifications" class="active text-white text-xl no-underline">
+              Notificações
+            </a>
+          </li>
+          <li class="menuitem">
+            <a href="#areaNegra" class="active text-white text-xl no-underline">
+              Área de Risco
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="config-container w-full bg-gray-75 flex flex-col gap-5">
+      <section id="conta" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">Conta</h2>
+        <div class="form-group pd-y-5 gap-3">
+          <p><strong>E-mail:</strong> usuario@email.com</p>
+          <label for="senha">Senha</label>
+          <div class="input-with-icon form-control sm flex flex-row gap-3 items-center justify-center" style="padding: 5px;">
+            <input type="password" class="w-full h-full bg-gray-100 outline-none text-white border-none mg-x-3" id="senha" value="********" readonly>
+            <button type="button" class="toggle-visibility btn btn-gray" title="Mostrar senha">
+              <ion-icon name="eye-outline" style="color: var(--white); font-size: 19px;"></ion-icon>
+            </button>
+          </div>
+          <button class="btn btn-primary mg-t-3 btn-ghost">Alterar senha</button>
+        </div>
+        <h2>Informações Pessoais</h2>
+        <div class="form-group">
+          <label for="dataid">Data de nascimento</label>
+          <div class="rowDataDeNascimento flex flex-row gap-2">
+            <div class="flex flex-col">
+              <label for="">Dia</label>
+              <input type="number" id="dataid" placeholder="DD" class="input-date form-control sm">
+            </div>
+            <div class="flex flex-col">
+              <label for="">Mês</label>
+              <input type="number" id="dataid" placeholder="MM" class="input-date form-control sm">
+            </div>
+            <div class="flex flex-col">
+              <label for="">Ano</label>
+              <input type="number" id="dataid" placeholder="YYYY" class="input-date form-control sm">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tempo-exp">Tempo de experiência</label>
+          <input type="text" class="form-control sm" id="tempo-exp" placeholder="2 anos e 6 meses">
+        </div>
+        <div class="form-group">
+          <label>Trabalha com</label>
+          <div class="tags-container form-control sm flex flex-row gap-2">
+            <span class="tag pd-1 pd-x-4 bg-base-100 rounded-xl flex items-center">Front-end</span>
+            <span class="tag pd-1 pd-x-4 bg-base-100 rounded-xl flex items-center">Design UI</span>
+            <button id="adicionar-trabalho" type="button" class="tag-btn btn btn-primary btn-ghost">+</button>
+          </div>
+        </div>
+      </section>
+      <section id="personalizar" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2>Temas</h2>
+        <div class="temas-grid flex flex-row gap-3 flex-wrap">
+          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
+              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
+            </div>
           </button>
+          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
+              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
+            </div>
+          </button>
+          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
+              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
+            </div>
+          </button>
+          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
+              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
+            </div>
+          </button>
+        
         </div>
-        <button class="btn-primario">Alterar senha</button>
-      </div>
+      </section>
+      <section id="dados" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2>Solicitações de mensagens</h2>
+        <label><input type="radio" name="message" checked> Qualquer um pode enviar</label>
+        <label><input type="radio" name="message"> Caixa de solicitação</label>
+        <label><input type="radio" name="message"> Não receber</label>
+        <h2>Quem pode comentar nas minhas publicações</h2>
+        <label><input type="radio" name="comment"> Qualquer um</label>
+        <label><input type="radio" name="comment"> Somente freelancers</label>
+      </section>
+      <section id="notifications" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2>Notificações</h2>
+        <label><input type="checkbox" name="contact"> Solicitação de contato</label>
+        <label><input type="checkbox" name="review"> Avaliações</label>
+        <label><input type="checkbox" name="comment2">Comentários</label>
+      </section>
 
-      <h2>Informações Pessoais</h2>
-
-      <div class="form-group">
-        <label for="dataid">Data de nascimento</label>
-        <input type="date" id="dataid" value="2008-01-26">
-      </div>
-
-      <div class="form-group">
-        <label>Idiomas</label>
-        <div class="tags-container">
-          <span class="tag">Inglês</span>
-          <span class="tag">Português</span>
-          <button id="add-language-btn" type="button" class="tag-btn">+</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="tempo-exp">Tempo de experiência</label>
-        <input type="text" id="tempo-exp" placeholder="2 anos e 6 meses">
-      </div>
-
-      <div class="form-group">
-        <label>Trabalha com</label>
-        <div class="tags-container">
-          <span class="tag">Front-end</span>
-          <span class="tag">Design UI</span>
-          <button id="adicionar-trabalho" type="button" class="tag-btn">+</button>
-        </div>
-      </div>
-
-      <h2>Autenticação</h2>
-      <div class="form-group auth-buttons">
-        <button class="btn-secundario"><span class="material-symbols-outlined">google</span> Google</button>
-        <button class="btn-secundario"><span class="material-symbols-outlined">code</span> GitHub</button>
-      </div>
-    </section>
-
-    <section id="personalizar" class="config-section">
-      <h2>Temas</h2>
-      <div class="temas-grid">
-        <button class="tema-btn">
-          <span>Padrão</span>
-          <div class="cores">
-            <div style="background:#251D59"></div>
-            <div style="background:#3C38A6"></div>
-            <div style="background:#5274D9"></div>
-          </div>
-        </button>
-        <button class="tema-btn">
-          <span>Vermelho</span>
-          <div class="cores">
-            <div style="background:#510707"></div>
-            <div style="background:#A50B0B"></div>
-            <div style="background:#A22626"></div>
-          </div>
-        </button>
-        <button class="tema-btn">
-          <span>Azul</span>
-          <div class="cores">
-            <div style="background:#000661"></div>
-            <div style="background:#000AAF"></div>
-            <div style="background:#1736EA"></div>
-          </div>
-        </button>
-        <button class="tema-btn">
-          <span>Verde</span>
-          <div class="cores">
-            <div style="background:#001900"></div>
-            <div style="background:#00270B"></div>
-            <div style="background:#003C17"></div>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <section id="dados" class="config-section">
-      <h2>Solicitações de mensagens</h2>
-      <label><input type="radio" name="message" checked> Qualquer um pode enviar</label>
-      <label><input type="radio" name="message"> Caixa de solicitação</label>
-      <label><input type="radio" name="message"> Não receber</label>
-
-      <h2>Quem pode comentar nas minhas publicações</h2>
-      <label><input type="radio" name="comment"> Qualquer um</label>
-      <label><input type="radio" name="comment"> Somente freelancers</label>
-    </section>
-
-    <section id="notifications" class="config-section">
-      <h2>Notificações</h2>
-      <label><input type="checkbox" name="contact"> Solicitação de contato</label>
-      <label><input type="checkbox" name="challenge"> Novos desafios</label>
-      <label><input type="checkbox" name="review"> Avaliações</label>
-      <label><input type="checkbox" name="comment2"> Comentários</label>
-    </section>
-  </main>
+      <section id="areaNegra" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">Zona obscura</h2>
+        <button class="btn btn-warning btn-ghost mg-t-2">Deletar Conta</button>
+      </section>
+    </main>
+  </div>
 </body>
 
 </html>
