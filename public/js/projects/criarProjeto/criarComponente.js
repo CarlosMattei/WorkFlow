@@ -464,7 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (dadosProjeto.tags) {
                 tags = dadosProjeto.tags
-                renderTags()
             }
 
             if (dadosProjeto.capaUrl) {
