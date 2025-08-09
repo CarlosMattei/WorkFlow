@@ -71,6 +71,13 @@
     }
 </style>
 
+<div class="preloader-container" id="preloader">
+    <div class="loader">
+      <img src="/assets/vetors/loader.gif" alt="" style="width: 150px; height: 100%;">
+  </div>
+  </div>
+  <script src="/js/preloader.js"></script>
+
 <section class="flex flex-col h-full w-full">
     <div class="topbar w-full flex flex-row justify-between pd-2">
         <button class="btn btn-gray" id="btnCancelar" type="button">Cancelar</button>
@@ -146,8 +153,8 @@
         </div>
     </div>
 
-    <div id="addComponent" class="addbutton w-full flex justify-end pd-5">
-        <button class="btn btn-purple">
+    <div class="addbutton w-full flex justify-end pd-5">
+        <button id="addComponent" class="btn btn-purple">
             <p class="text-3xl mg-0 pd-0">+</p>
         </button>
     </div>

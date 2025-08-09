@@ -1,193 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/css/profile/profile.css">
+  <style>
+  </style>
 </head>
-
-<section class="section-1">
-  <div class="banner" id="banner">
-    <img id="imgBanner" src="default-banner.jpg" alt="banner" style="cursor:pointer;">
-    <div class="alterar-texto">CLIQUE PARA ALTERAR</div>
-  </div>
-  <input type="file" id="inputBanner" accept="image/*" style="display:none" />
-</section>
-
-<section class="section-2">
-  <div class="container-1" style="position: relative;">
-    <div class="profile-pic">
-      <img src="default-profile.jpg" alt="pic">
-    </div>
-
-    <div class="card-infos">
-      <div class="container-card-1">
-        <div class="nome">
-          <h1>Nome</h1>
-          <div class="tag">
-            <p>UI Designer</p>
-          </div>
-        </div>
-
-        <div class="experiencia">
-          <span>Profissional</span>
-          <div class="exp-blocks">
-            <div class="exp"></div>
-            <div class="exp"></div>
-            <div class="exp"></div>
-            <div class="exp"></div>
-          </div>
-        </div>
-        
-        <div class="container-card-2">
-          <div class="descricao">
-            <p>Olá, estou em busca de um emprego.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="container-card-3">
-        <div class="container-card-3-3">
-          <div class="container-infos projetos-realizados">
-            <span class="quantidade" id="quantidadeProjetos">10</span>
-            <p id="textoProjetos">Projetos realizados</p>
-          </div>
-          <div class="container-infos propostas-finalizadas">
-            <span class="quantidade">10</span>
-            <p>Propostas finalizadas</p>
-          </div>
-        </div>
-
-        <button class="editarinfos" onclick="abrirModal()">Editar informações</button>
-
-        <div id="modal-editar" class="modal">
-          <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal()">&times;</span>
-            <h2>Editar Perfil</h2>
-            <form id="form-editar">
-              <label for="fotoPerfil">Foto Perfil:</label>
-              <div class="custom-file">
-                <label for="fotoPerfil" class="file-label" id="labelFotoPerfil">Selecionar imagem</label>
-                <input type="file" id="fotoPerfil" accept="image/*" class="hidden-file">
-              </div>
-
-              <label for="nome">Nome:</label>
-              <input type="text" id="nome" placeholder="Digite seu nome"><br>
-
-              <label for="tag">Tag (Cargo):</label>
-              <input type="text" id="tag" placeholder="Ex: UI Designer"><br>
-
-              <label for="bio">Biografia:</label>
-              <textarea id="bio" rows="4" placeholder="Fale um pouco sobre você..."></textarea><br>
-
-              <button type="submit">Salvar alterações</button>
-            </form>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-  <div class="projetos-wrapper">
-    <div class="profile-tabs">
-    <button class="tab-button active" data-tab="projetos" onclick="mostrarCards('projetos', event)">
-        <svg class="tab-icon icon-projetos" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" stroke="currentColor"
-          stroke-width="2" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-        </svg>
-        <span>Projetos</span>
-    </button>
-    <button class="tab-button" data-tab="curtidos" onclick="mostrarCards('curtidos', event)">
-        <svg class="tab-icon icon-curtidos" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" stroke="currentColor"
-          stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                    2 5.42 4.42 3 7.5 3c1.74 0 3.41 1.01
-                    4.5 2.09C13.09 4.01 14.76 3 16.5 3
-                    19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-        </svg>
-        <span>Curtidos</span>
-    </button>
-    <button class="tab-button" data-tab="favoritos" onclick="mostrarCards('favoritos', event)">
-        <svg class="tab-icon icon-favoritos" xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" stroke="currentColor"
-          stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 17.27L18.18 21 16.54 13.97
-                    22 9.24l-7.19-.61L12 2 9.19 8.63
-                    2 9.24l5.46 4.73L5.82 21z" />
-        </svg>
-        <span>Favoritos</span>
-    </button>
+<body>
+<div class="preloader-container" id="preloader">
+  <div class="loader">
+    <img src="/assets/vetors/loader.gif" alt="" style="width: 150px; height: 100%;">
 </div>
+</div>
+<div class="loading"></div>
 
-    <div class="container-2">
-      <main class="card-zone">
-        <div class="card_projeto">
-          <div class="capa">
-            <figure>
-              <img src="" alt="" class="thumbnail">
-            </figure>
-            <div class="thumbnail-overlay">
-              <div class="project-overlay-content">
-                <div class="like">
-
-                </div>
-                <div class="project-title">
-                  <h1>Project 1</h1>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="autor">
-            <img src="" alt="Profile pic">
-            <h2 class="username">User</h2>
-          </div>
-        </div>
-      </main>
+  <section class="section-1">
+    <div class="banner" id="banner">
+      <img id="imgBanner" src="default-banner.jpg" alt="banner" style="cursor:pointer;">
     </div>
-  </div>
+  </section>
+  
+  <section class="card-infos pd-3 flex flex-row gap-5">
+    <div class="profilePic overflow-hidden bg-gray-50 border border-solid border-gray-100">
+      <img class="profile-pic" src="default-profile.jpg" alt="pic" style="width: 100%; height: 100%;">
+    </div>
+    <div class="buttonsContainer flex flex-1 flex-row justify-center gap-2">
+      <div class="infos flex flex-1 flex-col gap-2 justify-center">
+        <div class="text-3xl text-white mg-0" id="nome"></div>
+        <div class="text-gray-25 mg-0" id="tag"></div>
+        <div class="descricao"><p class="p descricao text-sm text-white mg-0" id="bio"></p></div>
+      </div>
+      <div class="buttons flex flex-row gap-2 justify-end">
+        <button class="btn btn-white btn-ghost"><ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon></button>
+        <button class="btn btn-white btn-ghost"><ion-icon name="ellipsis-horizontal" style="font-size: 24px;"></ion-icon></button>
+        <button class="btn btn-purple">Contratar</button>
+      </div>
+    </div>
+  </section>
+  <section class="Partes flex flex-row justify-around border-t-0 border-r-0 border-l-0 border-solid border-b border-gray-25">
+    <div class="tabs tab-button flex items-center pd-b-2 justify-center border-t-0 border-r-0 border-l-0 border-solid border-b-2 border-white" data-tab="projetos" onclick="mostrarCards('projetos', event)">
+      <span class="text text-xl mg-0">Projetos</span>
+    </div>
+    <div class="tabs tab-button flex items-center pd-b-2 justify-center border-t-0 border-r-0 border-l-0 border-solid border-b border-gray-25" data-tab="curtidos" onclick="mostrarCards('curtidos', event)">
+      <span class="text text-xl mg-0">Curtidos</span>
+    </div>
+    <div class="tabs tab-button flex items-center pd-b-2 justify-center border-t-0 border-r-0 border-l-0 border-solid border-b border-gray-25" data-tab="favoritos" onclick="mostrarCards('favoritos', event)">
+      <span class="text text-xl mg-0">Favoritos</span>
+    </div>
+    <div class="tabs tab-button flex items-center pd-b-2 justify-center border-t-0 border-r-0 border-l-0 border-solid border-b border-gray-25">
+      <span class="text text-xl mg-0">Sobre</span>
+    </div>
+  </section>
 
 
-  <div id="floatingCardInfos" class="floating-card-infos"></div>
-
+  <section class="cardProjetosPerfil w-full pd-x-3 pd-y-3">
+  <main class="card-zone" id="card-zone"></main>
 </section>
+
 
 <script type="module" src="/js/perfil.js"></script>
-<script>
-  function abrirModal() {
-    document.getElementById('modal-editar').style.display = 'block';
-    const h1Nome = document.querySelector('.nome h1');
-    const pTag = document.querySelector('.tag p');
-    const pBio = document.querySelector('.descricao p');
-    document.getElementById('nome').value = h1Nome.textContent || '';
-    document.getElementById('tag').value = pTag.textContent || '';
-    document.getElementById('bio').value = pBio.textContent || '';
-  }
-
-  function fecharModal() {
-    document.getElementById('modal-editar').style.display = 'none';
-  }
-
-  window.onclick = function (event) {
-    const modal = document.getElementById('modal-editar');
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  document.getElementById('fotoPerfil').addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imgPerfil = document.querySelector('.profile-pic img');
-      imgPerfil.src = URL.createObjectURL(file);
-    }
-  });
-
-  document.getElementById('fotoPerfil').addEventListener('change', (e) => {
-    const label = document.getElementById('labelFotoPerfil');
-    const file = e.target.files[0];
-    label.textContent = file ? file.name : 'Selecionar imagem';
-  });
-
-
-</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -214,12 +86,13 @@
   const auth = getAuth();
   const db = getDatabase();
 
-  const imgPerfil = document.querySelector('.profile-pic img');
-  const h1Nome = document.querySelector('.nome h1');
-  const pTag = document.querySelector('.tag p');
-  const pBio = document.querySelector('.descricao p');
+  const imgPerfil = document.querySelector('.profilePic img');
+  const h1Nome = document.getElementById('nome');
+  const pTag = document.getElementById('tag');
+  const pBio = document.getElementById('bio');
   const imgBanner = document.getElementById('imgBanner');
   const inputBanner = document.getElementById('inputBanner');
+  
   const botaoEditar = document.querySelector('.editarinfos');
 
   let currentUserUid = null;
@@ -267,7 +140,6 @@
     }
 
     if (currentUserUid === loggedInUid) {
-      botaoEditar.style.display = 'block';
       imgBanner.style.cursor = 'pointer';
       document.getElementById('banner').classList.add('editable');
 
@@ -275,44 +147,10 @@
         inputBanner.click();
       });
     } else {
-      botaoEditar.style.display = 'none';
       imgBanner.style.cursor = 'default';
       document.getElementById('banner').classList.remove('editable');
     }
-
   });
-
-
-  document.getElementById('form-editar').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nome = document.getElementById('nome').value.trim();
-    const tag = document.getElementById('tag').value.trim();
-    const bio = document.getElementById('bio').value.trim();
-    const fotoFile = document.getElementById('fotoPerfil').files[0];
-
-    const updates = { nome, tag, bio };
-    try {
-      const bucket = currentTipoUsuario === 'Freelancer' ? 'freelancer-photos' : 'contratante-photos';
-
-      if (fotoFile) {
-        updates.foto_perfil = await uploadImageToSupabase(fotoFile, currentUserUid, bucket);
-      }
-
-      await update(ref(db, `${currentTipoUsuario}/${currentUserUid}`), updates);
-
-      h1Nome.textContent = nome;
-      pTag.textContent = tag;
-      pBio.textContent = bio;
-
-      fecharModal();
-
-      location.reload();
-
-    } catch (err) {
-      console.error("Erro ao salvar:", err);
-    }
-  });
-
 
   inputBanner.addEventListener('change', async () => {
     const file = inputBanner.files[0];
@@ -321,16 +159,14 @@
     try {
       const bucket = currentTipoUsuario === 'Freelancer' ? 'freelancer-photos' : 'contratante-photos';
       const bannerUrl = await uploadImageToSupabase(file, currentUserUid, bucket);
+      
       imgBanner.src = bannerUrl;
       await update(ref(db, `${currentTipoUsuario}/${currentUserUid}`), { banner: bannerUrl });
-
-      location.reload();
-
     } catch (error) {
       console.error("Erro ao atualizar banner:", error);
     }
   });
-
+  // ...existing code...
 </script>
 <script>
   function mostrarCards(tipo) {
@@ -344,87 +180,6 @@
     });
   }
 </script>
-<script>
-  const cardInfos = document.querySelector('.card-infos');
-const profilePic = document.querySelector('.profile-pic');
-const floatingCard = document.getElementById('floatingCardInfos');
-
-function copiarConteudoCard() {
-  floatingCard.innerHTML = ''; 
-  const clonedProfilePic = profilePic.cloneNode(true);
-  floatingCard.appendChild(clonedProfilePic);
-
-  const clonedCardInfos = cardInfos.cloneNode(true);
-  const clonedProfilePicDentro = clonedCardInfos.querySelector('.profile-pic');
-  if (clonedProfilePicDentro) {
-    clonedProfilePicDentro.remove();
-  }
-  floatingCard.appendChild(clonedCardInfos);
-}
-
-function atualizarPosicaoELargura() {
-  const rect = cardInfos.getBoundingClientRect();
-  floatingCard.style.left = rect.left + 'px';
-  floatingCard.style.width = rect.width + 'px';
-  floatingCard.style.top = '80px'; 
-  floatingCard.style.position = 'fixed';
-  floatingCard.style.zIndex = '9999'; 
-}
-
-let floatingVisible = false;
-
-function animarSumirCard() {
-  cardInfos.classList.remove('aparecendo');
-  cardInfos.classList.remove('sumindo');
-  void cardInfos.offsetWidth;
-  cardInfos.classList.add('sumindo');
-}
-
-function animarAparecerCard() {
-  cardInfos.classList.remove('aparecendo');
-  cardInfos.classList.remove('sumindo');
-  void cardInfos.offsetWidth;
-  cardInfos.classList.add('aparecendo');
-}
-
-function onScrollOrResize() {
-  const rect = cardInfos.getBoundingClientRect();
-
-  if (rect.bottom <= 0 && !floatingVisible) {
-    copiarConteudoCard();
-    atualizarPosicaoELargura();
-
-    floatingCard.classList.remove('sumindo');
-    floatingCard.classList.add('aparecendo');
-    floatingCard.style.display = 'block';
-
-    cardInfos.classList.remove('aparecendo');
-    cardInfos.classList.add('sumindo');
-
-    floatingVisible = true;
-
-  } else if (rect.bottom > 0 && floatingVisible) {
-
-    floatingCard.classList.remove('aparecendo');
-    floatingCard.classList.add('sumindo');
-
-    cardInfos.classList.remove('sumindo');
-    cardInfos.classList.add('aparecendo');
-
-    floatingVisible = false;
-
-    setTimeout(() => {
-      if (!floatingVisible) {
-        floatingCard.classList.remove('sumindo');
-        floatingCard.style.display = 'none';
-      }
-    }, 400);
-  }
-}
-
-window.addEventListener('scroll', onScrollOrResize);
-window.addEventListener('resize', onScrollOrResize);
-
-onScrollOrResize();
-
-</script>
+<script src="/js/preloader.js"></script>
+</body>
+</html>

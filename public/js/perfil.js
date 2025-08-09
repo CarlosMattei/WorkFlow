@@ -14,10 +14,10 @@ const perfilUserId = params.get('id');
 
 const auth = getAuth(firebaseApp);
 const db = getDatabase(firebaseApp);
-const containerCard = document.querySelector('.card-zone');
+const containerCard = document.getElementById('card-zone');
 const contadorProjetos = document.getElementById('quantidadeProjetos');
 const tabButtons = document.querySelectorAll('.tab-button');
-const textoProjetos = document.querySelector('.projetos-realizados p');
+
 
 const abas = {
     projetos: [],
@@ -447,20 +447,6 @@ function mostrarCards(tipo) {
     containerCard.querySelectorAll('.mensagem-aba').forEach(el => el.remove());
 
     const cards = abas[tipo];
-
-    switch (tipo) {
-        case 'projetos':
-            textoProjetos.textContent = tipoUsuario === 'Contratante' ? 'Propostas realizadas' : 'Projetos realizados';
-            break;
-        case 'curtidos':
-            textoProjetos.textContent = 'Projetos curtidos';
-            break;
-        case 'favoritos':
-            textoProjetos.textContent = 'Projetos favoritados';
-            break;
-        default:
-            textoProjetos.textContent = 'Projetos realizados';
-    }
 
     if (!cards || cards.length === 0) {
         const msg = document.createElement('p');

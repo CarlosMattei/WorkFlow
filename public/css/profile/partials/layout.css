@@ -1,16 +1,13 @@
-body {
-    margin-top: 0px;
+.section-1 .banner {
+    max-height: 240px;
+    width: 100%;
+    aspect-ratio: auto 1340 / 240;
 }
 
-.section-1, .banner {
-    display: flex;
-    flex-direction: column;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 240px;
+.banner img {
     width: 100%;
-    background-color: var(--gray);
+    height: 100%;
+    object-fit: cover;
 }
 
 .section-2 {
@@ -33,3 +30,4 @@ body {
     flex: 7;
     justify-content: center;
 }
+

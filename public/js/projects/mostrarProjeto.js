@@ -26,7 +26,7 @@ const db = getDatabase(app);
 const auth = getAuth();
 
 
-const container = document.querySelector("#card-zone");
+const container = document.getElementById("card-zone");
 const modal = document.getElementById("modal");
 
 async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, userId }, cardIndex = 0) {
