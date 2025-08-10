@@ -4,273 +4,159 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
-    authDomain: "workflow-da28d.firebaseapp.com",
-    projectId: "workflow-da28d",
-    storageBucket: "workflow-da28d.appspot.com",
-    messagingSenderId: "939828605253",
-    appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
-    measurementId: "G-3LXB7BR5M1"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
+        authDomain: "workflow-da28d.firebaseapp.com",
+        projectId: "workflow-da28d",
+        storageBucket: "workflow-da28d.appspot.com",
+        messagingSenderId: "939828605253",
+        appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
+        measurementId: "G-3LXB7BR5M1"
+    };
 
-  let app;
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
-  }
-
-  const db = getDatabase(app);
-  const auth = getAuth();
-
-  // onAuthStateChanged deve estar aqui, depois que auth e db estão definidos
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      const uid = user.uid;
-      const userRef = ref(db, `Contratante/${uid}`);
-
-      get(userRef).then(snapshot => {
-        if (snapshot.exists()) {
-          const dados = snapshot.val();
-          const previewAutor = document.getElementById('preview-autor');
-          const previewFoto = document.getElementById('preview-foto');
-
-          if (previewAutor) {
-            previewAutor.textContent = dados.nome || "Nome do Autor";
-          }
-
-          if (previewFoto) {
-            previewFoto.src = dados.foto_perfil || "https://via.placeholder.com/40";
-          }
-        }
-      }).catch(err => {
-        console.error("Erro ao buscar dados do autor:", err);
-      });
-    }
-  });
-
-  // Seletores do DOM e variáveis
-  const selectedTagsContainer = document.querySelector('.selected-tags');
-  const searchInput = document.getElementById('search-input');
-  const optionsListItems = document.querySelectorAll('.options-list li');
-  const clearSearchBtn = document.getElementById('clear-search');
-  const publicarBtn = document.getElementById('publicar');
-  const modalConfirmacao = document.getElementById('modal-confirmacao');
-  const btnSim = document.getElementById('btn-sim');
-  const btnNao = document.getElementById('btn-nao');
-
-  // Funções para adicionar/remover tags
-  function addTag(value) {
-    if ([...selectedTagsContainer.children].some(tag => tag.dataset.value === value)) return;
-
-    const tag = document.createElement('span');
-    tag.classList.add('tag');
-    tag.dataset.value = value;
-    tag.innerHTML = `${value} <span class="remover" data-value="${value}">X</span>`;
-    selectedTagsContainer.appendChild(tag);
-
-    atualizarPreview();
-  }
-
-  function removeTag(value) {
-    const tags = selectedTagsContainer.querySelectorAll('.tag');
-    tags.forEach(tag => {
-      if (tag.dataset.value === value) tag.remove();
-    });
-
-    optionsListItems.forEach(item => {
-      if (item.dataset.value === value) item.classList.remove('selected');
-    });
-
-    atualizarPreview();
-  }
-
-  selectedTagsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('remover')) {
-      const value = e.target.dataset.value;
-      removeTag(value);
-    }
-  });
-
-  optionsListItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const value = item.dataset.value;
-      if (item.classList.contains('selected')) {
-        removeTag(value);
-      } else {
-        addTag(value);
-        item.classList.add('selected');
-      }
-    });
-  });
-
-  searchInput.addEventListener('input', () => {
-    const filterText = searchInput.value.toLowerCase();
-    optionsListItems.forEach((item) => {
-      const label = item.textContent.toLowerCase();
-      item.style.display = label.includes(filterText) ? '' : 'none';
-    });
-  });
-
-  clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    searchInput.dispatchEvent(new Event('input'));
-  });
-
-  publicarBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-
-    const tituloInput = document.getElementById('tituloProposta');
-    const descricaoInput = document.getElementById('descricao');
-    const precoMinInput = document.getElementById('precoMin');
-    const precoMaxInput = document.getElementById('precoMax');
-
-    if (!tituloInput || !descricaoInput || !precoMinInput || !precoMaxInput) {
-      alert('Campos do formulário não encontrados.');
-      return;
+    let app;
+    if (!getApps().length) {
+        app = initializeApp(firebaseConfig);
+    } else {
+        app = getApps()[0];
     }
 
-    const titulo = tituloInput.value.trim();
-    const descricao = descricaoInput.value.trim();
-    const precoMin = precoMinInput.value.trim();
-    const precoMax = precoMaxInput.value.trim();
+    const db = getDatabase(app);
+    const auth = getAuth();
 
-    if (!titulo || !descricao || !precoMin || !precoMax) {
-      alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
+    const sections = document.querySelectorAll('.content section');
+    const stepButtons = document.querySelectorAll('.steps div');
+    const nextButton = document.querySelector('.buttonProximo .btn-primary');
+    const backButtonList = document.querySelectorAll('.btn-secondary');
+    const createProposalButton = document.querySelector('.buttonsContinuarVoltar .btn-primary');
+    
+    let currentStep = 0;
 
-    const tagsSelecionadas = [...selectedTagsContainer.querySelectorAll('.tag')]
-      .map(tag => tag.dataset.value || tag.textContent.trim());
-
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert('Você precisa estar logado.');
-      return;
-    }
-
-    const uid = user.uid;
-    const userRef = ref(db, `Contratante/${uid}`);
-
-    get(userRef).then(snapshot => {
-      if (!snapshot.exists()) {
-        alert('Dados do contratante não encontrados.');
-        return;
-      }
-
-      const dadosUsuario = snapshot.val();
-
-      const novaProposta = {
-        titulo,
-        descricao,
-        precoMin: parseFloat(precoMin),
-        precoMax: parseFloat(precoMax),
-        datacriacao: new Date().toISOString(),
-        tags: tagsSelecionadas,
-        autorId: uid,
-        nomeAutor: dadosUsuario.nome || "Nome não informado",
-        fotoAutorUrl: dadosUsuario.foto_perfil || ""
-      };
-
-      const propostasRef = ref(db, 'Propostas');
-      push(propostasRef, novaProposta)
-        .then(() => {
-          alert('Publicado!');
-          publicarBtn.style.backgroundColor = 'white';
-          publicarBtn.style.color = 'black';
-          publicarBtn.textContent = 'Publicado!';
-          if (modalConfirmacao) modalConfirmacao.classList.remove('hidden');
-        })
-        .catch((error) => {
-          console.error("Erro ao salvar proposta:", error);
-          alert('Erro ao publicar proposta.');
+    function updateSteps() {
+        sections.forEach((section, index) => {
+            section.style.display = index === currentStep ? 'block' : 'none';
         });
-    }).catch((error) => {
-      console.error("Erro ao buscar contratante:", error);
-      alert('Erro ao buscar dados do autor.');
-    });
-  });
 
-  if (btnSim) {
-    btnSim.addEventListener('click', () => location.reload());
-  }
-
-  if (btnNao) {
-    btnNao.addEventListener('click', () => {
-      if (modalConfirmacao) modalConfirmacao.classList.add('hidden');
-      document.querySelectorAll('input, textarea, button').forEach(el => {
-        if (!['btn-sim', 'btn-nao', 'Cancelar'].includes(el.id)) el.disabled = true;
-      });
-      selectedTagsContainer.classList.add('locked');
-      optionsListItems.forEach(item => {
-        item.style.pointerEvents = 'none';
-        item.style.opacity = '0.5';
-      });
-      searchInput.disabled = true;
-      clearSearchBtn.disabled = true;
-      clearSearchBtn.style.opacity = '0.5';
-
-      let btnVoltar = document.getElementById('btn-voltar');
-      if (!btnVoltar) {
-        btnVoltar = document.createElement('button');
-        btnVoltar.id = 'btn-voltar';
-        btnVoltar.textContent = 'Voltar à tela de criação';
-        document.body.appendChild(btnVoltar);
-        btnVoltar.addEventListener('click', () => location.reload());
-      }
-
-      btnVoltar.style.display = 'block';
-    });
-  }
-
-  function atualizarPreview() {
-    const tituloInput = document.getElementById('tituloProposta');
-    const descricaoInput = document.getElementById('descricao');
-    const precoMinInput = document.getElementById('precoMin');
-    const precoMaxInput = document.getElementById('precoMax');
-    const previewTitulo = document.getElementById('preview-titulo');
-    const previewDescricao = document.getElementById('preview-descricao');
-    const previewPreco = document.getElementById('preview-preco');
-    const previewData = document.getElementById('preview-data');
-    const previewTags = document.getElementById('preview-tags');
-
-    if (!tituloInput || !descricaoInput || !precoMinInput || !precoMaxInput || !previewTitulo || !previewDescricao || !previewPreco || !previewData || !previewTags) {
-      return;
+        stepButtons.forEach((btn, index) => {
+            if (index <= currentStep) {
+                btn.classList.add('bg-tertiary');
+                btn.classList.remove('bg-gray');
+            } else {
+                btn.classList.add('bg-gray');
+                btn.classList.remove('bg-tertiary');
+            }
+        });
     }
 
-    const titulo = tituloInput.value;
-    const descricao = descricaoInput.value;
-    const precoMin = parseFloat(precoMinInput.value) || 0;
-    const precoMax = parseFloat(precoMaxInput.value) || 0;
+    nextButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        if (currentStep === 0) {
+            const title = document.getElementById('title').value.trim();
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value.trim();
+            const priceMin = document.getElementById('price-min').value.trim();
+            const priceMax = document.getElementById('price-max').value.trim();
 
-    previewTitulo.textContent = titulo || 'Título da proposta';
-    previewDescricao.textContent = descricao || 'A descrição da proposta aparecerá aqui.';
-    previewPreco.textContent = `R$${precoMin} - R$${precoMax}`;
+            if (!title || !category || !description || !priceMin || !priceMax) {
+                alert('Por favor, preencha todos os campos da Etapa 1.');
+                return;
+            }
+            
+            const min = parseFloat(priceMin.replace(',', '.'));
+            const max = parseFloat(priceMax.replace(',', '.'));
+            
+            if (isNaN(min) || isNaN(max) || min < 0 || max < 0) {
+                alert('Por favor, insira valores numéricos para o preço.');
+                return;
+            }
+            if (min > max) {
+                alert('O preço mínimo não pode ser maior que o preço máximo.');
+                return;
+            }
+        }
 
-    const dataAtual = new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
+        if (currentStep < sections.length - 1) {
+            currentStep++;
+            updateSteps();
+        }
     });
-    previewData.textContent = `Criado em ${dataAtual}`;
 
-    const tags = [...selectedTagsContainer.querySelectorAll('.tag')]
-      .map(tag => tag.dataset.value || tag.textContent.trim());
+    backButtonList.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentStep > 0) {
+                currentStep--;
+                updateSteps();
+            }
+        });
+    });
 
-    previewTags.innerHTML = tags.length
-      ? tags.map(tag => `<span class="tag">${tag}</span>`).join('')
-      : '<span class="tag">Nenhuma tag</span>';
-  }
+    createProposalButton.addEventListener('click', (e) => {
+        e.preventDefault();
 
-  ['tituloProposta', 'descricao', 'precoMin', 'precoMax'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', atualizarPreview);
-  });
+        const titulo = document.getElementById('title').value;
+        const category = document.getElementById('category').value;
+        const description = document.getElementById('description').value;
+        const precoMin = document.getElementById('price-min').value;
+        const precoMax = document.getElementById('price-max').value;
+        const contatoChat = document.getElementById('contatoChat').checked;
+        const contatoEmail = document.getElementById('contatoEmail').checked;
+        const contatoWhatsapp = document.getElementById('contatoWhatsapp').checked;
+        const contatoLinkedin = document.getElementById('contatLinkedin').checked;
+        const contatoGithub = document.getElementById('contatGithub').checked;
+        const contatoOutro = document.getElementById('contatoOutro').checked;
+        const tempoDeProposta = document.getElementById('tempoDeProposta').value;
+        const menoresDeIdade = document.getElementById('menoresDeIdade').checked;
+        
+        const user = auth.currentUser;
+        if (!user) {
+            alert('Você precisa estar logado para criar a proposta.');
+            return;
+        }
 
-  if (selectedTagsContainer) {
-    selectedTagsContainer.addEventListener('DOMSubtreeModified', atualizarPreview);
-  }
+        const uid = user.uid;
+        get(ref(db, `Contratante/${uid}`)).then(snapshot => {
+            if (!snapshot.exists()) {
+                alert('Dados do contratante não encontrados.');
+                return;
+            }
 
+            const dadosUsuario = snapshot.val();
+            
+            const novaProposta = {
+                titulo: titulo,
+                descricao: description,
+                precoMin: parseFloat(precoMin.replace(',', '.')),
+                precoMax: parseFloat(precoMax.replace(',', '.')),
+                meiosDeContato: {
+                    chat: contatoChat,
+                    email: contatoEmail,
+                    whatsapp: contatoWhatsapp,
+                    linkedin: contatoLinkedin,
+                    github: contatoGithub,
+                    outro: contatoOutro
+                },
+                tempoDeProposta: tempoDeProposta,
+                menoresDeIdade: menoresDeIdade,
+                datacriacao: new Date().toISOString(),
+                autorId: uid,
+                nomeAutor: dadosUsuario.nome || "Nome não informado",
+                fotoAutorUrl: dadosUsuario.foto_perfil || "",
+                tags: [category]
+            };
+
+            const propostasRef = ref(db, 'Propostas');
+            push(propostasRef, novaProposta)
+                .then(() => {
+                    alert('Proposta criada com sucesso!');
+                })
+                .catch(error => {
+                    console.error("Erro ao salvar proposta:", error);
+                    alert('Erro ao criar proposta.');
+                });
+        });
+    });
+
+    updateSteps();
 });
