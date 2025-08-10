@@ -66,6 +66,8 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const uid = user.uid
         escutarMensagensNaoLidasNavbar(uid)
+        carregarNotificacoesInfo(uid);
+
 
         const statusRef = ref(db, 'status/' + uid)
         await update(statusRef, {
@@ -135,7 +137,7 @@ onAuthStateChanged(auth, async (user) => {
                         const uid = auth.currentUser?.uid;
                         if (uid) {
                             const statusRef = ref(db, 'status/' + uid);
-                             update(statusRef, {
+                            update(statusRef, {
                                 online: false,
                                 last_seen: Date.now()
                             });
@@ -309,3 +311,79 @@ function atualizarBadgeNavbar(contagem) {
         badge.style.display = 'none';
     }
 }
+async function carregarNotificacoesInfo(uid) {
+    const notificacoesContainer = document.querySelector('.notficacoesContent');
+    notificacoesContainer.innerHTML = ''; // limpa
+
+    const conversasRef = ref(db, `Conversas/${uid}`);
+    const snapConversas = await get(conversasRef);
+    if (!snapConversas.exists()) {
+        notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
+        return;
+    }
+
+    const conversaIds = Object.keys(snapConversas.val());
+    for (const outroId of conversaIds) {
+        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
+        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
+
+        const leituraSnap = await get(leituraRef);
+        const ultimaLeitura = leituraSnap.exists() ? leituraSnap.val().timestamp || 0 : 0;
+
+        const mensagensSnap = await get(mensagensRef);
+        if (mensagensSnap.exists()) {
+            const msgs = mensagensSnap.val();
+            const msgsNaoLidas = Object.values(msgs).filter(msg => msg.autor !== uid && msg.timestamp > ultimaLeitura);
+            if (msgsNaoLidas.length === 0) continue;
+
+            // Tenta pegar dados do usuário em Freelancer
+            let userData = null;
+            const userFreelancerRef = ref(db, `Freelancer/${outroId}`);
+            const userFreelancerSnap = await get(userFreelancerRef);
+            if (userFreelancerSnap.exists()) {
+                userData = userFreelancerSnap.val();
+            } else {
+                // Se não achou em Freelancer, tenta em Contratante
+                const userContratanteRef = ref(db, `Contratante/${outroId}`);
+                const userContratanteSnap = await get(userContratanteRef);
+                if (userContratanteSnap.exists()) {
+                    userData = userContratanteSnap.val();
+                }
+            }
+
+            // Se não achou em nenhum, usa padrão
+            if (!userData) {
+                userData = {
+                    nome: "Usuário",
+                    foto: "https://via.placeholder.com/40"
+                };
+            }
+
+            const item = document.createElement('div');
+            item.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
+
+            item.innerHTML = `
+        <div class="icon rounded-xl pd-1 overflow-hidden" style="width:40px; height:40px;">
+          <img src="${userData.foto_perfil}" alt="${userData.nome}" style="width:100%; height:100%; object-fit: cover; border-radius: 50%;" />
+        </div>
+        <div class="notificationContent flex flex-col gap-0">
+          <h1 class="text-base text-white mg-0 text-bold">Você tem mensagens não lidas</h1>
+          <p class="messagecontent text-xs text-white mg-0 text-regular">
+            Acesse o chat para responder a <strong>${userData.nome}</strong>
+          </p>
+        </div>
+      `;
+
+            item.addEventListener('click', () => {
+                abrirChatComUsuario(outroId);
+            });
+
+            notificacoesContainer.appendChild(item);
+        }
+    }
+
+    if (!notificacoesContainer.hasChildNodes()) {
+        notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
+    }
+}
+
