@@ -44,18 +44,24 @@
       </nav>
     </aside>
     <main class="config-container w-full bg-gray-75 flex flex-col gap-5">
-      <section id="conta" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
-        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">Conta</h2>
+      <section id="conta"
+        class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">
+          Conta</h2>
         <div class="form-group pd-y-5 gap-3">
-          <p><strong>E-mail:</strong> usuario@email.com</p>
-          <label for="senha">Senha</label>
-          <div class="input-with-icon form-control sm flex flex-row gap-3 items-center justify-center" style="padding: 5px;">
-            <input type="password" class="w-full h-full bg-gray-100 outline-none text-white border-none mg-x-3" id="senha" value="********" readonly>
-            <button type="button" class="toggle-visibility btn btn-gray" title="Mostrar senha">
-              <ion-icon name="eye-outline" style="color: var(--white); font-size: 19px;"></ion-icon>
-            </button>
+          <p><strong>E-mail:</strong> <span id="user-email">Carregando...</span></p>
+          <button class="btn btn-primary mg-t-3 btn-ghost btnAlterarSenha">Alterar senha</button>
+          <div id="modalSenha" class="modal">
+            <div class="modal-content">
+              <span class="close-btn">&times;</span>
+              <h2>Alterar senha</h2>
+              <input type="password" id="novaSenhaInput" placeholder="Digite a nova senha" minlength="6" />
+              <div class="modal-buttons">
+                <button id="salvarSenhaBtn" class="btn btn-primary">Salvar</button>
+                <button id="cancelarSenhaBtn" class="btn btn-secondary">Cancelar</button>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-primary mg-t-3 btn-ghost">Alterar senha</button>
         </div>
         <h2>Informações Pessoais</h2>
         <div class="form-group">
@@ -88,7 +94,8 @@
           </div>
         </div>
       </section>
-      <section id="personalizar" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+      <section id="personalizar"
+        class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
         <h2>Temas</h2>
         <div class="temas-grid flex flex-row gap-3 flex-wrap">
           <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
@@ -119,10 +126,11 @@
               <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
             </div>
           </button>
-        
+
         </div>
       </section>
-      <section id="dados" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+      <section id="dados"
+        class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
         <h2>Solicitações de mensagens</h2>
         <label><input type="radio" name="message" checked> Qualquer um pode enviar</label>
         <label><input type="radio" name="message"> Caixa de solicitação</label>
@@ -131,19 +139,85 @@
         <label><input type="radio" name="comment"> Qualquer um</label>
         <label><input type="radio" name="comment"> Somente freelancers</label>
       </section>
-      <section id="notifications" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+      <section id="notifications"
+        class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
         <h2>Notificações</h2>
         <label><input type="checkbox" name="contact"> Solicitação de contato</label>
         <label><input type="checkbox" name="review"> Avaliações</label>
         <label><input type="checkbox" name="comment2">Comentários</label>
       </section>
 
-      <section id="areaNegra" class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
-        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">Zona obscura</h2>
+      <section id="areaNegra"
+        class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
+        <h2 class="text-3xl text-white mg-0 w-full border border-r-0 border-l-0 border-t-0 border-solid border-gray-25">
+          Zona obscura</h2>
         <button class="btn btn-warning btn-ghost mg-t-2">Deletar Conta</button>
       </section>
     </main>
   </div>
+  <script type="module" src="/js/configs/config.js"></script>
 </body>
+<style>
+  .modal {
+    display: none;
+    /* Escondido por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: #1E1E1E;
+    padding: 25px;
+    border-radius: 8px;
+    width: 320px;
+    max-width: 90%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .modal-content input {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    color: #333;
+  }
+
+  .close-btn:hover {
+    color: #007bff;
+  }
+</style>
 
 </html>
