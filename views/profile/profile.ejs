@@ -20,7 +20,9 @@
   <section class="section-1">
     <div class="banner" id="banner">
       <img id="imgBanner" src="default-banner.jpg" alt="banner" style="cursor:pointer;">
+       <div class="alterar-texto">CLIQUE PARA ALTERAR</div>
     </div>
+    <input type="file" id="inputBanner" accept="image/*" style="display:none" />
   </section>
   
   <section class="card-infos pd-3 flex gap-5">
@@ -69,19 +71,19 @@
     </div>
     <form id="form-editar">
       <label for="fotoPerfil">Foto Perfil:</label>
-      <div class="custom-file form-control">
+    <div class="custom-file form-control">
         <label for="fotoPerfil" class="file-label" id="labelFotoPerfil">Selecionar imagem</label>
         <input type="file" id="fotoPerfil" accept="image/*" class="hidden-file form-control">
       </div>
 
-      <label for="nome">Nome</label>
-      <input class="form-control sm" type="text" id="nome" placeholder="Digite seu nome"><br>
+<label for="input-nome">Nome</label>
+<input class="form-control sm" type="text" id="input-nome" placeholder="Digite seu nome"><br>
 
-      <label for="tag">Tag (Cargo)</label>
-      <input class="form-control sm" type="text" id="tag" placeholder="Ex: UI Designer"><br>
+<label for="input-tag">Tag (Cargo)</label>
+<input class="form-control sm" type="text" id="input-tag" placeholder="Ex: UI Designer"><br>
 
-      <label for="bio">Biografia</label>
-      <textarea class="form-control sm" id="bio" rows="4" placeholder="Fale um pouco sobre você..."></textarea><br>
+<label for="textarea-bio">Biografia</label>
+<textarea class="form-control sm" id="textarea-bio" rows="4" placeholder="Fale um pouco sobre você..."></textarea><br>
 
       <button type="submit" class="btn btn-purple">Salvar alterações</button>
     </form>
@@ -99,22 +101,20 @@
   const overlay = document.getElementById('modalOverlay');
 
     // Abrir o modal
-
-  buttonOpen.onclick = function () {
-        modal.showModal();
-        overlay.classList.add("active");
-        modal.classList.remove("closing");
-        modal.classList.add("opening");
-        overlay.classList.add("active");
-        setTimeout(() => modal.classList.add("open"), 10);
-        const h1Nome = document.querySelector('.nome h1');
-        const pTag = document.querySelector('.tag p');
-        const pBio = document.querySelector('.descricao p');
-        document.getElementById('nome').value = h1Nome.textContent || '';
-        document.getElementById('tag').value = pTag.textContent || '';
-        document.getElementById('bio').value = pBio.textContent || '';
-    };
-
+buttonOpen.onclick = function () {
+    modal.showModal();
+    overlay.classList.add("active");
+    modal.classList.remove("closing");
+    modal.classList.add("opening");
+    overlay.classList.add("active");
+    setTimeout(() => modal.classList.add("open"), 10);
+    const nomeDisplay = document.getElementById('nome').textContent;
+    const tagDisplay = document.getElementById('tag').textContent;
+    const bioDisplay = document.getElementById('bio').textContent;
+    document.getElementById('input-nome').value = nomeDisplay || '';
+    document.getElementById('input-tag').value = tagDisplay || '';
+    document.getElementById('textarea-bio').value = bioDisplay || '';
+};
     buttonClose.onclick = closeModal;
 
     function closeModal() {
@@ -255,7 +255,54 @@
       console.error("Erro ao atualizar banner:", error);
     }
   });
-  // ...existing code...
+
+const formEditar = document.getElementById('form-editar');
+const inputNome = document.getElementById('input-nome');
+const inputTag = document.getElementById('input-tag');
+const textareaBio = document.getElementById('textarea-bio');
+const inputFotoPerfil = document.getElementById('fotoPerfil'); 
+
+formEditar.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+
+    const novoNome = inputNome.value;
+    const novaTag = inputTag.value;
+    const novaBio = textareaBio.value;
+    const novaFotoFile = inputFotoPerfil.files[0];
+
+    if (!currentUserUid || !currentTipoUsuario) {
+        console.error("UID do usuário ou tipo de usuário não definido.");
+        return;
+    }
+
+    try {
+        const dadosAtualizados = {
+            nome: novoNome,
+            tag: novaTag,
+            bio: novaBio
+        };
+        
+        if (novaFotoFile) {
+            const bucket = currentTipoUsuario === 'Freelancer' ? 'freelancer-photos' : 'contratante-photos';
+            const fotoUrl = await uploadImageToSupabase(novaFotoFile, currentUserUid, bucket);
+            dadosAtualizados.foto_perfil = fotoUrl; 
+        }
+
+        await update(ref(db, `${currentTipoUsuario}/${currentUserUid}`), dadosAtualizados);
+
+        document.getElementById('nome').textContent = novoNome;
+        document.getElementById('tag').textContent = novaTag;
+        document.getElementById('bio').textContent = novaBio;
+        if (dadosAtualizados.foto_perfil) {
+            imgPerfil.src = dadosAtualizados.foto_perfil;
+        }
+
+        closeModal(); 
+        console.log("Perfil atualizado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao atualizar perfil:", error);
+    }
+});
 </script>
 <script>
   function mostrarCards(tipo) {
