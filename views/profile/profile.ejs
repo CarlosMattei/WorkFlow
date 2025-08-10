@@ -15,13 +15,15 @@
 </div>
 <div class="loading"></div>
 
+
+
   <section class="section-1">
     <div class="banner" id="banner">
       <img id="imgBanner" src="default-banner.jpg" alt="banner" style="cursor:pointer;">
     </div>
   </section>
   
-  <section class="card-infos pd-3 flex flex-row gap-5">
+  <section class="card-infos pd-3 flex gap-5">
     <div class="profilePic overflow-hidden bg-gray-50 border border-solid border-gray-100">
       <img class="profile-pic" src="default-profile.jpg" alt="pic" style="width: 100%; height: 100%;">
     </div>
@@ -33,7 +35,7 @@
       </div>
       <div class="buttons flex flex-row gap-2 justify-end">
         <button class="btn btn-white btn-ghost"><ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon></button>
-        <button class="btn btn-white btn-ghost"><ion-icon name="ellipsis-horizontal" style="font-size: 24px;"></ion-icon></button>
+        <button class="btn btn-white btn-ghost" id="editarinfos">Editar</button>
         <button class="btn btn-purple">Contratar</button>
       </div>
     </div>
@@ -58,8 +60,95 @@
   <main class="card-zone" id="card-zone"></main>
 </section>
 
+<dialog id="modalEditar" class="modalEditar closing bg-gray-100 pd-3 border border-solid rounded-lg border-gray">
+
+    <div class="modal-header flex flex-row justify-between items-center w-full pd-y-1">
+      <h2 class="text-white text-xl">Editar Perfil</h2>
+      <button id="close" class="closemodal" style="background-color: var(--background); border: 0px;"><ion-icon
+        name="close-outline" size="large" style="color: var(--white);"></ion-icon></button>
+    </div>
+    <form id="form-editar">
+      <label for="fotoPerfil">Foto Perfil:</label>
+      <div class="custom-file form-control">
+        <label for="fotoPerfil" class="file-label" id="labelFotoPerfil">Selecionar imagem</label>
+        <input type="file" id="fotoPerfil" accept="image/*" class="hidden-file form-control">
+      </div>
+
+      <label for="nome">Nome</label>
+      <input class="form-control sm" type="text" id="nome" placeholder="Digite seu nome"><br>
+
+      <label for="tag">Tag (Cargo)</label>
+      <input class="form-control sm" type="text" id="tag" placeholder="Ex: UI Designer"><br>
+
+      <label for="bio">Biografia</label>
+      <textarea class="form-control sm" id="bio" rows="4" placeholder="Fale um pouco sobre você..."></textarea><br>
+
+      <button type="submit" class="btn btn-purple">Salvar alterações</button>
+    </form>
+
+</dialog>
+<div id="modalOverlay" class="modalOverlay"></div>
+
 
 <script type="module" src="/js/perfil.js"></script>
+
+<script>
+  const modal = document.getElementById('modalEditar');
+  const buttonOpen = document.getElementById("editarinfos");
+  const buttonClose = document.getElementById('close');
+  const overlay = document.getElementById('modalOverlay');
+
+    // Abrir o modal
+
+  buttonOpen.onclick = function () {
+        modal.showModal();
+        overlay.classList.add("active");
+        modal.classList.remove("closing");
+        modal.classList.add("opening");
+        overlay.classList.add("active");
+        setTimeout(() => modal.classList.add("open"), 10);
+        const h1Nome = document.querySelector('.nome h1');
+        const pTag = document.querySelector('.tag p');
+        const pBio = document.querySelector('.descricao p');
+        document.getElementById('nome').value = h1Nome.textContent || '';
+        document.getElementById('tag').value = pTag.textContent || '';
+        document.getElementById('bio').value = pBio.textContent || '';
+    };
+
+    buttonClose.onclick = closeModal;
+
+    function closeModal() {
+      modal.classList.remove("opening");
+      modal.classList.add("closing");
+      overlay.classList.remove("active");
+        setTimeout(() => {
+            modal.classList.remove("closing");
+            modal.close();
+        }, 300);
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById('modal-editar');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+  
+    document.getElementById('fotoPerfil').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const imgPerfil = document.querySelector('.profile-pic img');
+        imgPerfil.src = URL.createObjectURL(file);
+      }
+    });
+  
+    document.getElementById('fotoPerfil').addEventListener('change', (e) => {
+      const label = document.getElementById('labelFotoPerfil');
+      const file = e.target.files[0];
+      label.textContent = file ? file.name : 'Selecionar imagem';
+    });
+
+</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";

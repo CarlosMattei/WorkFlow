@@ -31,3 +31,32 @@
     justify-content: center;
 }
 
+.dropdownOpcoes {
+    display: none;
+    position: absolute;
+    right: 0;
+    min-width: 160px;
+    z-index: 1;
+    border-radius: 8px;
+    margin-top: 50px;
+    margin-right: 120px;
+  }
+
+  .dropdownOpcoes button {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: none;
+  }
+
+  .dropdownOpcoes button:hover {
+    background-color: var(--gray-100);
+  }
+
+  .show {
+    display: block;
+  }

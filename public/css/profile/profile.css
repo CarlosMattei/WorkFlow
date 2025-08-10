@@ -6,11 +6,16 @@
 .profilePic {
   position: relative;
     width: 170px;
+    aspect-ratio: auto 1 / 1;
     height: 170px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
     margin-top: -50px;
+}
+
+.card-infos {
+  flex-direction: row;
 }
 
 .tabs {
@@ -24,12 +29,70 @@
 
 }
 
+.modalEditar {
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+  transform: translate(-50%, -50%) scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modalOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 999;
+}
+
+.modalOverlay .active {
+  display: block;
+}
+
+dialog::backdrop {
+  backdrop-filter: blur(5px);
+}
+
+.modalEditar .opening {
+  opacity: 1;
+  z-index: 10000;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.modalEditar .closing {
+  opacity: 0;
+  display: none;
+  transform: translate(-50%, -50%) scale(0.95);
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   .ProfileInfos {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
+
+  .card-infos {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .infos {
+    text-align: center;
+  }
+
   .buttonsContainer {
     flex-direction: column;
   }
