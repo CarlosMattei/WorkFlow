@@ -173,53 +173,95 @@
             return isNaN(data) ? "Data inválida" : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         }
 
-        function renderizarPropostas(propostasFiltradas) {
-            propostasContainer.innerHTML = '';
+       function renderizarPropostas(propostasFiltradas) {
+    propostasContainer.innerHTML = '';
 
-            if (propostasFiltradas.length === 0) {
-                propostasContainer.innerHTML = '<p>Nenhuma proposta encontrada com os filtros selecionados.</p>';
+    if (propostasFiltradas.length === 0) {
+        propostasContainer.innerHTML = '<p>Nenhuma proposta encontrada com os filtros selecionados.</p>';
+        return;
+    }
+
+    const agora = new Date();
+
+    propostasFiltradas.forEach(p => {
+        if (p.dataExpiracao) {
+            const dataExpiracao = new Date(p.dataExpiracao);
+            if (agora > dataExpiracao) {
                 return;
             }
+        }
 
-            propostasFiltradas.forEach(p => {
-                const tagsHtml = Array.isArray(p.tags)
-                    ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
-                    : '';
+        const tagsHtml = Array.isArray(p.tags)
+            ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+            : '';
 
-                const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
-                const nomeAutor = p.nomeAutor || 'Nome não informado';
+        let iconesDeContatoHtml = '';
+        if (p.meiosDeContato) {
+            const iconMap = {
+                chat: 'chatbubbles-outline',
+                whatsapp: 'logo-whatsapp',
+                email: 'mail-outline',
+                github: 'logo-github',
+                linkedin: 'logo-linkedin',
+                outro: 'ellipsis-horizontal-outline'
+            };
+            
+            iconesDeContatoHtml = Object.entries(p.meiosDeContato)
+                .filter(([, value]) => value) 
+                .map(([key]) => {
+                    const iconName = iconMap[key] || 'ellipsis-horizontal-outline';
+                    return `<ion-icon name="${iconName}" class="contact-icon" title="${key}"></ion-icon>`;
+                })
+                .join('');
+        }
 
-                const wrapper = document.createElement('div');
-                const card = document.createElement('div');
-                card.classList.add('proposta-card');
-                card.dataset.propostaId = p.id;
+        const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
+        const nomeAutor = p.nomeAutor || 'Nome não informado';
+        
+        const tempoDeProposta = p.tempoDeProposta || 'Indefinido';
 
-                card.innerHTML = `
-            <div class="head mg-0">
-                <h3>${p.titulo || 'Sem título'}</h3>
-                <div class="price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
+        const wrapper = document.createElement('div');
+        const card = document.createElement('div');
+        card.classList.add('proposta-card');
+        card.dataset.propostaId = p.id;
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-title">
+                    <h3>${p.titulo || 'Sem título'}</h3>
+                    <div class="card-price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
+                </div>
+                <p class="card-date">Criado em ${formatarData(p.datacriacao)}</p>
             </div>
-            <p class="criadoEm mg-0">Criado em ${formatarData(p.datacriacao)}</p>
-            <div class="tags">${tagsHtml}</div>
-            <p class="description">${p.descricao || ''}</p>
-            <div class="client-footer">
-                <div class="client">
+            
+            <div class="card-body">
+                <p class="card-description">${p.descricao || 'Nenhuma descrição fornecida.'}</p>
+                <div class="card-tags">${tagsHtml}</div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="client-info">
                     <a href="/perfil?id=${p.autorId}" class="profile-link">
                         <img class="profilePic" src="${fotoUrl}" alt="${nomeAutor}">
                         <span class="client-name">${nomeAutor}</span>
                     </a>
                 </div>
-                <div class="buttons">
-                    <button class="enviar">se candidatar</button>
+                <div class="proposal-details">
+                    <div class="contact-icons">
+                        ${iconesDeContatoHtml}
+                    </div>
+                    <div class="duration-info">Expira em: ${tempoDeProposta}</div>
                 </div>
+                <button class="enviar">Se candidatar</button>
             </div>
         `;
 
-                wrapper.appendChild(card);
-                propostasContainer.appendChild(wrapper);
-            });
-            adicionarEventoBotaoCandidatarse();
-        }
+        wrapper.appendChild(card);
+        propostasContainer.appendChild(wrapper);
+    });
+    
+    adicionarEventoBotaoCandidatarse();
+}
 
         function adicionarEventoBotaoCandidatarse() {
             document.querySelectorAll('.enviar').forEach(botao => {
