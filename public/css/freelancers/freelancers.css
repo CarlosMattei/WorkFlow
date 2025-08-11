@@ -23,3 +23,109 @@
         max-width: none;
     }
 }
+@import "globals/globals.css";
+
+.section-1 {
+    padding: 30px 40px;
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background-color: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.select-filter {
+    flex: 1 1 200px; 
+}
+
+.dropdown {
+    position: relative;
+    width: 100%;
+}
+.dropdown-btn {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+.dropdown-btn::after {
+    content: '▼';
+    font-size: 10px;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+.dropdown.open .dropdown-btn::after {
+    transform: rotate(180deg);
+}
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    margin-top: 5px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    display: none;
+    max-height: 250px;
+    overflow-y: auto;
+}
+.dropdown.open .dropdown-content {
+    display: block;
+}
+.dropdown-content input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    color: var(--text-primary);
+}
+#lista-categorias {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#lista-categorias li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#lista-categorias li:hover {
+    background-color: var(--bg-surface);
+}
+
+.freelancers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+.freelancers-grid > p {
+    grid-column: 1 / -1; 
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .section-1 {
+        padding: 20px;
+    }
+    .filter-bar {
+        flex-direction: column;
+    }
+    .select-filter, .category {
+        width: 100%;
+    }
+}
