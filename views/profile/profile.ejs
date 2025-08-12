@@ -91,6 +91,33 @@
 <div id="modalOverlay" class="modalOverlay"></div>
 
 
+  <dialog class="modalContratar closing bg-gray-100 pd-3 border border-solid rounded-lg border-gray" id="modalContratar">
+    <div class="modal-header-contratar flex flex-row justify-between items-center w-full pd-y-1">
+      <h2 class="text-white text-xl">Contratar</h2>
+      <button id="closeContratar" class="closemodal" style="background-color: var(--background); border: 0px;"><ion-icon
+        name="close-outline" size="large" style="color: var(--white);"></ion-icon></button>
+    </div>
+    <div class="modalContent">
+      <label for="mensagemContrato">Mensagem de Contratação</label>
+      <textarea id="mensagemContrato" class="form-control sm " rows="4" placeholder="Escreva uma mensagem para o freelancer..."></textarea>
+      <label for="meioDeRetorno">Meio de Retorno</label>
+      <div class="meioDeRetorno flex flex-row gap-2 justify-center">
+        <select class="sm" name="meioDeRetorno" id="meioDeRetorno">
+          <option" id="email">Email</option>
+          <option id="Telefone">Telefone</option>
+          <option id="LinkedIn">LinkedIn</option>
+          <option id="Whatsapp">Whatsapp</option>
+          <option id="GitHub">GitHub</option>
+        </select>
+        <input type="text" name="meioDeRetorno" id="meioDeRetorno" class="form-control sm" placeholder="Cole o link de contato nessa área">
+      </div>
+      <div class="buttonContainerModal flex flex-row justify-end mg-t-4">
+        <button type="submit" class="btn btn-purple">Enviar</button>
+      </div>
+    </div>
+</dialog>
+
+
 <script type="module" src="/js/perfil.js"></script>
 
 <script>
@@ -146,6 +173,32 @@ buttonOpen.onclick = function () {
       const file = e.target.files[0];
       label.textContent = file ? file.name : 'Selecionar imagem';
     });
+
+</script>
+
+<script>
+  const modalContratar = document.getElementById('modalContratar');
+  const buttonOpenContratar = document.getElementById("contratarButton");
+  const buttonCloseContratar = document.getElementById('closeContratar');
+
+  buttonOpenContratar.onclick = function () {
+    modalContratar.showModal();
+    modalContratar.classList.remove("closing");
+    modalContratar.classList.add("opening");
+    setTimeout(() => modalContratar.classList.add("open"), 10);
+    
+};
+    buttonCloseContratar.onclick = closeModal;
+
+    function closeModal() {
+      modalContratar.classList.remove("opening");
+      modalContratar.classList.add("closing");
+      overlay.classList.remove("active");
+        setTimeout(() => {
+            modalContratar.classList.remove("closing");
+            modalContratar.close();
+        }, 300);
+    }
 
 </script>
 

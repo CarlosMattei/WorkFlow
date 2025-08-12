@@ -4,6 +4,35 @@
     aspect-ratio: auto 1340 / 240;
 }
 
+@media (max-width: 768px) {
+    .section-1 .banner {
+        aspect-ratio: auto 1340 / 330;
+    }
+}
+
+@media (max-width: 425px) {
+    .section-1 .banner {
+        aspect-ratio: auto 1340 / 520;
+    }
+}
+
+.project-overlay-content {
+  flex-direction: row-reverse;
+}
+
+.project-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.project-title h1 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-medium);
+}
+
 .banner img {
     width: 100%;
     height: 100%;

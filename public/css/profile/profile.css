@@ -29,7 +29,25 @@
 
 }
 
+.nav-active {
+  background-color: var(--gray-100);
+}
+
 .modalEditar {
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+  transform: translate(-50%, -50%) scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modalContratar {
   max-width: 800px;
   width: 100%;
   overflow: hidden;
@@ -62,14 +80,14 @@ dialog::backdrop {
   backdrop-filter: blur(5px);
 }
 
-.modalEditar .opening {
+.modalEditar .opening, .modalContratar .opening {
   opacity: 1;
   z-index: 10000;
   transform: translate(-50%, -50%) scale(1);
   pointer-events: auto;
 }
 
-.modalEditar .closing {
+.modalEditar .closing, .modalContratar .opening {
   opacity: 0;
   display: none;
   transform: translate(-50%, -50%) scale(0.95);
@@ -96,11 +114,6 @@ dialog::backdrop {
   .buttonsContainer {
     flex-direction: column;
   }
-}
-body, html {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box; 
 }
 
 .section-1 {
@@ -426,7 +439,7 @@ body, html {
 }
 
 .card-infos {
-  padding-top: 70px;
+  padding-top: -70px;
   background: transparent !important;
   border-radius: 0 !important;
   box-shadow: none !important;
