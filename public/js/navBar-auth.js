@@ -297,23 +297,28 @@ async function recalcularNaoLidas(uid) {
         }
     }
 
+    totalMensagensNaoLidas = totalNaoLidas;
+    atualizarBadgeNavbar();
     return totalNaoLidas;
 }
-
-function atualizarBadgeNavbar(contagem) {
+let totalMensagensNaoLidas = 0;
+let totalNotificacoesProjeto = 0;
+function atualizarBadgeNavbar() {
     const badge = document.getElementById('badge-mensagens');
     if (!badge) return;
 
-    if (contagem > 0) {
+    const total = totalMensagensNaoLidas + totalNotificacoesProjeto;
+
+    if (total > 0) {
         badge.style.display = 'flex';
-        badge.textContent = contagem > 99 ? '99+' : contagem;
+        badge.textContent = total > 99 ? '99+' : total;
     } else {
         badge.style.display = 'none';
     }
 }
 async function carregarNotificacoesInfo(uid) {
     const notificacoesContainer = document.querySelector('.notficacoesContent');
-    notificacoesContainer.innerHTML = ''; // limpa
+    notificacoesContainer.innerHTML = '';
 
     const conversasRef = ref(db, `Conversas/${uid}`);
     const snapConversas = await get(conversasRef);
@@ -336,14 +341,12 @@ async function carregarNotificacoesInfo(uid) {
             const msgsNaoLidas = Object.values(msgs).filter(msg => msg.autor !== uid && msg.timestamp > ultimaLeitura);
             if (msgsNaoLidas.length === 0) continue;
 
-            // Tenta pegar dados do usuário em Freelancer
             let userData = null;
             const userFreelancerRef = ref(db, `Freelancer/${outroId}`);
             const userFreelancerSnap = await get(userFreelancerRef);
             if (userFreelancerSnap.exists()) {
                 userData = userFreelancerSnap.val();
             } else {
-                // Se não achou em Freelancer, tenta em Contratante
                 const userContratanteRef = ref(db, `Contratante/${outroId}`);
                 const userContratanteSnap = await get(userContratanteRef);
                 if (userContratanteSnap.exists()) {
@@ -351,7 +354,6 @@ async function carregarNotificacoesInfo(uid) {
                 }
             }
 
-            // Se não achou em nenhum, usa padrão
             if (!userData) {
                 userData = {
                     nome: "Usuário",
@@ -375,7 +377,7 @@ async function carregarNotificacoesInfo(uid) {
       `;
 
             item.addEventListener('click', () => {
-                abrirChatComUsuario(outroId);
+                window.location.href = '/chat'
             });
 
             notificacoesContainer.appendChild(item);
@@ -387,3 +389,42 @@ async function carregarNotificacoesInfo(uid) {
     }
 }
 
+const projetosNotificados = new Set();
+
+function criarNotificacaoInfo(projeto) {
+  const container = document.querySelector('.notficacoesContent');
+
+  const notificacao = document.createElement('div');
+notificacao.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
+
+notificacao.innerHTML = `
+  <div class="icon bg-gray-50 rounded-xl" style="width: 60px; height: 55px; overflow: hidden;">
+    <img src="${projeto.capaUrl}" alt="Capa do Projeto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+  </div>
+  <div class="notificationContent flex flex-col gap-0">
+    <h1 class="text-base text-white mg-0 text-bold">Parabéns!</h1>
+    <p class="messagecontent text-xs text-white mg-0 text-regular">
+      Seu projeto <strong>${projeto.titulo}</strong> chegou a 20 visualizações
+    </p>
+  </div>
+`;
+
+  container.appendChild(notificacao);
+}
+
+const projetosRef = ref(db, 'Projetos');
+
+onValue(projetosRef, (snapshot) => {
+  const projetos = snapshot.val();
+  if (!projetos) return;
+
+  Object.entries(projetos).forEach(([id, projeto]) => {
+    if (projeto.visualizacoes === 20 && !projetosNotificados.has(id)) {
+      criarNotificacaoInfo(projeto);
+      projetosNotificados.add(id);
+    }
+  });
+    totalNotificacoesProjeto = projetosNotificados.size;
+    atualizarBadgeNavbar();
+
+});
