@@ -29,7 +29,7 @@
 
 }
 
-.modalEditar {
+.modalEditar, .modalContratar{
   max-width: 800px;
   width: 100%;
   overflow: hidden;
