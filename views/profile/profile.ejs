@@ -36,7 +36,9 @@
         <div class="descricao"><p class="p descricao text-sm text-white mg-0" id="bio"></p></div>
       </div>
       <div class="buttons flex flex-row gap-2 justify-end">
-        <button class="btn btn-white btn-ghost"><ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon></button>
+       <button class="btn btn-white btn-ghost" id="chatButton">
+    <ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon>
+</button>
         <button class="btn btn-white btn-ghost" id="editarinfos">Editar</button>
         <button class="btn btn-purple">Contratar</button>
       </div>
@@ -148,97 +150,187 @@ buttonOpen.onclick = function () {
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getDatabase, ref, get, update, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import { createClient } from "https://esm.sh/@supabase/supabase-js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getDatabase, ref, get, update, child, set, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
-    authDomain: "workflow-da28d.firebaseapp.com",
-    projectId: "workflow-da28d",
-    storageBucket: "workflow-da28d.firebasestorage.app",
-    messagingSenderId: "939828605253",
-    appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
-    measurementId: "G-3LXB7BR5M1"
-  };
-  initializeApp(firebaseConfig);
+    const firebaseConfig = {
+        apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
+        authDomain: "workflow-da28d.firebaseapp.com",
+        projectId: "workflow-da28d",
+        storageBucket: "workflow-da28d.firebasestorage.app",
+        messagingSenderId: "939828605253",
+        appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
+        measurementId: "G-3LXB7BR5M1"
+    };
+    initializeApp(firebaseConfig);
+    const supabase = createClient(
+        "https://uvvquwlgbkdcnchiyqzs.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2dnF1d2xnYmtkY25jaGl5cXpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0ODA2OTQsImV4cCI6MjA2MjA1NjY5NH0.SnVqdpZa1V_vjJvoupVFAXjg0_2ih7KlfUa1s3vuzhE"
+    );
 
-  const supabase = createClient(
-    "https://uvvquwlgbkdcnchiyqzs.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2dnF1d2xnYmtkY25jaGl5cXpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0ODA2OTQsImV4cCI6MjA2MjA1NjY5NH0.SnVqdpZa1V_vjJvoupVFAXjg0_2ih7KlfUa1s3vuzhE"
-  );
+    const auth = getAuth();
+    const db = getDatabase();
 
-  const auth = getAuth();
-  const db = getDatabase();
+    const imgPerfil = document.querySelector('.profilePic img');
+    const h1Nome = document.getElementById('nome');
+    const pTag = document.getElementById('tag');
+    const pBio = document.getElementById('bio');
+    const imgBanner = document.getElementById('imgBanner');
+    const inputBanner = document.getElementById('inputBanner');
+    const chatButton = document.getElementById('chatButton'); 
 
-  const imgPerfil = document.querySelector('.profilePic img');
-  const h1Nome = document.getElementById('nome');
-  const pTag = document.getElementById('tag');
-  const pBio = document.getElementById('bio');
-  const imgBanner = document.getElementById('imgBanner');
-  const inputBanner = document.getElementById('inputBanner');
-  
-  const botaoEditar = document.querySelector('.editarinfos');
+    let currentUserUid = null;
+    let currentTipoUsuario = null;
 
-  let currentUserUid = null;
-  let currentTipoUsuario = null;
-
-  function getUidFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('id');
-  }
-
-  const uidFromURL = getUidFromURL();
-
-  async function detectarTipoUsuario(uid) {
-    const dbRef = ref(db);
-    if ((await get(child(dbRef, `Freelancer/${uid}`))).exists()) return 'Freelancer';
-    if ((await get(child(dbRef, `Contratante/${uid}`))).exists()) return 'Contratante';
-    return null;
-  }
-
-  async function uploadImageToSupabase(file, folder, bucketName) {
-    const path = `${folder}/${Date.now()}_${file.name}`;
-    const { error } = await supabase.storage.from(bucketName).upload(path, file);
-    if (error) throw error;
-    const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(path);
-    return publicUrlData.publicUrl;
-  }
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-
-    const loggedInUid = user.uid;
-    currentUserUid = uidFromURL || loggedInUid;
-
-    currentTipoUsuario = await detectarTipoUsuario(currentUserUid);
-    if (!currentTipoUsuario) return;
-
-    const snap = await get(ref(db, `${currentTipoUsuario}/${currentUserUid}`));
-    if (snap.exists()) {
-      const data = snap.val();
-      if (data.foto_perfil) imgPerfil.src = data.foto_perfil;
-      if (data.nome) h1Nome.textContent = data.nome;
-      if (data.tag) pTag.textContent = data.tag;
-      if (data.bio) pBio.textContent = data.bio;
-      if (data.banner) imgBanner.src = data.banner;
+    function getUidFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
     }
 
-    if (currentUserUid === loggedInUid) {
-      imgBanner.style.cursor = 'pointer';
-      document.getElementById('banner').classList.add('editable');
-
-      document.getElementById('banner').addEventListener('click', () => {
-        inputBanner.click();
-      });
-    } else {
-      imgBanner.style.cursor = 'default';
-      document.getElementById('banner').classList.remove('editable');
+    const uidFromURL = getUidFromURL();
+    
+    async function detectarTipoUsuario(uid) {
+        const dbRef = ref(db);
+        if ((await get(child(dbRef, `Freelancer/${uid}`))).exists()) return 'Freelancer';
+        if ((await get(child(dbRef, `Contratante/${uid}`))).exists()) return 'Contratante';
+        return null;
     }
-  });
 
-  inputBanner.addEventListener('change', async () => {
+    async function uploadImageToSupabase(file, folder, bucketName) {
+        const path = `${folder}/${Date.now()}_${file.name}`;
+        const { error } = await supabase.storage.from(bucketName).upload(path, file);
+        if (error) throw error;
+        const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(path);
+        return publicUrlData.publicUrl;
+    }
+
+    async function iniciarConversa(userIdContato, nomeContato, avatarContato) {
+        const authUser = auth.currentUser;
+
+        if (!authUser) {
+            alert('Você precisa estar logado para iniciar uma conversa.');
+            return;
+        }
+
+        const userIdLogado = authUser.uid;
+        
+        try {
+            const db = getDatabase();
+
+            const conversaLogadoRef = ref(db, `Conversas/${userIdLogado}/${userIdContato}`);
+            const conversaContatoRef = ref(db, `Conversas/${userIdContato}/${userIdLogado}`);
+
+            const [snapshotLogado, snapshotContato] = await Promise.all([
+                get(conversaLogadoRef),
+                get(conversaContatoRef)
+            ]);
+
+            if (snapshotLogado.exists() && snapshotContato.exists()) {
+                window.location.href = `/chat?user=${userIdContato}`;
+                return;
+            }
+
+            let dadosUserLogado = null;
+            const snapshotFreelancer = await get(ref(db, `Freelancer/${userIdLogado}`));
+            if (snapshotFreelancer.exists()) {
+                dadosUserLogado = snapshotFreelancer.val();
+            } else {
+                const snapshotContratante = await get(ref(db, `Contratante/${userIdLogado}`));
+                if (snapshotContratante.exists()) {
+                    dadosUserLogado = snapshotContratante.val();
+                }
+            }
+
+            if (!dadosUserLogado) {
+                alert("Erro ao obter seus dados para criar a conversa.");
+                return;
+            }
+
+            const timestampAgora = Date.now();
+
+            await Promise.all([
+                set(conversaLogadoRef, {
+                    nome: nomeContato,
+                    avatar: avatarContato,
+                    timestamp: timestampAgora
+                }),
+                set(conversaContatoRef, {
+                    nome: dadosUserLogado.nome || '',
+                    avatar: dadosUserLogado.foto_perfil || '',
+                    timestamp: timestampAgora
+                })
+            ]);
+
+            const mensagensRef = ref(db, `Conversas/${userIdLogado}/${userIdContato}/mensagens`);
+            await push(mensagensRef, {
+                autor: userIdLogado,
+                texto: "Você iniciou uma conversa.",
+                timestamp: timestampAgora
+            });
+
+            alert("Contato salvo! Agora você será redirecionado ao chat.");
+            window.location.href = `/chat?user=${userIdContato}`;
+        } catch (error) {
+            console.error("Erro ao salvar contato:", error);
+            alert("Erro ao salvar contato. Tente novamente mais tarde.");
+        }
+    }
+
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            if (chatButton) chatButton.style.display = 'none';
+            return;
+        }
+
+        const loggedInUid = user.uid;
+        currentUserUid = uidFromURL || loggedInUid;
+        
+        if (currentUserUid === loggedInUid && chatButton) {
+            chatButton.style.display = 'none';
+        } else if (chatButton) {
+            chatButton.style.display = 'flex'; 
+        }
+        
+        currentTipoUsuario = await detectarTipoUsuario(currentUserUid);
+        if (!currentTipoUsuario) return;
+
+        const snap = await get(ref(db, `${currentTipoUsuario}/${currentUserUid}`));
+        if (snap.exists()) {
+            const data = snap.val();
+            if (data.foto_perfil) imgPerfil.src = data.foto_perfil;
+            if (data.nome) h1Nome.textContent = data.nome;
+            if (data.tag) pTag.textContent = data.tag;
+            if (data.bio) pBio.textContent = data.bio;
+            if (data.banner) imgBanner.src = data.banner;
+            
+            if (chatButton) {
+                chatButton.addEventListener('click', async () => {
+                    const userIdToContact = currentUserUid;
+                    const nomeToContact = h1Nome.textContent;
+                    const avatarToContact = imgPerfil.src;
+
+                    await iniciarConversa(userIdToContact, nomeToContact, avatarToContact);
+                });
+            }
+        }
+
+        if (currentUserUid === loggedInUid) {
+            imgBanner.style.cursor = 'pointer';
+            document.getElementById('banner').classList.add('editable');
+
+            document.getElementById('banner').addEventListener('click', () => {
+                inputBanner.click();
+            });
+        } else {
+            imgBanner.style.cursor = 'default';
+            document.getElementById('banner').classList.remove('editable');
+        }
+    });
+
+inputBanner.addEventListener('change', async () => {
     const file = inputBanner.files[0];
     if (!file || !currentUserUid || !currentTipoUsuario) return;
 
@@ -253,53 +345,53 @@ buttonOpen.onclick = function () {
     }
   });
 
-const formEditar = document.getElementById('form-editar');
-const inputNome = document.getElementById('input-nome');
-const inputTag = document.getElementById('input-tag');
-const textareaBio = document.getElementById('textarea-bio');
-const inputFotoPerfil = document.getElementById('fotoPerfil'); 
+    const formEditar = document.getElementById('form-editar');
+    const inputNome = document.getElementById('input-nome');
+    const inputTag = document.getElementById('input-tag');
+    const textareaBio = document.getElementById('textarea-bio');
+    const inputFotoPerfil = document.getElementById('fotoPerfil'); 
 
-formEditar.addEventListener('submit', async (e) => {
-    e.preventDefault(); 
-
-    const novoNome = inputNome.value;
-    const novaTag = inputTag.value;
-    const novaBio = textareaBio.value;
-    const novaFotoFile = inputFotoPerfil.files[0];
-
-    if (!currentUserUid || !currentTipoUsuario) {
-        console.error("UID do usuário ou tipo de usuário não definido.");
-        return;
-    }
-
-    try {
-        const dadosAtualizados = {
-            nome: novoNome,
-            tag: novaTag,
-            bio: novaBio
-        };
+    formEditar.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
         
-        if (novaFotoFile) {
-            const bucket = currentTipoUsuario === 'Freelancer' ? 'freelancer-photos' : 'contratante-photos';
-            const fotoUrl = await uploadImageToSupabase(novaFotoFile, currentUserUid, bucket);
-            dadosAtualizados.foto_perfil = fotoUrl; 
+        const novoNome = inputNome.value;
+        const novaTag = inputTag.value;
+        const novaBio = textareaBio.value;
+        const novaFotoFile = inputFotoPerfil.files[0];
+
+        if (!currentUserUid || !currentTipoUsuario) {
+            console.error("UID do usuário ou tipo de usuário não definido.");
+            return;
         }
 
-        await update(ref(db, `${currentTipoUsuario}/${currentUserUid}`), dadosAtualizados);
+        try {
+            const dadosAtualizados = {
+                nome: novoNome,
+                tag: novaTag,
+                bio: novaBio
+            };
+            
+            if (novaFotoFile) {
+                const bucket = currentTipoUsuario === 'Freelancer' ? 'freelancer-photos' : 'contratante-photos';
+                const fotoUrl = await uploadImageToSupabase(novaFotoFile, currentUserUid, bucket);
+                dadosAtualizados.foto_perfil = fotoUrl; 
+            }
 
-        document.getElementById('nome').textContent = novoNome;
-        document.getElementById('tag').textContent = novaTag;
-        document.getElementById('bio').textContent = novaBio;
-        if (dadosAtualizados.foto_perfil) {
-            imgPerfil.src = dadosAtualizados.foto_perfil;
+            await update(ref(db, `${currentTipoUsuario}/${currentUserUid}`), dadosAtualizados);
+
+            document.getElementById('nome').textContent = novoNome;
+            document.getElementById('tag').textContent = novaTag;
+            document.getElementById('bio').textContent = novaBio;
+            if (dadosAtualizados.foto_perfil) {
+                imgPerfil.src = dadosAtualizados.foto_perfil;
+            }
+
+            closeModal(); 
+            console.log("Perfil atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao atualizar perfil:", error);
         }
-
-        closeModal(); 
-        console.log("Perfil atualizado com sucesso!");
-    } catch (error) {
-        console.error("Erro ao atualizar perfil:", error);
-    }
-});
+    });
 </script>
 <script>
   function mostrarCards(tipo) {
