@@ -202,6 +202,7 @@ notificacoes.addEventListener('click', (e) => {
 })
 document.addEventListener('click', () => {
     dropDown.style.display = 'none'
+    dropDownNotificacao.style.display = 'none'
 })
 dropDown.addEventListener('click', (e) => {
     e.stopPropagation()
@@ -209,106 +210,71 @@ dropDown.addEventListener('click', (e) => {
 
 const DEFAULT_USER_PHOTO = '/assets/image/defaultIcon.jpg';
 
-const popupOverlay = document.getElementById('popupOverlay');
-const closeBtn = document.getElementById('closePopup');
+async function contarNaoLidasDeConversa(uid, outroId) {
+    const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
+    const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
 
+    const leituraSnap = await get(leituraRef);
+    const ultimaLeitura = leituraSnap.exists() ? leituraSnap.val().timestamp || 0 : 0;
 
-async function escutarMensagensNaoLidasNavbar(uid) {
-    const conversasRef = ref(db, `Conversas/${uid}`);
+    const mensagensSnap = await get(mensagensRef);
+    if (!mensagensSnap.exists()) return 0;
 
-    const snapConversas = await get(conversasRef);
-    if (!snapConversas.exists()) {
-        atualizarBadgeNavbar(0);
-        return;
-    }
-
-    const conversaIds = Object.keys(snapConversas.val());
-    let totalNaoLidas = 0;
-
-    // Contar mensagens não lidas já existentes
-    for (const outroId of conversaIds) {
-        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
-        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
-
-        const leituraSnap = await get(leituraRef);
-        const ultimaLeitura = leituraSnap.exists() ? leituraSnap.val().timestamp || 0 : 0;
-
-        const mensagensSnap = await get(mensagensRef);
-        if (mensagensSnap.exists()) {
-            const msgs = mensagensSnap.val();
-            for (const key in msgs) {
-                const msg = msgs[key];
-                if (msg.autor !== uid && msg.timestamp > ultimaLeitura) {
-                    totalNaoLidas++;
-                }
-            }
-        }
-    }
-
-    atualizarBadgeNavbar(totalNaoLidas);
-
-    for (const outroId of conversaIds) {
-        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
-        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
-
-        let ultimaLeitura = 0;
-
-        onValue(leituraRef, (snap) => {
-            ultimaLeitura = snap.val()?.timestamp || 0;
-            recalcularNaoLidas(uid).then(cont => atualizarBadgeNavbar(cont));
-        });
-
-        onChildAdded(mensagensRef, (msgSnap) => {
-            const msg = msgSnap.val();
-            if (!msg || !msg.timestamp || msg.autor === uid) return;
-
-            if (msg.timestamp > ultimaLeitura) {
-
-                recalcularNaoLidas(uid).then(cont => atualizarBadgeNavbar(cont));
-            }
-        });
-    }
+    return Object.values(mensagensSnap.val()).filter(
+        msg => msg.autor !== uid && msg.timestamp > ultimaLeitura
+    ).length;
 }
 
 async function recalcularNaoLidas(uid) {
     const conversasRef = ref(db, `Conversas/${uid}`);
     const snapConversas = await get(conversasRef);
-    if (!snapConversas.exists()) return 0;
+    if (!snapConversas.exists()) {
+        totalMensagensNaoLidas = 0;
+        atualizarBadgeNavbar();
+        return 0;
+    }
 
     const conversaIds = Object.keys(snapConversas.val());
     let totalNaoLidas = 0;
 
     for (const outroId of conversaIds) {
-        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
-        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
-
-        const leituraSnap = await get(leituraRef);
-        const ultimaLeitura = leituraSnap.exists() ? leituraSnap.val().timestamp || 0 : 0;
-
-        const mensagensSnap = await get(mensagensRef);
-        if (mensagensSnap.exists()) {
-            const msgs = mensagensSnap.val();
-            for (const key in msgs) {
-                const msg = msgs[key];
-                if (msg.autor !== uid && msg.timestamp > ultimaLeitura) {
-                    totalNaoLidas++;
-                }
-            }
-        }
+        totalNaoLidas += await contarNaoLidasDeConversa(uid, outroId);
     }
 
     totalMensagensNaoLidas = totalNaoLidas;
     atualizarBadgeNavbar();
     return totalNaoLidas;
 }
+
+async function escutarMensagensNaoLidasNavbar(uid) {
+    const conversasRef = ref(db, `Conversas/${uid}`);
+    const snapConversas = await get(conversasRef);
+    if (!snapConversas.exists()) {
+        atualizarBadgeNavbar();
+        return;
+    }
+
+    const conversaIds = Object.keys(snapConversas.val());
+
+    await recalcularNaoLidas(uid);
+
+    for (const outroId of conversaIds) {
+        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
+        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
+
+        onValue(leituraRef, () => recalcularNaoLidas(uid));
+        onChildAdded(mensagensRef, () => recalcularNaoLidas(uid));
+    }
+}
+
 let totalMensagensNaoLidas = 0;
 let totalNotificacoesProjeto = 0;
+
 function atualizarBadgeNavbar() {
     const badge = document.getElementById('badge-mensagens');
     if (!badge) return;
 
     const total = totalMensagensNaoLidas + totalNotificacoesProjeto;
-
     if (total > 0) {
         badge.style.display = 'flex';
         badge.textContent = total > 99 ? '99+' : total;
@@ -316,115 +282,92 @@ function atualizarBadgeNavbar() {
         badge.style.display = 'none';
     }
 }
-async function carregarNotificacoesInfo(uid) {
+
+function carregarNotificacoesInfo(uid) {
     const notificacoesContainer = document.querySelector('.notficacoesContent');
-    notificacoesContainer.innerHTML = '';
-
     const conversasRef = ref(db, `Conversas/${uid}`);
-    const snapConversas = await get(conversasRef);
-    if (!snapConversas.exists()) {
-        notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
-        return;
-    }
 
-    const conversaIds = Object.keys(snapConversas.val());
-    for (const outroId of conversaIds) {
-        const mensagensRef = ref(db, `Conversas/${uid}/${outroId}/mensagens`);
-        const leituraRef = ref(db, `LeituraMensagens/${uid}/${outroId}`);
+    onValue(conversasRef, async (snapConversas) => {
+        notificacoesContainer.innerHTML = '';
 
-        const leituraSnap = await get(leituraRef);
-        const ultimaLeitura = leituraSnap.exists() ? leituraSnap.val().timestamp || 0 : 0;
+        if (!snapConversas.exists()) {
+            notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
+            return;
+        }
 
-        const mensagensSnap = await get(mensagensRef);
-        if (mensagensSnap.exists()) {
-            const msgs = mensagensSnap.val();
-            const msgsNaoLidas = Object.values(msgs).filter(msg => msg.autor !== uid && msg.timestamp > ultimaLeitura);
-            if (msgsNaoLidas.length === 0) continue;
+        const conversaIds = Object.keys(snapConversas.val());
+
+        for (const outroId of conversaIds) {
+            const qtdNaoLidas = await contarNaoLidasDeConversa(uid, outroId);
+            if (qtdNaoLidas === 0) continue;
 
             let userData = null;
-            const userFreelancerRef = ref(db, `Freelancer/${outroId}`);
-            const userFreelancerSnap = await get(userFreelancerRef);
-            if (userFreelancerSnap.exists()) {
-                userData = userFreelancerSnap.val();
-            } else {
-                const userContratanteRef = ref(db, `Contratante/${outroId}`);
-                const userContratanteSnap = await get(userContratanteRef);
-                if (userContratanteSnap.exists()) {
-                    userData = userContratanteSnap.val();
+            for (const tipo of ['Freelancer', 'Contratante']) {
+                const snap = await get(ref(db, `${tipo}/${outroId}`));
+                if (snap.exists()) {
+                    userData = snap.val();
+                    break;
                 }
             }
-
             if (!userData) {
-                userData = {
-                    nome: "Usuário",
-                    foto: "https://via.placeholder.com/40"
-                };
+                userData = { nome: "Usuário", foto_perfil: "https://via.placeholder.com/40" };
             }
 
             const item = document.createElement('div');
             item.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
-
             item.innerHTML = `
-        <div class="icon rounded-xl pd-1 overflow-hidden" style="width:40px; height:40px;">
-          <img src="${userData.foto_perfil}" alt="${userData.nome}" style="width:100%; height:100%; object-fit: cover; border-radius: 50%;" />
-        </div>
-        <div class="notificationContent flex flex-col gap-0">
-          <h1 class="text-base text-white mg-0 text-bold">Você tem mensagens não lidas</h1>
-          <p class="messagecontent text-xs text-white mg-0 text-regular">
-            Acesse o chat para responder a <strong>${userData.nome}</strong>
-          </p>
-        </div>
-      `;
-
-            item.addEventListener('click', () => {
-                window.location.href = '/chat'
-            });
-
+                <div class="icon rounded-xl pd-1 overflow-hidden" style="width:45px; height:45px;">
+                    <img src="${userData.foto_perfil}" alt="${userData.nome}" style="width:100%; height:100%; object-fit: cover; border-radius: 50%;" />
+                </div>
+                <div class="notificationContent flex flex-col gap-0">
+                    <h1 class="text-base text-white mg-0 text-bold">Você tem mensagens não lidas</h1>
+                    <p class="messagecontent text-xs text-white mg-0 text-regular">
+                        Acesse o chat para responder a <strong>${userData.nome}</strong>
+                    </p>
+                </div>
+            `;
+            item.addEventListener('click', () => window.location.href = '/chat');
             notificacoesContainer.appendChild(item);
         }
-    }
 
-    if (!notificacoesContainer.hasChildNodes()) {
-        notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
-    }
+        if (!notificacoesContainer.hasChildNodes()) {
+            notificacoesContainer.innerHTML = '<p class="text-white">Sem notificações</p>';
+        }
+    });
 }
 
 const projetosNotificados = new Set();
 
 function criarNotificacaoInfo(projeto) {
-  const container = document.querySelector('.notficacoesContent');
+    const container = document.querySelector('.notficacoesContent');
+    const notificacao = document.createElement('div');
+    notificacao.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
 
-  const notificacao = document.createElement('div');
-notificacao.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
-
-notificacao.innerHTML = `
-  <div class="icon bg-gray-50 rounded-xl" style="width: 60px; height: 55px; overflow: hidden;">
-    <img src="${projeto.capaUrl}" alt="Capa do Projeto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-  </div>
-  <div class="notificationContent flex flex-col gap-0">
-    <h1 class="text-base text-white mg-0 text-bold">Parabéns!</h1>
-    <p class="messagecontent text-xs text-white mg-0 text-regular">
-      Seu projeto <strong>${projeto.titulo}</strong> chegou a 20 visualizações
-    </p>
-  </div>
-`;
-
-  container.appendChild(notificacao);
+    notificacao.innerHTML = `
+        <div class="icon bg-gray-50 rounded-xl" style="width: 60px; height: 55px; overflow: hidden;">
+            <img src="${projeto.capaUrl}" alt="Capa do Projeto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+        </div>
+        <div class="notificationContent flex flex-col gap-0">
+            <h1 class="text-base text-white mg-0 text-bold">Parabéns!</h1>
+            <p class="messagecontent text-xs text-white mg-0 text-regular">
+                Seu projeto <strong>${projeto.titulo}</strong> chegou a 20 visualizações
+            </p>
+        </div>
+    `;
+    container.appendChild(notificacao);
 }
 
-const projetosRef = ref(db, 'Projetos');
+onValue(ref(db, 'Projetos'), (snapshot) => {
+    const projetos = snapshot.val();
+    if (!projetos) return;
 
-onValue(projetosRef, (snapshot) => {
-  const projetos = snapshot.val();
-  if (!projetos) return;
+    Object.entries(projetos).forEach(([id, projeto]) => {
+        if (projeto.visualizacoes === 20 && !projetosNotificados.has(id)) {
+            criarNotificacaoInfo(projeto);
+            projetosNotificados.add(id);
+        }
+    });
 
-  Object.entries(projetos).forEach(([id, projeto]) => {
-    if (projeto.visualizacoes === 20 && !projetosNotificados.has(id)) {
-      criarNotificacaoInfo(projeto);
-      projetosNotificados.add(id);
-    }
-  });
     totalNotificacoesProjeto = projetosNotificados.size;
     atualizarBadgeNavbar();
-
 });
