@@ -63,8 +63,9 @@ if (cacheUsuario && tempoCache && Date.now() - tempoCache < 5 * 60 * 1000) {
     }
 }
 onAuthStateChanged(auth, async (user) => {
+    const uid = user.uid
+
     if (user) {
-        const uid = user.uid
         escutarMensagensNaoLidasNavbar(uid)
         carregarNotificacoesInfo(uid);
 
@@ -189,6 +190,21 @@ onAuthStateChanged(auth, async (user) => {
 
 
     }
+
+    onValue(ref(db, 'Projetos'), (snapshot) => {
+        const projetos = snapshot.val();
+        if (!projetos) return;
+
+        Object.entries(projetos).forEach(([id, projeto]) => {
+            if (projeto.visualizacoes === 20 && projeto.userId === uid && !projetosNotificados.has(id)) {
+                criarNotificacaoInfo(projeto);
+                projetosNotificados.add(id);
+            }
+        });
+
+        totalNotificacoesProjeto = projetosNotificados.size;
+        atualizarBadgeNavbar();
+    });
 
 });
 
@@ -356,18 +372,3 @@ function criarNotificacaoInfo(projeto) {
     `;
     container.appendChild(notificacao);
 }
-
-onValue(ref(db, 'Projetos'), (snapshot) => {
-    const projetos = snapshot.val();
-    if (!projetos) return;
-
-    Object.entries(projetos).forEach(([id, projeto]) => {
-        if (projeto.visualizacoes === 20 && !projetosNotificados.has(id)) {
-            criarNotificacaoInfo(projeto);
-            projetosNotificados.add(id);
-        }
-    });
-
-    totalNotificacoesProjeto = projetosNotificados.size;
-    atualizarBadgeNavbar();
-});

@@ -1,5 +1,5 @@
 <div align="center">
-<img  src="https://imghost.net/ib/x5bzs5lEfXkRdZw_1746616925.png" alt="workflowLogo.png" width="50%"/></a>
+<img  src="../public/assets/image/logoWorkFlow-com-nome.svg" alt="workflowLogo.png" width="50%"/></a>
     
 ## Onde iniciantes se tornam profissionais
 
@@ -11,8 +11,6 @@
     Workflow é uma plataforma inovadora que conecta freelancers iniciantes com contratantes em busca de talentos. Nosso objetivo é criar um ecossistema acessível, justo e eficiente para quem quer contratar serviços ou expor seus projetos e habilidades.
     
 </div>
-
- ![image](https://github.com/user-attachments/assets/f89464dc-ba45-4759-8ca2-e4bef96b0a5d)
   
 # Nosso propósito 
 <div>
