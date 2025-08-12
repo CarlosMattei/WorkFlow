@@ -40,7 +40,7 @@
     <ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon>
 </button>
         <button class="btn btn-white btn-ghost" id="editarinfos">Editar</button>
-        <button class="btn btn-purple">Contratar</button>
+        <button class="btn btn-purple" id="contratarButton">Contratar</button>
       </div>
     </div>
   </section>
@@ -179,7 +179,9 @@ buttonOpen.onclick = function () {
     const pBio = document.getElementById('bio');
     const imgBanner = document.getElementById('imgBanner');
     const inputBanner = document.getElementById('inputBanner');
-    const chatButton = document.getElementById('chatButton'); 
+    const editarButton = document.getElementById('editarinfos');
+    const chatButton = document.getElementById('chatButton');
+    const contratarButton = document.getElementById('contratarButton');
 
     let currentUserUid = null;
     let currentTipoUsuario = null;
@@ -189,8 +191,6 @@ buttonOpen.onclick = function () {
         return params.get('id');
     }
 
-    const uidFromURL = getUidFromURL();
-    
     async function detectarTipoUsuario(uid) {
         const dbRef = ref(db);
         if ((await get(child(dbRef, `Freelancer/${uid}`))).exists()) return 'Freelancer';
@@ -280,18 +280,24 @@ buttonOpen.onclick = function () {
 
 
     onAuthStateChanged(auth, async (user) => {
+        if (editarButton) editarButton.style.display = 'none';
+        if (chatButton) chatButton.style.display = 'none';
+        if (contratarButton) contratarButton.style.display = 'none';
+        
+        const uidFromURL = getUidFromURL();
+
         if (!user) {
-            if (chatButton) chatButton.style.display = 'none';
             return;
         }
 
-        const loggedInUid = user.uid;
-        currentUserUid = uidFromURL || loggedInUid;
+        const loggedInUserUid = user.uid;
+        currentUserUid = uidFromURL || loggedInUserUid;
         
-        if (currentUserUid === loggedInUid && chatButton) {
-            chatButton.style.display = 'none';
-        } else if (chatButton) {
-            chatButton.style.display = 'flex'; 
+        if (currentUserUid === loggedInUserUid) {
+            if (editarButton) editarButton.style.display = 'flex';
+        } else {
+            if (chatButton) chatButton.style.display = 'flex';
+            if (contratarButton) contratarButton.style.display = 'flex';
         }
         
         currentTipoUsuario = await detectarTipoUsuario(currentUserUid);
@@ -317,7 +323,7 @@ buttonOpen.onclick = function () {
             }
         }
 
-        if (currentUserUid === loggedInUid) {
+        if (currentUserUid === loggedInUserUid) {
             imgBanner.style.cursor = 'pointer';
             document.getElementById('banner').classList.add('editable');
 
