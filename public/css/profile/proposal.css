@@ -1,0 +1,168 @@
+/* Estilos para a lista de propostas do Contratante */
+.grid-propostas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+.contratante-zone {
+    padding: 5px;
+}
+
+.proposta-card {
+    background-color: var(--gray-75);
+    color: var(--white);
+    padding: var(--space-3);
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-25);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+  }
+  .propostas .proposta-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .proposta-card .head {
+    font-size: var(--f4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .proposta-card .head h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .proposta-card .head .price {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--primary);
+  }
+  
+  .proposta-card .criadoEm {
+    font-size: 0.9rem;
+    color: var(--gray);
+  }
+  
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block: 5px;
+  }
+  
+  .tags .tag {
+    background-color: var(--tertiary);
+    color: white;
+    border-radius: 20px;
+    padding: 3px 8px;
+    font-size: var(--f1);
+  }
+  
+  .proposta-card .description {
+    margin-block: 10px;
+    line-height: 1.6;
+  }
+  
+  .proposta-card .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+  
+  .client {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .client .profilePic {
+    background-color: var(--white);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gray);
+  }
+  
+  .client span {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .buttons .verMais {
+    background-color: var(--gray);
+    border: none;
+    padding: 10px 16px;
+    color: var(--white);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .buttons .verMais:hover {
+    background-color: #5a5a5a;
+  }
+  
+  .buttons .enviar {
+    background-color: var(--primary);
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .buttons .enviar:hover {
+    background-color: #0073e6;
+  }
+  .client-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    gap: 10px;
+  }
+  
+  .client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .client .profilePic {
+    background-color: var(--white);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gray);
+  }
+  
+  .client-name {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 10px;
+  }
+  

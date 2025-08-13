@@ -1,17 +1,20 @@
 @import "../globals/globals.css";
 @import "../index/partials/card.css";
+@import "../index/partials/modals.css";
+@import "proposal.css";
 
 @import "partials/layout.css";
 
-.profilePic {
+.perfilPic {
   position: relative;
-    width: 170px;
-    aspect-ratio: auto 1 / 1;
-    height: 170px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    margin-top: -50px;
+  width: 170px;
+  aspect-ratio: auto 1 / 1;
+  height: 170px;
+  border-radius: 50%;
+  border: 5px solid var(--gray-100);
+  object-fit: cover;
+  margin-bottom: 20px;
+  margin-top: -50px;
 }
 
 .card-infos {
@@ -96,4 +99,161 @@ dialog::backdrop {
   .buttonsContainer {
     flex-direction: column;
   }
+}
+
+.card-zone .contratante-zone {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3, 1fr));
+  gap: 20px;
+}
+
+/*
+
+body {
+  margin-bottom: 30px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: opacity 0.3s;
+  overflow: hidden;
+  overflow-y: auto;
+  padding-top: 5px;
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  z-index: 2000;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h1 {
+  font-size: var(--text-4xl);
+  margin: 0;
+}
+
+.modal-header a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: var(--font-weight-bold);
+}
+
+.combined-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+
+.section-infos, .footer-section {
+  display: flex;
+  flex: 1;
+}
+
+.section-infos {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.header-card-autor-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.header-card-autor {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.header-card-autor-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-card-autor-title h1 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white);
+  margin: 0;
+}
+
+.header-card-autor .container-1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+}
+
+.container-2 {
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.container-2 button {
+  display: inline-flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  padding-inline: var(--space-5);
+  background-color: var(--success);
+  color: var(--white);
+  height: 48px;
+  border-radius: 8px;
+  font-size: var(--f1);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s, opacity 0.2s;
+  outline: none;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
+#btnVerPerfil {
+  flex: 1;
+}
+
+#btnVerPerfil button {
+  width: 100%;
+  background-color: var(--base-100);
+  color: var(--white);
+}
+
+.carousel-container {
+  padding: 5px;
+}
+
+.carousel-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+}
+
+.carousel-item {
+  aspect-ratio: auto 4 / 3;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
 }

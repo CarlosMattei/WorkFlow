@@ -89,3 +89,8 @@
   .show {
     display: block;
   }
+
+  body {
+    margin-bottom: 30px;
+}
+

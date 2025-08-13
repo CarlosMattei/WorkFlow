@@ -20,13 +20,12 @@
   <section class="section-1">
     <div class="banner" id="banner">
       <img id="imgBanner" src="default-banner.jpg" alt="banner" style="cursor:pointer;">
-       <div class="alterar-texto">CLIQUE PARA ALTERAR</div>
     </div>
     <input type="file" id="inputBanner" accept="image/*" style="display:none" />
   </section>
   
   <section class="card-infos pd-3 flex gap-5">
-    <div class="profilePic overflow-hidden bg-gray-50 border border-solid border-gray-100">
+    <div class="profilePic perfilPic overflow-hidden bg-gray-50 border border-solid border-gray-100">
       <img class="profile-pic" src="default-profile.jpg" alt="pic" style="width: 100%; height: 100%;">
     </div>
     <div class="buttonsContainer flex flex-1 flex-row justify-center gap-2">
@@ -464,6 +463,7 @@ inputBanner.addEventListener('change', async () => {
     });
   }
 </script>
+
 <script type="module" src="/js/perfil.js"></script>
 <script src="/js/preloader.js"></script>
 </body>

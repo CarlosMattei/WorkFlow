@@ -29,19 +29,16 @@ let tipoUsuario = null;
 const activeListeners = {};
 
 const modalHTML = `
-<div id="modalProjeto" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span id="modalClose" class="modal-close">&times;</span>
-        <div id="modalBody"></div>
-    </div>
-</div>
+
+// tem que resolver isso Christopher Cavalo
+
 `;
-if (!document.getElementById('modalProjeto')) {
+if (!document.getElementById('modal')) {
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
-const modal = document.getElementById('modalProjeto');
-const modalBody = document.getElementById('modalBody');
-const modalClose = document.getElementById('modalClose');
+const modal = document.getElementById('modal-overlay');
+const modalBody = document.getElementById('modal');
+const modalClose = document.getElementById('modalCloseBtn');
 
 modalClose.addEventListener('click', () => {
     modal.style.display = 'none';
@@ -496,11 +493,11 @@ async function incrementarVisualizacaoUnica(projetoId) {
 
 function criarCabecalhoProjetoHTML(projeto, autorNome, autorId) {
     return `
-        <div class="modal-header">
+        <div class="modal-header flex flex-col justify-center items-center pd-y-16">
             <div class="modal-titulo">
-                <h1>${projeto.titulo || 'Sem Título'}</h1>
+                <h1 class="text-5xl mg-0">${projeto.titulo || 'Sem Título'}</h1>
             </div>
-            <div class="modal-creator">
+            <div class="modal-creator mg-0"">
                 <p>Projeto criado por <a href="/perfil?id=${autorId}" class="user-name-modal">${autorNome || 'Desconhecido'}</a>.</p>
             </div>
         </div>
@@ -509,7 +506,7 @@ function criarCabecalhoProjetoHTML(projeto, autorNome, autorId) {
 
 function criarComentarioHTML(comentario) {
     return `
-        <div class="containerComentarios">
+        <div id="containerComentarios" class="containerComentarios chat-mensagens flex flex-col gap-3 pd-2 bg-gray-50 rounded-md">
             <div class="user-info">
                 <img src="${comentario.foto || 'https://via.placeholder.com/50'}" alt="Usuário">
                 <div class="user-details">
@@ -581,61 +578,86 @@ async function criarBlocoExtraProjetoHTML(projeto, autorData, comentarios) {
     }
 
     return `
-    <div class="combined-section">
-        <div class="section-infos">
-            <div class="titulo-container">
-                <h1 id="txtTituloTag">${projeto.titulo || 'Sem Título'}</h1>
-            </div>
-            <div id="modalTagsContainer" class="tags-container">
-                ${tagsHTML}
-            </div>
-            <div class="data-container">
-                <p id="data-criado" class="data-criado">criado em ${dataCriacao}</p>
-            </div>
-        </div>
+    <div
+                class="section-infos flex justify-between items-start gap-8 pd-4 mg-4 rounded-2xl bg-gradient-primary border border-gray-50">
+                <div class="project-info-container flex flex-col gap-6 flex-1">
+                    <div class="titulo-container">
+                        <h1 id="txtTituloTag" class="text-2xl font-bold text-white mg-0 mg-b-4">${projeto.titulo || 'Sem Título'}</h1>
+                    </div>
+                    <div id="modalTagsContainer" class="tags-container flex flex-wrap gap-2 mg-b-4">
+                        ${tagsHTML}
+                    </div>
+                    <div class="data-container border-t border-gray-50 pd-t-4">
+                        <p id="data-criado" class="data-criado text-sm text-gray mg-0">criado em ${dataCriacao}</p>
+                    </div>
+                </div>
 
-        <div class="footer-section">
-            <div class="footer-left">
-                <div class="card-autor">
-                    <div class="header-card-autor">
-                        <div class="container-1">
-                            <div class="header-card-autor-image">
-                                <img src="${autorData.foto_perfil || 'https://via.placeholder.com/50'}" id="modalUserPhoto" alt="Profile pic">
+                <div class="author-profile-container bg-gray-75 flex flex-1 flex-col max-w-full" style="width: 400px;">
+                    <div class="card-autor">
+                        <div class="card-autor-header">
+                            <div class="autor-info">
+                                <div class="autor-avatar">
+                                    <img src="${autorData.foto_perfil || 'https://via.placeholder.com/50'}" id="modalUserPhoto" alt="Foto do perfil">
+                                </div>
+                                <div class="autor-details">
+                                    <h3 id="modalAutor">${autorData.nome || 'Autor Desconhecido'}</h3>
+                                    <p id="modalTag">${autorData.tag || 'Não informado'}</p>
+                                    <div class="autor-stats">
+                                        <span class="stat">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            24 projetos
+                                        </span>
+                                        <span class="stat">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M12 20.94C11.5 20.94 11.05 20.79 10.65 20.49C10.25 20.19 9.95 19.79 9.75 19.29C9.55 18.79 9.5 18.25 9.6 17.67C9.7 17.09 9.95 16.57 10.35 16.11C10.75 15.65 11.25 15.3 11.85 15.06C12.45 14.82 13.1 14.7 13.8 14.7C14.5 14.7 15.15 14.82 15.75 15.06C16.35 15.3 16.85 15.65 17.25 16.11C17.65 16.57 17.9 17.09 18 17.67C18.1 18.25 18.05 18.79 17.85 19.29C17.65 19.79 17.35 20.19 16.95 20.49C16.55 20.79 16.1 20.94 15.6 20.94H12Z"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path
+                                                    d="M12 2C13.1 2 14.1 2.4 14.9 3.2C15.7 4 16.1 5 16.1 6.1C16.1 7.2 15.7 8.2 14.9 9C14.1 9.8 13.1 10.2 12 10.2C10.9 10.2 9.9 9.8 9.1 9C8.3 8.2 7.9 7.2 7.9 6.1C7.9 5 8.3 4 9.1 3.2C9.9 2.4 10.9 2 12 2Z"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                            4.8 ⭐
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="header-card-autor-title">
-                                <h1 id="modalAutor">${autorData.nome || 'Autor Desconhecido'}</h1>
-                                <p id="modalTag">${autorData.tag || 'Não informado'}</p>
+                            <div class="autor-actions">
+                                <button class="btn flex flex-1 gap-3 pd-y-5 btn-success" id="contactar">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M22 2H2V22L6 18H22V2Z" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    Contatar
+                                </button>
+                                <button id="btnVerPerfil" class="btn pd-y-5 gap-3 flex flex-1 btn-purple">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    Ver Perfil
+                                </button>
                             </div>
-                        </div>
-                        <div class="container-2">
-                            <button class="button-container contactar" id="contactar">Contatar</button>
-                            <a id="btnVerPerfil" href="/perfil?id=${autorData.id}"><button class="button-container">Ver Perfil</button></a>
                         </div>
                     </div>
-                    <div class="outros-projetos">
-                       
-                        <div class="carousel-container">
-                            <div class="carousel-track">
-                                ${outrosProjetosHTML}
-                            </div>
-                            <button class="carousel-button prev">&#10094;</button>
-                            <button class="carousel-button next">&#10095;</button>
-                        </div>
-                    </div>
-                </div>
-                <h3>comentarios</h3>
-                <div class="message-card">
-                <div class="input-box" style="margin-top: 20px;">
-                    <input type="text" id="commentInput" placeholder="Escreva um comentário...">
-                    <button id="btnEnviarComentario">Enviar</button>
-                </div>
-                <div id="comentariosProjeto" style="margin-top: 20px;">
-                    ${comentariosHTML}
-                </div>
                 </div>
             </div>
-        </div>
-        </div>
     `;
 }
 
@@ -1120,7 +1142,7 @@ onAuthStateChanged(auth, async (user) => {
         curtidasSnap,
         comentariosGlobaisSnap,
         favoritosSnap,
-        tipoUsuario
+        detectedTipoUsuario
     ] = await Promise.all([
         get(ref(db, 'Propostas')),
         get(ref(db, 'Projetos')),
@@ -1130,16 +1152,22 @@ onAuthStateChanged(auth, async (user) => {
         detectarTipoUsuario(perfilUserId)
     ]);
 
+    tipoUsuario = detectedTipoUsuario;
+
     if (!tipoUsuario) {
         containerCard.innerHTML = '<p>Tipo de usuário não encontrado para este ID.</p>';
         contadorProjetos.textContent = '0';
         return;
     }
 
-
     if (tipoUsuario === 'Contratante') {
+        containerCard.classList.add('contratante-zone');
+        containerCard.classList.remove('freelancer-zone');
         const labelProjetos = document.querySelector('.projetos-realizados p');
         if (labelProjetos) labelProjetos.textContent = 'Propostas realizadas';
+    } else { // Freelancer
+        containerCard.classList.add('freelancer-zone');
+        containerCard.classList.remove('contratante-zone');
     }
 
     tabButtons.forEach(btn => {
@@ -1233,8 +1261,8 @@ onAuthStateChanged(auth, async (user) => {
                     const comentarios = todosComentarios[id] ? Object.keys(todosComentarios[id]).length : 0;
 
                     criarCardProjeto(id, dados, 'projetos', currentUserId, isLikedByViewer, autorData.nome, autorData.foto_perfil, visualizacoes, curtidas, comentarios, projetosIndex++, isFavoritedByViewer);
-                }
-            });
+               }
+           });
         }
     }
 
@@ -1270,7 +1298,10 @@ onAuthStateChanged(auth, async (user) => {
 
     const spanNivel = document.querySelector('.experiencia > span');
     if (spanNivel) {
-        spanNivel.textContent = titulo;
+        spanNivel.textConte
+nt
+ 
+mostrarCards('projetos') = titulo;
     }
 });
 
