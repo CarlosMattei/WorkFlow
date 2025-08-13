@@ -32,36 +32,6 @@ const notificacoes = document.getElementById('notificacoes');
 
 const perfilLink = document.querySelector("#dropDownMenu a[href='/perfil']")
 
-const cacheUsuario = localStorage.getItem('cacheUsuario')
-const tempoCache = localStorage.getItem('cacheUsuarioTempo')
-
-if (cacheUsuario && tempoCache && Date.now() - tempoCache < 5 * 60 * 1000) {
-    try {
-        const dados = JSON.parse(cacheUsuario);
-
-        if (btnLogin) btnLogin.style.display = 'none';
-        if (btnRegister) btnRegister.style.display = 'none';
-        if (aLogin) aLogin.style.display = 'none';
-        if (aRegister) aRegister.style.display = 'none';
-        if (userControls) userControls.style.display = 'flex';
-
-        const nome = dados.nome || 'Usuário';
-        const foto = dados.foto_perfil || DEFAULT_USER_PHOTO;
-
-        const userNameSpan = document.querySelector(".user-name");
-        if (userNameSpan) userNameSpan.textContent = nome;
-
-        if (userPhoto) {
-            userPhoto.style.backgroundImage = `url('${foto}')`;
-            userPhoto.style.display = 'block';
-        }
-        if (userPhotoDrop) userPhotoDrop.src = foto;
-        if (perfilLink) perfilLink.href = `/perfil?id=${dados.uid}`;
-
-    } catch (e) {
-        console.warn('Erro ao carregar cache do usuário:', e);
-    }
-}
 onAuthStateChanged(auth, async (user) => {
     const uid = user.uid
 

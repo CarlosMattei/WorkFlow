@@ -30,7 +30,12 @@ const activeListeners = {};
 
 const modalHTML = `
 
-// tem que resolver isso Christopher Cavalo
+<div id="modalProjeto" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span id="modalClose" class="modal-close">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
 
 `;
 if (!document.getElementById('modal')) {
@@ -40,11 +45,6 @@ const modal = document.getElementById('modal-overlay');
 const modalBody = document.getElementById('modal');
 const modalClose = document.getElementById('modalCloseBtn');
 
-modalClose.addEventListener('click', () => {
-    modal.style.display = 'none';
-    modal.dataset.currentProjectId = '';
-    liberarScrollPagina();
-});
 modal.addEventListener('click', (e) => {
     if (e.target === modal) {
         modal.style.display = 'none';
@@ -752,15 +752,7 @@ async function abrirModalProjeto(projetoId) {
 
         const blocoExtraHTML = await criarBlocoExtraProjetoHTML(projetoData, autorData, comentarios);
 
-        modalBody.innerHTML = `
-    ${cabecalhoHTML}
-    <div id="conteudoProjeto" style="padding: 20px;">
-        ${componentesHTML}
-    </div>
-    <div id="blocoExtraProjeto" style="padding: 20px;">
-        ${blocoExtraHTML}
-    </div>
-`;
+        
 
         modal.style.display = 'flex';
         modal.dataset.currentProjectId = projetoId;
