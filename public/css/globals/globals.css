@@ -9,3 +9,7 @@
 @import "./flex.css";
 @import "./loader.css";
 @import "./themes.css";
+
+body {
+    background-color: var(--gray-100);
+}

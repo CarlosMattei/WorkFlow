@@ -105,7 +105,7 @@ body {
     background: none;
     border: none;
     font-family: "Work Sans", sans-serif;
-    color: #FFFFFF;
+    color: var(--white);
     width: 100%;
     font-size: 14px;
 }
