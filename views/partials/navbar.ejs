@@ -145,13 +145,13 @@
 
     .linhaDivisoria {
         width: 1px;
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--gray-25);
         height: 25px;
         align-self: center;
     }
 
     .userPhoto:hover {
-        border: 3px solid #6f6dcc;
+        border: 3px solid var(--primary);
         transition: 0.3s ease;
     }
 
@@ -175,7 +175,7 @@
         top: 60px;
         right: 0;
         min-width: 180px;
-        background-color: #1A1A1A;
+        background-color: var(--gray-75);
         border-radius: 12px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         border: 1px solid #2a2a2a;
@@ -206,7 +206,7 @@
     .dropDownMenu a {
         display: block;
         padding: 12px 16px;
-        color: #fff;
+        color: var(--white);
         text-decoration: none;
         font-size: 15px;
         border: 1px solid #2a2a2a;
@@ -214,7 +214,7 @@
     }
 
     .dropDownMenu a:hover {
-        background-color: #3c38a6;
+        background-color: var(--base-100);
         color: white;
     }
 
@@ -291,7 +291,6 @@
 
     .links a {
         position: relative;
-        color: rgba(150, 150, 150, 0.4) !important;
         transition: color 0.3s ease;
         padding-bottom: 5px;
         overflow: hidden;
@@ -325,7 +324,7 @@
 
     .links a:hover,
     .links a.active {
-        color: white !important;
+        color: var(--white) !important;
     }
 
     .searchbar {

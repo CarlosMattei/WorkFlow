@@ -98,28 +98,28 @@
         class="config-section mg-y-2 mg-x-2 bg-gray-100 rounded-xl pd-3 border border-solid border-gray-25">
         <h2>Temas</h2>
         <div class="temas-grid flex flex-row gap-3 flex-wrap">
-          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+          <button id="tema-escuro" class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#161617;"></div>
+              <div class="flex-1 rounded-lg" style="background:#1E1E1E; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#2C2C2C; margin-left: -15px;"></div>
+            </div>
+          </button>
+          <button id="tema-claro" class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+            <div class="cores flex flex-row gap-0 w-full h-full">
+              <div class="flex-1 rounded-lg" style="background:#FBFBFB;"></div>
+              <div class="flex-1 rounded-lg" style="background:#EFF0F2; margin-left: -15px;"></div>
+              <div class="flex-1 rounded-lg" style="background:#E3E0E0; margin-left: -15px;"></div>
+            </div>
+          </button>
+          <button id="tema-contraste" class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
             <div class="cores flex flex-row gap-0 w-full h-full">
               <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
               <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
               <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
             </div>
           </button>
-          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
-            <div class="cores flex flex-row gap-0 w-full h-full">
-              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
-              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
-              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
-            </div>
-          </button>
-          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
-            <div class="cores flex flex-row gap-0 w-full h-full">
-              <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
-              <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
-              <div class="flex-1 rounded-lg" style="background:#5274D9; margin-left: -15px;"></div>
-            </div>
-          </button>
-          <button class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
+          <button id="tema-azul" class="tema-btn btn btn-gray flex flex-col gap-2 pd-2 flex-1 btn-ghost" style="height: 150px;">
             <div class="cores flex flex-row gap-0 w-full h-full">
               <div class="flex-1 rounded-lg" style="background:#251D59;"></div>
               <div class="flex-1 rounded-lg" style="background:#3C38A6; margin-left: -15px;"></div>
@@ -219,5 +219,11 @@
     color: #007bff;
   }
 </style>
+
+<script src="/js/theme.js"></script>
+<script>
+document.getElementById("tema-escuro").addEventListener("click", () => setTheme("dark"));
+document.getElementById("tema-claro").addEventListener("click", () => setTheme("light"));
+</script>
 
 </html>

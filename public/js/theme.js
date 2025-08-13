@@ -1,56 +1,34 @@
-// Theme toggle functionality
-const themeButtons = document.querySelectorAll('.theme button');
-const root = document.documentElement;
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    updateLogo(theme);
+}
 
-// Get saved theme from localStorage or default to light theme
-let isDarkTheme = localStorage.getItem('theme') === 'dark';
+function updateLogo(theme) {
+    const logoElements = document.querySelectorAll('.logo img');
+    const logoElementsFooter = document.querySelectorAll('.logo-footer img');
+    logoElements.forEach(logo => {
+        if (theme === 'light') {
+            logo.src = '/assets/image/logo-roxo.svg';
+        } else {
+            logo.src = '/assets/image/logoWorkFlow-nome.svg';
+        }
+    });
 
-// Apply initial theme
-setTheme(isDarkTheme);
-
-// Update active state of theme buttons
-function updateButtonStates(isDark) {
-    themeButtons.forEach(button => {
-        const isActive = (button.getAttribute('type') === 'dark') === isDark;
-        button.classList.toggle('active', isActive);
+    logoElementsFooter.forEach(logo => {
+        if (theme === 'light') {
+            logo.src = '/assets/image/logoWorkFlow-nome-cinza.svg';
+        } else {
+            logo.src = '/assets/image/logoWorkFlow-nome.svg';
+        }
     });
 }
 
-// Set theme colors
-function setTheme(isDark) {
-    if (isDark) {
-        root.style.setProperty('--primary', '#3C38A6');
-        root.style.setProperty('--secundary', '#251D59');
-        root.style.setProperty('--tertiary', '#5274D9');
-        root.style.setProperty('--quaternary', '#30BFA5');
-        root.style.setProperty('--gray', '#404040');
-        root.style.setProperty('--darkgray', '#1E1E1E');
-        root.style.setProperty('--background', '#171616');
-        root.style.setProperty('--white', '#D9D9D9');
-    } else {
-        root.style.setProperty('--primary', '#3C38A6');
-        root.style.setProperty('--secundary', '#251D59');
-        root.style.setProperty('--tertiary', '#5274D9');
-        root.style.setProperty('--quaternary', '#30BFA5');
-        root.style.setProperty('--gray', '#F5F5F5');
-        root.style.setProperty('--darkgray', '#e9ecef');
-        root.style.setProperty('--background', '#f8f9fa');
-        root.style.setProperty('--white', '#1E1E1E');
-    }
-    updateButtonStates(isDark);
+function loadTheme() {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    updateLogo(savedTheme);
 }
 
-// Theme toggle handler
-function changeTheme() {
-    isDarkTheme = !isDarkTheme;
-    localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
-    setTheme(isDarkTheme);
-}
-
-// Add click event listeners to theme buttons
-themeButtons.forEach(button => {
-    button.addEventListener('click', changeTheme);
-});
-
-// Set initial button states
-updateButtonStates(isDarkTheme);
+// Carrega o tema assim que o arquivo for importado
+loadTheme();

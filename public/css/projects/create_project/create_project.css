@@ -3,7 +3,7 @@
 body {
     background-color: var(--gray-100);
     opacity: 1;
-    background-image: radial-gradient(var(--gray-25) 0.65px, #000000 0.65px);
+    background-image: radial-gradient(var(--gray-25) 0.65px, var(--gray-100) 0.65px);
     background-size: 13px 13px;
 }
 
@@ -131,8 +131,8 @@ body {
 }
 
 .upload-container {
-    border: 2px dashed #555;
-    background-color: #2a2a2a;
+    border: 2px dashed var(--gray-25);
+    background-color: var(--gray-50);
     border-radius: 10px;
     padding: 10px;
     text-align: center;

@@ -1,0 +1,43 @@
+/* Tema escuro */
+[data-theme="dark"] {
+    --gray-100: #161617;
+    --gray-75: #1E1E1E;
+    --gray-50: #2C2C2C;
+    --gray-25: #414141;
+
+    --base-100: #3C38A6;
+    --base-70: #463FC3;
+    --base-50: #514DDE;
+
+    --primary: #4276FE;
+    --primary-dark: #35436A;
+    --success: #01B671;
+    --success-dark: #0A3424;
+    --warning: #FF8E0C;
+    --warning-dark: #A06420;
+    --alert: #F84241;
+    --alert-dark: #330c0c;
+    --white: #D9D9D9;
+  }
+
+/* Tema claro */
+[data-theme="light"] {
+    --gray-100: #FBFBFB;
+    --gray-75: #EFF0F2;
+    --gray-50: #E3E0E0;
+    --gray-25: #acabab;
+
+    --base-100: #3C38A6;
+    --base-70: #463FC3;
+    --base-50: #514DDE;
+
+    --primary: #4276FE;
+    --primary-dark: #35436A;
+    --success: #01B671;
+    --success-dark: #0A3424;
+    --warning: #FF8E0C;
+    --warning-dark: #A06420;
+    --alert: #F84241;
+    --alert-dark: #330c0c;
+    --white: light-dark(#28282a, #D9D9D9);
+}

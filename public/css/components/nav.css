@@ -62,7 +62,7 @@ body {
 }
 
 .links a {
-    color: var(--gray);
+    color: var(--gray-25);
     text-decoration: none;
     font-family: "Work Sans", sans-serif;
     transition: color 0.3s ease-in-out;

@@ -5,6 +5,7 @@
   justify-content: center;
   padding-inline: var(--space-5);
   height: 48px;
+  color: light-dark(var(--white), var(--gray-100));
   border-radius: 8px;
   font-size: var(--f1);
   font-weight: 500;
@@ -22,31 +23,31 @@
 /* Botões preenchidos */
 .btn-primary {
   background: var(--primary);
-  color: var(--white);
+  color: white;
 }
 .btn-danger {
   background: var(--alert);
-  color: var(--white);
+  color: white;
 }
 .btn-warning {
   background: var(--warning);
-  color: var(--white);
+  color: white;
 }
 .btn-gray {
   background: var(--gray-50);
-  color: var(--white);
+  color: white;
 }
 .btn-gray-75 {
   background: var(--gray-75);
-  color: var(--white);
+  color: white;
 }
 .btn-success {
   background: var(--quaternary);
-  color: var(--white);
+  color: white;
 }
 .btn-purple {
   background: var(--base-100);
-  color: var(--white);
+  color: white;
 }
 
 /* Hover preenchidos */
