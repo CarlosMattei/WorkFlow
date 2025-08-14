@@ -5,6 +5,65 @@
 
 @import "partials/layout.css";
 
+
+  
+.comentarios-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; 
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.comentario-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a2a2a; 
+}
+
+.comentario-item:last-child {
+    border-bottom: none; 
+}
+
+.comentario-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #555;
+}
+
+.comentario-conteudo {
+    flex: 1;
+}
+
+.comentario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.comentario-autor {
+    font-weight: bold;
+    color: #ffffff; 
+    font-size: 1em;
+}
+
+.comentario-data {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.comentario-texto {
+    color: #ccc;
+    line-height: 1.6;
+    margin: 0;
+}
 .perfilPic {
   position: relative;
   width: 170px;
