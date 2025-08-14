@@ -133,6 +133,9 @@ async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, u
                 }
             })
         }
+        else{
+            svgCurtida.style.display = 'none'
+        }
     })
 
     const svgFavorito = card.querySelector('.favoritar svg')
@@ -156,6 +159,17 @@ async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, u
                     path.classList.remove('favoritado')
                 }
             })
+        }
+        else{
+            svgFavorito.style.display = 'none'
+            const likeBtn = document.getElementById('likeBtn');
+            likeBtn.style.display = 'none'
+            const btnContatar = document.getElementById('contactar')
+            btnContatar.style.display = 'none'
+            const btnVerperfil = document.getElementById('btnVerPerfil');
+            btnVerperfil.style.display = 'none'
+
+
         }
     })
     if (userId) {

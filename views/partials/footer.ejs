@@ -1,12 +1,63 @@
-<footer class="footer">
+<footer class="footer" style="display: none;">
     <div class="container-footer">
         <div class="logo-footer"><img src="/assets/image/logoWorkFlow-nome.svg" alt="Logo"></div>
         <div class="links-footer">
             <a href="/termos">Termos e Condições</a>
             <a href="/privacidade">Privacidade</a>
             <a href="/ajuda">Ajuda</a>
-            <a href="https://workflow-i2gk.onrender.com/" target="_blank" rel="noopener noreferrer">Conheça o projeto</a>
+            <a href="https://workflow-i2gk.onrender.com/" target="_blank" rel="noopener noreferrer">Conheça o
+                projeto</a>
         </div>
     </div>
 </footer>
+
+<div class="site-footer">
+    <div class="footer-left">
+        <img src="/assets/image/logoWorkFlow-nome.svg" alt="Logo" class="footer-logo">
+        <div class="linhaDivisoria"></div>
+
+        <span class="footer-text">Junte-se a Plataforma <span style="font-weight: bold;">WorkFLow</span> e aproveite o máximo de oportunidades!</span>
+    </div>
+    <a class="aRegister" id="aRegister" href="/register">
+        <button class="btn btn-purple text-sm registrar buttonNav" id="btnCriarConta">Criar Conta</button>
+    </a>
+</div>
+<style>
+    .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: #251D59;
+        position: fixed;
+        bottom: 0;
+        z-index: 999;
+        width: 100%;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .footer-logo {
+        height: 30px;
+        width: auto;
+    }
+
+    .footer-text {
+        font-size: 20px;
+        color: white;
+    }
+    .linhaDivisoria {
+        width: 1px;
+        background: var(--gray-25);
+        height: 25px;
+        align-self: center;
+    }
+</style>
 <script src="/js/theme.js"></script>
+<script type="module" src="/js/footer/footer.js"></script>

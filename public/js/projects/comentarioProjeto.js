@@ -7,13 +7,28 @@ const auth = getAuth();
 window.usuarioLogado = null
 
 onAuthStateChanged(auth, (user) => {
-    if(user){
+    if (user) {
         window.usuarioLogado = {
             id: user.uid
         }
     }
-    else{
+    else {
         window.usuarioLogado = null
+        const input = document.getElementById('commentInput')
+        const btnEnviarComentario = document.getElementById('btnEnviarComentario')
+        const chatForm = document.getElementById('chatForm');
+
+        input.style.display = 'none'
+        btnEnviarComentario.style.display = 'none'
+
+        const msg = document.createElement('span')
+        msg.textContent = 'Você precisa estar logado para comentar'
+        msg.style.color = 'white'
+        msg.style.fontSize = '14px'
+        msg.style.fontWeight = '500'
+        msg.style.color = '#F84241'
+        chatForm.style.justifyContent = 'center'
+        chatForm.appendChild(msg)
     }
 })
 function salvarComentario(idProjeto, userId, textoComentario) {
@@ -56,11 +71,11 @@ async function carregarComentario(idProjeto) {
 
             let userSnapshot = await get(ref(db, `Freelancer/${c.userId}`))
 
-            if(!userSnapshot.exists()){
+            if (!userSnapshot.exists()) {
                 userSnapshot = await get(ref(db, `Contratante/${c.userId}`))
             }
 
-            if(userSnapshot.exists()){
+            if (userSnapshot.exists()) {
                 const usuario = userSnapshot.val()
                 nome = usuario.nome || nome
                 foto = usuario.foto_perfil || foto
@@ -81,7 +96,7 @@ async function carregarComentario(idProjeto) {
             container.appendChild(div)
         }
     }
-    else{
+    else {
         container.innerHTML = '<p>Nenhum comentário ainda.</p>'
     }
 }
@@ -90,13 +105,13 @@ document.addEventListener('modalProjetoAberto', (e) => {
     carregarComentario(idProjeto)
 })
 
-document.getElementById('btnEnviarComentario').addEventListener('click', async() => {
+document.getElementById('btnEnviarComentario').addEventListener('click', async () => {
     const input = document.getElementById('commentInput')
     const texto = input.value.trim()
 
-    if(texto === '' || !window.idProjetoAtual) return
+    if (texto === '' || !window.idProjetoAtual) return
 
-    if(contemPalavrao(texto)){
+    if (contemPalavrao(texto)) {
         alert('Seu comentario contem palavras ofensivas e não pode ser enviado')
         return
     }

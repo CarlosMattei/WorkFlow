@@ -31,9 +31,5 @@ export function iconeFavorito(projetoId, svg) {
                 }
             })
         }
-        else{
-            console.log('voce precisa estar logado para favoritar')
-        }
-
     })
 }
