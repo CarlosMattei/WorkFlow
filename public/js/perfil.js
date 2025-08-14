@@ -54,38 +54,58 @@ modal.addEventListener('click', (e) => {
     }
 });
 
+// Primeiro, vamos modificar o HTML do modal para usar dialog
 const modalCandidatosHTML = `
-<div id="modalCandidatos" class="modal" style="display:none; align-items: center; justify-content: center;">
-    <div class="modal-content" style="background-color: #2c2c2c; padding: 25px; border-radius: 10px; max-width: 600px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative;">
-        <span id="modalCandidatosClose" class="modal-close" style="position: absolute; top: 10px; right: 20px; font-size: 30px; color: #bbb; cursor: pointer;">&times;</span>
+<dialog id="modalCandidatos" class="modal-dialog mg-0">
+<div class="modal-content bg-gray-50 pd-2 flex flex-col justify-center items-center" style="border-radius: 10px; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+<div class="container flex flex-row justify-end"><button id="modalCandidatosClose" class="modal-close btn btn-gray" style="font-size: 30px; color: #bbb; cursor: pointer; background: none; border: none;">&times;</button></div>
+        <div class="icon bg-success-dark border border-solid border-success rounded-xl" style="display: flex; justify-content: center; align-items: center; width: 52px; height: 52px;"><ion-icon name="people-outline" style="color: var(--success); font-size: 28px"></ion-icon></div>
         <h2 id="modalCandidatosTitulo" style="color: #fff; text-align: center; margin-bottom: 20px; font-size: 1.8em;">Candidatos para a Proposta</h2>
-        <div id="listaCandidatos" style="display: flex; flex-direction: column; gap: 15px; max-height: 70vh; overflow-y: auto; padding-right: 10px;">
-            </div>
+        <div id="listaCandidatos" class="bg-gray-75 w-full pd-3 rounded-md" style="display: flex; flex-direction: column; gap: 15px; max-height: 70vh; overflow-y: auto;">
+        </div>
     </div>
-</div>
+</dialog>
 `;
+
+// Adicionar o dialog ao documento se ele não existir
 if (!document.getElementById('modalCandidatos')) {
     document.body.insertAdjacentHTML('beforeend', modalCandidatosHTML);
 }
 
+// Obter referências aos elementos
 const modalCandidatos = document.getElementById('modalCandidatos');
 const modalCandidatosClose = document.getElementById('modalCandidatosClose');
 const listaCandidatosDiv = document.getElementById('listaCandidatos');
 
-modalCandidatosClose.addEventListener('click', () => {
-    modalCandidatos.style.display = 'none';
-    listaCandidatosDiv.innerHTML = '';
-});
-modalCandidatos.addEventListener('click', (e) => {
-    if (e.target === modalCandidatos) {
-        modalCandidatos.style.display = 'none';
-        listaCandidatosDiv.innerHTML = '';
+// Adicionar estilos CSS para o dialog
+const style = document.createElement('style');
+style.textContent = `
+    .modal-dialog {
+        padding: 0;
+        border: none;
+        background: transparent;
     }
-});
+    
+    .modal-dialog::backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-dialog[open] {
+        opacity: 1;
+        transform: scale(1);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 800px;
+        width: 100%;
+    }
+`;
+document.head.appendChild(style);
 
+// Função para abrir o modal de candidatos
 async function abrirModalCandidatos(propostaId) {
     listaCandidatosDiv.innerHTML = '<p style="color: #ccc; text-align: center;">Carregando candidatos...</p>';
-    modalCandidatos.style.display = 'flex';
+    modalCandidatos.showModal();
 
     try {
         const candidaturasRef = ref(db, `Candidaturas/${propostaId}`);
@@ -109,21 +129,19 @@ async function abrirModalCandidatos(propostaId) {
                     };
                 }));
 
-                candidatosComDetalhes.forEach(candidato => {
-                    candidatosHtml += `
-                        <div class="candidato-item" style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px;">
-                            <div class="candidato-header" style="display: flex; align-items: center; gap: 10px;">
-                                <img src="${candidato.foto_perfil}" alt="${candidato.nome}" class="candidato-foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #5274D9;">
-                                <div class="candidato-info">
-                                    <h3 style="margin: 0; color: #fff; font-size: 1.1em;">${candidato.nome}</h3>
-                                    <p style="margin: 0; color: #bbb; font-size: 0.9em;">${candidato.tag}</p>
-                                </div>
+                candidatosHtml = candidatosComDetalhes.map(candidato => `
+                    <div class="candidato-item" style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px;">
+                        <div class="candidato-header" style="display: flex; align-items: center; gap: 10px;">
+                            <img src="${candidato.foto_perfil}" alt="${candidato.nome}" class="candidato-foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #5274D9;">
+                            <div class="candidato-info">
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1em;">${candidato.nome}</h3>
+                                <p style="margin: 0; color: #bbb; font-size: 0.9em;">${candidato.tag}</p>
                             </div>
-                            <p class="candidato-mensagem" style="color: #ccc; font-style: italic; margin-left: 60px;">"${candidato.mensagem}"</p>
-                            <a href="/perfil?id=${candidato.userId}" target="_blank" class="ver-perfil-candidato" style="display: inline-block; background-color: #5274D9; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; align-self: flex-end; font-size: 0.9em; transition: background-color 0.3s ease;">Ver Perfil</a>
                         </div>
-                    `;
-                });
+                        <p class="candidato-mensagem" style="color: #ccc; font-style: italic; margin-left: 60px;">"${candidato.mensagem}"</p>
+                        <a href="/perfil?id=${candidato.userId}" target="_blank" class="ver-perfil-candidato" style="display: inline-block; background-color: #5274D9; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; align-self: flex-end; font-size: 0.9em; transition: background-color 0.3s ease;">Ver Perfil</a>
+                    </div>
+                `).join('');
             } else {
                 candidatosHtml = '<p style="color: #ccc; text-align: center;">Nenhum candidato encontrado para esta proposta.</p>';
             }
@@ -138,6 +156,23 @@ async function abrirModalCandidatos(propostaId) {
         listaCandidatosDiv.innerHTML = `<p style="color: red; text-align: center;">Erro ao carregar candidatos: ${error.message}</p>`;
     }
 }
+
+// Event listeners para fechar o dialog
+modalCandidatosClose.addEventListener('click', () => {
+    modalCandidatos.close();
+    listaCandidatosDiv.innerHTML = '';
+});
+
+modalCandidatos.addEventListener('click', (e) => {
+    const rect = modalCandidatos.getBoundingClientRect();
+    const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height
+        && rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+    if (!isInDialog) {
+        modalCandidatos.close();
+        listaCandidatosDiv.innerHTML = '';
+    }
+});
+
 
 async function obterDadosUsuario(userId) {
     let userData = null;
@@ -359,7 +394,7 @@ function criarCardProposta(p, aba = 'projetos') {
             </div>
             <div class="buttons">
                 ${isDonoDoPerfil
-            ? `<button class="candidatos" data-proposta-id="${p.id}">Candidatos</button>`
+            ? `<button class="candidatos btn btn-purple" data-proposta-id="${p.id}">Candidatos</button>`
             : `<button class="enviar">Se candidatar</button>`
         }
             </div>

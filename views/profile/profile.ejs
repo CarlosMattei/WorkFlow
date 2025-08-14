@@ -26,7 +26,7 @@
   
   <section class="card-infos pd-3 flex gap-5">
     <div class="profilePic perfilPic overflow-hidden bg-gray-50 border border-solid border-gray-100">
-      <img class="profile-pic" src="default-profile.jpg" alt="pic" style="width: 100%; height: 100%;">
+      <img class="profile-pic" src="default-profile.jpg" alt="pic" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
     <div class="buttonsContainer flex flex-1 flex-row justify-center gap-2">
       <div class="infos flex flex-1 flex-col gap-2 justify-center">
@@ -289,13 +289,12 @@
   const buttonClose = document.getElementById('close');
   const overlay = document.getElementById('modalOverlay');
 
-    // Abrir o modal
-buttonOpen.onclick = function () {
+  // Abrir o modal
+  buttonOpen.onclick = function () {
     modal.showModal();
-    overlay.classList.add("active");
     modal.classList.remove("closing");
     modal.classList.add("opening");
-    overlay.classList.add("active");
+    if (overlay) overlay.classList.add("active");
     setTimeout(() => modal.classList.add("open"), 10);
     const nomeDisplay = document.getElementById('nome').textContent;
     const tagDisplay = document.getElementById('tag').textContent;
@@ -303,66 +302,48 @@ buttonOpen.onclick = function () {
     document.getElementById('input-nome').value = nomeDisplay || '';
     document.getElementById('input-tag').value = tagDisplay || '';
     document.getElementById('textarea-bio').value = bioDisplay || '';
-};
-    buttonClose.onclick = closeModal;
+  };
 
-    function closeModal() {
-      modal.classList.remove("opening");
-      modal.classList.add("closing");
-      overlay.classList.remove("active");
-        setTimeout(() => {
-            modal.classList.remove("closing");
-            modal.close();
-        }, 300);
-    }
+  buttonClose.onclick = closeModal;
 
-    window.onclick = function (event) {
-      const modal = document.getElementById('modal-editar');
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    }
-  
-    document.getElementById('fotoPerfil').addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const imgPerfil = document.querySelector('.profile-pic img');
-        imgPerfil.src = URL.createObjectURL(file);
-      }
-    });
-  
-    document.getElementById('fotoPerfil').addEventListener('change', (e) => {
-      const label = document.getElementById('labelFotoPerfil');
-      const file = e.target.files[0];
-      label.textContent = file ? file.name : 'Selecionar imagem';
-    });
-
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.remove("opening");
+    modal.classList.add("closing");
+    if (overlay) overlay.classList.remove("active");
+    setTimeout(() => {
+      modal.classList.remove("closing");
+      modal.close();
+    }, 300);
+  }
 </script>
 
 <script>
   const modalContratar = document.getElementById('modalContratar');
   const buttonOpenContratar = document.getElementById("contratarButton");
   const buttonCloseContratar = document.getElementById('closeContratar');
+  const overlayContratar = document.getElementById('modalOverlay');
 
   buttonOpenContratar.onclick = function () {
     modalContratar.showModal();
     modalContratar.classList.remove("closing");
     modalContratar.classList.add("opening");
+    if (overlayContratar) overlayContratar.classList.add("active");
     setTimeout(() => modalContratar.classList.add("open"), 10);
-    
-};
-    buttonCloseContratar.onclick = closeModal;
+  };
 
-    function closeModal() {
-      modalContratar.classList.remove("opening");
-      modalContratar.classList.add("closing");
-      overlay.classList.remove("active");
-        setTimeout(() => {
-            modalContratar.classList.remove("closing");
-            modalContratar.close();
-        }, 300);
-    }
+  buttonCloseContratar.onclick = closeModalContratar;
 
+  function closeModalContratar() {
+    if (!modalContratar) return;
+    modalContratar.classList.remove("opening");
+    modalContratar.classList.add("closing");
+    if (overlayContratar) overlayContratar.classList.remove("active");
+    setTimeout(() => {
+      modalContratar.classList.remove("closing");
+      modalContratar.close();
+    }, 300);
+  }
 </script>
 
 <script type="module">

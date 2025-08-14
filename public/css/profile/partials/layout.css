@@ -94,3 +94,8 @@
     margin-bottom: 30px;
 }
 
+.modal-content {
+  max-width: 800px;
+  width: 100%;
+}
+
