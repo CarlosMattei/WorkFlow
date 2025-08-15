@@ -477,25 +477,35 @@
 
 
     onAuthStateChanged(auth, async (user) => {
-        if (editarButton) editarButton.style.display = 'none';
-        if (chatButton) chatButton.style.display = 'none';
-        if (contratarButton) contratarButton.style.display = 'none';
-        
-        const uidFromURL = getUidFromURL();
+    if (editarButton) editarButton.style.display = 'none';
+    if (chatButton) chatButton.style.display = 'none';
+    if (contratarButton) contratarButton.style.display = 'none';
 
-        if (!user) {
-            return;
-        }
+    const uidFromURL = getUidFromURL();
 
-        const loggedInUserUid = user.uid;
-        currentUserUid = uidFromURL || loggedInUserUid;
-        
-        if (currentUserUid === loggedInUserUid) {
-            if (editarButton) editarButton.style.display = 'flex';
-        } else {
-            if (chatButton) chatButton.style.display = 'flex';
-            if (contratarButton) contratarButton.style.display = 'flex';
-        }
+    if (!user) {
+        return;
+    }
+
+    const loggedInUserUid = user.uid;
+    currentUserUid = uidFromURL || loggedInUserUid;
+
+    const tipoUsuarioLogado = await detectarTipoUsuario(loggedInUserUid);
+    const tipoUsuarioPerfil = await detectarTipoUsuario(currentUserUid);
+    
+    if (currentUserUid === loggedInUserUid) {
+        if (editarButton) editarButton.style.display = 'flex';
+        
+        if (contratarButton) contratarButton.style.display = 'none';
+    } else {
+        if (chatButton) chatButton.style.display = 'flex';
+
+        if (tipoUsuarioLogado === 'Contratante' && tipoUsuarioPerfil === 'Freelancer') {
+            if (contratarButton) contratarButton.style.display = 'flex';
+        } else {
+            if (contratarButton) contratarButton.style.display = 'none';
+        }
+    }
         
         currentTipoUsuario = await detectarTipoUsuario(currentUserUid);
         if (!currentTipoUsuario) return;
