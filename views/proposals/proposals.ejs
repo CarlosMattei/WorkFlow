@@ -173,7 +173,7 @@
             return isNaN(data) ? "Data inválida" : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         }
 
-       function renderizarPropostas(propostasFiltradas) {
+      function renderizarPropostas(propostasFiltradas) {
     propostasContainer.innerHTML = '';
 
     if (propostasFiltradas.length === 0) {
@@ -263,217 +263,221 @@
     adicionarEventoBotaoCandidatarse();
 }
 
-        function adicionarEventoBotaoCandidatarse() {
-            document.querySelectorAll('.enviar').forEach(botao => {
+function adicionarEventoBotaoCandidatarse() {
+    document.querySelectorAll('.enviar').forEach(botao => {
+        botao.removeEventListener('click', handleCandidatarClick);
+        botao.addEventListener('click', handleCandidatarClick);
+    });
+}
 
-                botao.removeEventListener('click', handleCandidatarClick);
-                botao.addEventListener('click', handleCandidatarClick);
-            });
+async function handleCandidatarClick(event) {
+    if (!currentUserId) {
+        alert('Você precisa estar logado para se candidatar a uma proposta!');
+        return;
+    }
+
+    const card = event.target.closest('.proposta-card');
+    if (!card) return;
+
+    const propostaId = card.dataset.propostaId;
+    currentPropostaId = propostaId;
+
+    const candidaturaRef = ref(db, `Candidaturas/${propostaId}/${currentUserId}`);
+    const candidaturaSnap = await get(candidaturaRef);
+
+    if (candidaturaSnap.exists()) {
+        alert('Você já se candidatou para esta proposta!');
+        return;
+    }
+
+    modalCandidatar.style.display = 'flex';
+    descricaoCandidaturaInput.value = '';
+}
+
+
+closeCandidatarModal.addEventListener('click', () => {
+    modalCandidatar.style.display = 'none';
+});
+
+modalCandidatar.addEventListener('click', (e) => {
+    if (e.target === modalCandidatar) {
+        modalCandidatar.style.display = 'none';
+    }
+});
+
+btnConfirmarCandidatura.addEventListener('click', async () => {
+    const descricao = descricaoCandidaturaInput.value.trim();
+
+    if (!descricao) {
+        alert('Por favor, escreva uma descrição para sua candidatura.');
+        return;
+    }
+
+    if (!currentPropostaId || !currentUserId) {
+        alert('Erro: Proposta ou usuário não identificado. Tente novamente.');
+        return;
+    }
+
+    try {
+        const candidaturaData = {
+            userId: currentUserId,
+            nome: currentUserName,
+            foto_perfil: currentUserPhoto,
+            tag: currentUserTag,
+            mensagem: descricao,
+            timestamp: Date.now()
+        };
+
+        await set(ref(db, `Candidaturas/${currentPropostaId}/${currentUserId}`), candidaturaData);
+
+        alert('Candidatura enviada com sucesso!');
+        modalCandidatar.style.display = 'none';
+
+        const cardEnviado = document.querySelector(`.proposta-card[data-proposta-id="${currentPropostaId}"] .enviar`);
+        if (cardEnviado) {
+            if (!cardEnviado.classList.contains('enviado')) {
+                cardEnviado.classList.add('enviado');
+                const check = document.createElement('span');
+                check.classList.add('checkmark');
+                cardEnviado.textContent = 'Enviado';
+                cardEnviado.appendChild(check);
+
+                setTimeout(() => {
+                    cardEnviado.classList.remove('enviado');
+                    check.remove();
+                    cardEnviado.textContent = 'se candidatar';
+                }, 2000);
+            }
         }
 
-        async function handleCandidatarClick(event) {
-            if (!currentUserId) {
-                alert('Você precisa estar logado para se candidatar a uma proposta!');
-                return;
-            }
+    } catch (error) {
+        console.error("Erro ao enviar candidatura:", error);
+        alert('Ocorreu um erro ao enviar sua candidatura. Tente novamente.');
+    }
+});
 
-            const card = event.target.closest('.proposta-card');
-            if (!card) return;
+function filtrarPropostas() {
+    const area = document.getElementById('area').value;
+    const periodo = document.getElementById('periodo').value;
+    const precoMin = parseFloat(document.getElementById('precomin').value) || 0;
+    const precoMax = parseFloat(document.getElementById('precomax').value) || Infinity;
+    const agora = new Date();
 
-            const propostaId = card.dataset.propostaId;
-            currentPropostaId = propostaId;
+    const propostasFiltradas = propostas.filter(p => {
+        const dataCriacao = new Date(p.datacriacao);
+        if (isNaN(dataCriacao)) return false;
 
-            const candidaturaRef = ref(db, `Candidaturas/${propostaId}/${currentUserId}`);
-            const candidaturaSnap = await get(candidaturaRef);
+        const dentroDaArea = (area === "Todos") ? true : Array.isArray(p.tags) && p.tags.includes(area);
 
-            if (candidaturaSnap.exists()) {
-                alert('Você já se candidatou para esta proposta!');
-                return;
-            }
-
-            modalCandidatar.style.display = 'flex';
-            descricaoCandidaturaInput.value = '';
+        let dentroDoPeriodo = true;
+        if (periodo === 'hoje') {
+            dentroDoPeriodo = dataCriacao.toDateString() === agora.toDateString();
+        } else if (periodo === 'ultimaSemana') {
+            const seteDiasAtras = new Date(agora);
+            seteDiasAtras.setDate(agora.getDate() - 7);
+            dentroDoPeriodo = dataCriacao >= seteDiasAtras;
+        } else if (periodo === 'ultimoMes') {
+            const trintaDiasAtras = new Date(agora);
+            trintaDiasAtras.setDate(agora.getDate() - 30);
+            dentroDoPeriodo = dataCriacao >= trintaDiasAtras;
+        } else if (periodo === 'indefinido') {
+            dentroDoPeriodo = true; 
         }
 
+        const precoMinProposta = parseFloat(p.precoMin) || 0;
+        const precoMaxProposta = parseFloat(p.precoMax) || 0;
+        const dentroDoPreco = precoMinProposta >= precoMin && precoMaxProposta <= precoMax;
 
-        closeCandidatarModal.addEventListener('click', () => {
-            modalCandidatar.style.display = 'none';
-        });
+        return dentroDaArea && dentroDoPeriodo && dentroDoPreco;
+    });
 
-        modalCandidatar.addEventListener('click', (e) => {
-            if (e.target === modalCandidatar) {
-                modalCandidatar.style.display = 'none';
-            }
-        });
+    renderizarPropostas(propostasFiltradas);
+}
 
-        btnConfirmarCandidatura.addEventListener('click', async () => {
-            const descricao = descricaoCandidaturaInput.value.trim();
+document.addEventListener('DOMContentLoaded', () => {
+    btnFiltrar.addEventListener('click', (e) => {
+        e.preventDefault();
+        filtrarPropostas();
+    });
 
-            if (!descricao) {
-                alert('Por favor, escreva uma descrição para sua candidatura.');
-                return;
-            }
-
-            if (!currentPropostaId || !currentUserId) {
-                alert('Erro: Proposta ou usuário não identificado. Tente novamente.');
-                return;
-            }
-
-            try {
-                const candidaturaData = {
-                    userId: currentUserId,
-                    nome: currentUserName,
-                    foto_perfil: currentUserPhoto,
-                    tag: currentUserTag,
-                    mensagem: descricao,
-                    timestamp: Date.now()
-                };
-
-                await set(ref(db, `Candidaturas/${currentPropostaId}/${currentUserId}`), candidaturaData);
-
-                alert('Candidatura enviada com sucesso!');
-                modalCandidatar.style.display = 'none';
-
-                const cardEnviado = document.querySelector(`.proposta-card[data-proposta-id="${currentPropostaId}"] .enviar`);
-                if (cardEnviado) {
-                    if (!cardEnviado.classList.contains('enviado')) {
-                        cardEnviado.classList.add('enviado');
-                        const check = document.createElement('span');
-                        check.classList.add('checkmark');
-                        cardEnviado.textContent = 'Enviado';
-                        cardEnviado.appendChild(check);
-
-                        setTimeout(() => {
-                            cardEnviado.classList.remove('enviado');
-                            check.remove();
-                            cardEnviado.textContent = 'se candidatar';
-                        }, 2000);
-                    }
-                }
-
-            } catch (error) {
-                console.error("Erro ao enviar candidatura:", error);
-                alert('Ocorreu um erro ao enviar sua candidatura. Tente novamente.');
-            }
-        });
-
-        function filtrarPropostas() {
-            const area = document.getElementById('area').value;
-            const periodo = document.getElementById('periodo').value;
-            const precoMin = parseFloat(document.getElementById('precomin').value) || 0;
-            const precoMax = parseFloat(document.getElementById('precomax').value) || Infinity;
-            const agora = new Date();
-
-            const propostasFiltradas = propostas.filter(p => {
-                const dataCriacao = new Date(p.datacriacao);
-                if (isNaN(dataCriacao)) return false;
-
-                const dentroDaArea = (area === "Todos") ? true : Array.isArray(p.tags) && p.tags.includes(area);
-
-                let dentroDoPeriodo = true;
-                if (periodo === 'hoje') {
-                    dentroDoPeriodo = dataCriacao.toDateString() === agora.toDateString();
-                } else if (periodo === 'ultimaSemana') {
-                    const seteDiasAtras = new Date(agora);
-                    seteDiasAtras.setDate(agora.getDate() - 7);
-                    dentroDoPeriodo = dataCriacao >= seteDiasAtras;
-                } else if (periodo === 'ultimoMes') {
-                    const trintaDiasAtras = new Date(agora);
-                    trintaDiasAtras.setDate(agora.getDate() - 30);
-                    dentroDoPeriodo = dataCriacao >= trintaDiasAtras;
-                } else if (periodo === 'indefinido') {
-                    dentroDoPeriodo = true; 
-                }
-
-
-                const precoMinProposta = parseFloat(p.precoMin) || 0;
-                const precoMaxProposta = parseFloat(p.precoMax) || 0;
-                const dentroDoPreco = precoMinProposta >= precoMin && precoMaxProposta <= precoMax;
-
-                return dentroDaArea && dentroDoPeriodo && dentroDoPreco;
-            });
-
-            renderizarPropostas(propostasFiltradas);
+    const searchInput = document.querySelector('.searchbar-input');
+    const aplicarFiltroPorTitulo = (busca) => {
+        if (!busca) {
+            renderizarPropostas(propostas);
+            return;
         }
+        const filtradas = propostas.filter(p =>
+            p.titulo?.toLowerCase().includes(busca.toLowerCase())
+        );
+        renderizarPropostas(filtradas);
+    };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            btnFiltrar.addEventListener('click', (e) => {
-                e.preventDefault();
-                filtrarPropostas();
-            });
+    const params = new URLSearchParams(window.location.search);
+    const busca = params.get('busca') || '';
+    if (searchInput) {
+        searchInput.value = busca;
+        if (busca) aplicarFiltroPorTitulo(busca);
 
+        searchInput.addEventListener('input', (e) => {
+            aplicarFiltroPorTitulo(e.target.value.trim());
+        });
+    }
+});
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUserId = user.uid;
+
+        const freelancerSnap = await get(ref(db, `Freelancer/${currentUserId}`));
+        if (freelancerSnap.exists()) {
+            const userData = freelancerSnap.val();
+            currentUserName = userData.nome || 'Usuário Anônimo';
+            currentUserPhoto = userData.foto_perfil || 'https://via.placeholder.com/50';
+            currentUserTag = userData.tag || 'Freelancer';
+        } else {
+            currentUserName = 'Usuário Logado';
+            currentUserPhoto = 'https://via.placeholder.com/50';
+            currentUserTag = 'Usuário';
+        }
+    } else {
+        currentUserId = null;
+        currentUserName = '';
+        currentUserPhoto = '';
+        currentUserTag = '';
+    }
+
+    onValue(ref(db, 'Propostas'), (snapshot) => {
+        propostas = [];
+        snapshot.forEach(childSnap => {
+            const propostaData = { id: childSnap.key, ...childSnap.val() };
+            propostas.push(propostaData);
+        });
+
+        propostas.sort((a, b) => {
+            const dataA = new Date(a.datacriacao);
+            const dataB = new Date(b.datacriacao);
+            return dataB - dataA;
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        const busca = params.get('busca') || '';
+        if (busca) {
             const searchInput = document.querySelector('.searchbar-input');
-            const aplicarFiltroPorTitulo = (busca) => {
-                if (!busca) {
-                    renderizarPropostas(propostas);
-                    return;
-                }
+            if (searchInput) {
+                searchInput.value = busca;
                 const filtradas = propostas.filter(p =>
                     p.titulo?.toLowerCase().includes(busca.toLowerCase())
                 );
                 renderizarPropostas(filtradas);
-            };
-
-            const params = new URLSearchParams(window.location.search);
-            const busca = params.get('busca') || '';
-            if (searchInput) {
-                searchInput.value = busca;
-                if (busca) aplicarFiltroPorTitulo(busca);
-
-                searchInput.addEventListener('input', (e) => {
-                    aplicarFiltroPorTitulo(e.target.value.trim());
-                });
-            }
-        });
-
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-
-                const freelancerSnap = await get(ref(db, `Freelancer/${currentUserId}`));
-                if (freelancerSnap.exists()) {
-                    const userData = freelancerSnap.val();
-                    currentUserName = userData.nome || 'Usuário Anônimo';
-                    currentUserPhoto = userData.foto_perfil || 'https://via.placeholder.com/50';
-                    currentUserTag = userData.tag || 'Freelancer';
-                } else {
-                    currentUserName = 'Usuário Logado';
-                    currentUserPhoto = 'https://via.placeholder.com/50';
-                    currentUserTag = 'Usuário';
-                }
             } else {
-                currentUserId = null;
-                currentUserName = '';
-                currentUserPhoto = '';
-                currentUserTag = '';
+                renderizarPropostas(propostas);
             }
-
-            onValue(ref(db, 'Propostas'), (snapshot) => {
-                propostas = [];
-                snapshot.forEach(childSnap => {
-                    const propostaData = { id: childSnap.key, ...childSnap.val() };
-                    propostas.push(propostaData);
-                });
-
-                const params = new URLSearchParams(window.location.search);
-                const busca = params.get('busca') || '';
-                if (busca) {
-                    const searchInput = document.querySelector('.searchbar-input');
-                    if (searchInput) {
-                        searchInput.value = busca;
-                        const filtradas = propostas.filter(p =>
-                            p.titulo?.toLowerCase().includes(busca.toLowerCase())
-                        );
-                        renderizarPropostas(filtradas);
-                    } else {
-                        renderizarPropostas(propostas);
-                    }
-                } else {
-                    renderizarPropostas(propostas);
-                }
-            });
-        });
+        } else {
+            renderizarPropostas(propostas);
+        }
+    });
+});
     </script>
 
     <script>
