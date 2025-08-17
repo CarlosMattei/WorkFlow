@@ -372,7 +372,7 @@ function criarCardProposta(p, aba = 'projetos') {
     const tagsHtml = Array.isArray(p.tags) ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
     const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
     const nomeAutor = p.nomeAutor || 'Nome não informado';
-    const isDonoDoPerfil = perfilUserId === auth.currentUser?.uid;
+    const isDonoDoPerfil = p.autorId === auth.currentUser?.uid;
 
     const card = document.createElement('div');
     card.className = 'proposta-card';
@@ -394,7 +394,8 @@ function criarCardProposta(p, aba = 'projetos') {
             </div>
             <div class="buttons">
                 ${isDonoDoPerfil
-            ? `<button class="candidatos btn btn-purple" data-proposta-id="${p.id}">Candidatos</button>`
+            ? `<button class="candidatos btn btn-purple" data-proposta-id="${p.id}">Candidatos</button>
+               <button class="excluir btn btn-red" data-proposta-id="${p.id}">Excluir</button>`
             : `<button class="enviar">Se candidatar</button>`
         }
             </div>
@@ -411,7 +412,32 @@ function criarCardProposta(p, aba = 'projetos') {
                 abrirModalCandidatos(p.id);
             });
         }
+
+        const excluirButton = card.querySelector('.excluir');
+        if (excluirButton) {
+            excluirButton.addEventListener('click', async () => {
+                const confirmDelete = confirm('Tem certeza que deseja excluir esta proposta?');
+                if (!confirmDelete) return;
+
+                try {
+                    const propostaRef = ref(getDatabase(), 'Propostas/' + p.id);
+                    await remove(propostaRef);
+
+                    
+                    card.remove();
+
+                  
+                    abas[aba] = abas[aba].filter(c => c.dataset.propostaId !== p.id);
+
+                    alert('Proposta excluída com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao excluir proposta:', error);
+                    alert('Não foi possível excluir a proposta.');
+                }
+            });
+        }
     }
+
     return card;
 }
 
