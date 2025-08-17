@@ -1232,7 +1232,7 @@ onAuthStateChanged(auth, async (user) => {
         if (data) {
             usersData[userId] = {
                 nome: data.nome || 'Desconhecido',
-                foto_perfil: data.foto_perfil || 'https://via.placeholder.com/50',
+                foto_perfil: data.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
                 tag: data.tag || (type === 'Freelancer' ? 'Freelancer' : 'Contratante'),
                 tipo: type
             };
