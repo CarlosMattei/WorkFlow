@@ -58,7 +58,7 @@ async function escutarUltimaMensagem(userId, outroUid) {
     const leituraRef = ref(db, `LeituraMensagens/${userId}/${outroUid}`);
 
     let nome = "Usuário";
-    let avatar = "https://via.placeholder.com/30";
+    let avatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     const snapFreelancer = await get(ref(db, `Freelancer/${outroUid}`));
     const snapContratante = await get(ref(db, `Contratante/${outroUid}`));
