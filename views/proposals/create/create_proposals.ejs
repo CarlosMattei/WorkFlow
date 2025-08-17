@@ -11,12 +11,27 @@
 <body>
     <div class="header pd-3">
         <h1 class="text-white text-3xl mg-0">Criar Proposta</h1>
+       <p class="etapas-horizontal">Etapas de criação</p>
+
+
+        <div class="steps-wizard">
+  <div class="step active" data-step="1">
+    <div class="circle"><ion-icon name="document-text-outline"></ion-icon></div>
+    <span class="label">Detalhes</span>
+  </div>
+  <div class="line"></div>
+  <div class="step" data-step="2">
+    <div class="circle"><ion-icon name="chatbubbles-outline"></ion-icon></div>
+    <span class="label">Contatos</span>
+  </div>
+  <div class="line"></div>
+  <div class="step" data-step="3">
+    <div class="circle"><ion-icon name="rocket-outline"></ion-icon></div>
+    <span class="label">Finalizar</span>
+  </div>
+</div>
         <p class="text-gray-25 text-sm">Preencha os campos a seguir para criar sua proposta.</p>
-        <div class="steps flex flex-row gap-2 mg-t-2">
-            <div class="step-1 flex flex-1 pd-1 mg-y-2 bg-tertiary rounded-xl"></div>
-            <div class="step-2 flex flex-1 pd-1 mg-y-2 bg-gray rounded-xl"></div>
-            <div class="step-3 flex flex-1 pd-1 mg-y-2 bg-gray rounded-xl"></div>
-        </div>
+
     </div>
     <div class="content pd-3">
 
@@ -246,6 +261,14 @@
 
 </body>
 <style>
+    .etapas-horizontal {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;      
+  display: block;
+  width: 100%;              
+}
+
     .modal {
         display: none;
         position: fixed;
@@ -331,6 +354,96 @@
     .confirm:hover {
         background: var(--base-70);
     }
+    .steps-wizard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 40px 0;
+  position: relative;
+  gap: 20px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.circle {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--gray-75), var(--gray-50));
+  color: var(--gray-25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5) inset;
+  transition: all 0.4s ease;
+}
+
+.label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--gray-25);
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+
+.line {
+  flex: 1;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gray-50), var(--gray-75));
+  border-radius: 4px;
+  transition: background 0.4s ease;
+  position: relative;
+  top: -10px;
+}
+
+.step.active .circle {
+  background: radial-gradient(circle at top left, var(--primary), var(--base-70));
+  color: var(--white);
+  transform: scale(1.15);
+  box-shadow: 0 0 15px var(--primary), 0 0 40px var(--primary);
+}
+
+.step.active .label {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.step.completed .circle {
+  background: linear-gradient(145deg, var(--primary), var(--base-70));
+  color: var(--white);
+  box-shadow: 0 0 10px var(--primary);
+}
+
+.step.completed .circle::before {
+  content: "✔";
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  animation: pop 0.3s ease;
+}
+
+.step.completed .label {
+  color: var(--primary);
+}
+
+.step.completed ~ .line {
+  background: linear-gradient(90deg, var(--primary), var(--base-70));
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  80% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
 </style>
 
 </html>

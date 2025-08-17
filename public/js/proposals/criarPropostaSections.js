@@ -1,52 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const steps = Array.from(document.querySelectorAll("section"));
-    const stepIndicators = [
-        document.querySelector(".step-1"),
-        document.querySelector(".step-2"),
-        document.querySelector(".step-3")
-    ];
+    const stepsSections = Array.from(document.querySelectorAll("section[class*='step-']"));
+    const stepIndicators = Array.from(document.querySelectorAll(".steps-wizard .step"));
+    const stepLines = Array.from(document.querySelectorAll(".steps-wizard .line"));
 
     let currentStep = 0;
 
-    steps.forEach((step, index) => {
-        step.style.display = index === currentStep ? "block" : "none";
-    });
+    const showStep = (index) => {
+        stepsSections.forEach((section, i) => {
+            section.style.display = i === index ? "block" : "none";
+        });
 
-    const updateStepIndicator = (index) => {
         stepIndicators.forEach((el, i) => {
-            if (i <= index) {
-                el.classList.add("bg-tertiary");
-                el.classList.remove("bg-gray");
+            el.classList.remove("active", "completed");
+            if (i < index) el.classList.add("completed");
+            if (i === index) el.classList.add("active");
+        });
+
+        stepLines.forEach((line, i) => {
+            if (i < index) {
+                line.style.background = "linear-gradient(90deg, var(--primary), var(--base-70))";
             } else {
-                el.classList.remove("bg-tertiary");
-                el.classList.add("bg-gray");
+                line.style.background = "linear-gradient(90deg, var(--gray-50), var(--gray-75))";
             }
         });
+
+        currentStep = index;
     };
 
-    updateStepIndicator(currentStep);
-
-    const changeStep = (direction) => {
-        const nextStep = currentStep + direction;
-        if (nextStep < 0 || nextStep >= steps.length) return;
-
-        steps[currentStep].style.display = "none";
-        steps[nextStep].style.display = "block";
-        currentStep = nextStep;
-
-        updateStepIndicator(currentStep);
-    };
-
-    document.querySelectorAll("form button[type='submit']").forEach((btn, index) => {
+    document.querySelectorAll("form button[type='submit']").forEach((btn) => {
         btn.addEventListener("click", (e) => {
             e.preventDefault();
-            changeStep(1);
+            if (currentStep < stepsSections.length - 1) {
+                showStep(currentStep + 1);
+            }
         });
     });
 
-    document.querySelectorAll("form button.btn-secondary").forEach((btn, index) => {
+    document.querySelectorAll("form button.btn-secondary").forEach((btn) => {
         btn.addEventListener("click", () => {
-            changeStep(-1);
+            if (currentStep > 0) {
+                showStep(currentStep - 1);
+            }
         });
     });
+
+    showStep(0);
 });
