@@ -54,7 +54,6 @@ modal.addEventListener('click', (e) => {
     }
 });
 
-// Primeiro, vamos modificar o HTML do modal para usar dialog
 const modalCandidatosHTML = `
 <dialog id="modalCandidatos" class="modal-dialog mg-0">
 <div class="modal-content bg-gray-50 pd-2 flex flex-col justify-center items-center" style="border-radius: 10px; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
@@ -67,17 +66,14 @@ const modalCandidatosHTML = `
 </dialog>
 `;
 
-// Adicionar o dialog ao documento se ele não existir
 if (!document.getElementById('modalCandidatos')) {
     document.body.insertAdjacentHTML('beforeend', modalCandidatosHTML);
 }
 
-// Obter referências aos elementos
 const modalCandidatos = document.getElementById('modalCandidatos');
 const modalCandidatosClose = document.getElementById('modalCandidatosClose');
 const listaCandidatosDiv = document.getElementById('listaCandidatos');
 
-// Adicionar estilos CSS para o dialog
 const style = document.createElement('style');
 style.textContent = `
     .modal-dialog {
@@ -101,8 +97,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Função para abrir o modal de candidatos
 async function abrirModalCandidatos(propostaId) {
     listaCandidatosDiv.innerHTML = '<p style="color: #ccc; text-align: center;">Carregando candidatos...</p>';
     modalCandidatos.showModal();
@@ -111,45 +105,135 @@ async function abrirModalCandidatos(propostaId) {
         const candidaturasRef = ref(db, `Candidaturas/${propostaId}`);
         const snapshot = await get(candidaturasRef);
 
-        let candidatosHtml = '';
+        let candidatosComDetalhes = [];
         if (snapshot.exists()) {
             const candidaturas = snapshot.val();
             const candidatosArray = Object.values(candidaturas);
 
             if (candidatosArray.length > 0) {
-                const candidatosComDetalhes = await Promise.all(candidatosArray.map(async (candidatoBruto) => {
+                candidatosComDetalhes = await Promise.all(candidatosArray.map(async (candidatoBruto) => {
                     const userId = candidatoBruto.userId;
                     const { data: userData } = await obterDadosUsuario(userId);
                     return {
                         userId: userId,
                         nome: userData?.nome || 'Nome Indisponível',
-                        foto_perfil: userData?.foto_perfil || 'https://via.placeholder.com/50',
+                        foto_perfil: userData?.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
                         tag: userData?.tag || 'Tag Indisponível',
                         mensagem: candidatoBruto.mensagem || 'Sem mensagem'
                     };
                 }));
-
-                candidatosHtml = candidatosComDetalhes.map(candidato => `
-                    <div class="candidato-item" style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px;">
-                        <div class="candidato-header" style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${candidato.foto_perfil}" alt="${candidato.nome}" class="candidato-foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #5274D9;">
-                            <div class="candidato-info">
-                                <h3 style="margin: 0; color: #fff; font-size: 1.1em;">${candidato.nome}</h3>
-                                <p style="margin: 0; color: #bbb; font-size: 0.9em;">${candidato.tag}</p>
-                            </div>
-                        </div>
-                        <p class="candidato-mensagem" style="color: #ccc; font-style: italic; margin-left: 60px;">"${candidato.mensagem}"</p>
-                        <a href="/perfil?id=${candidato.userId}" target="_blank" class="ver-perfil-candidato" style="display: inline-block; background-color: #5274D9; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; align-self: flex-end; font-size: 0.9em; transition: background-color 0.3s ease;">Ver Perfil</a>
-                    </div>
-                `).join('');
-            } else {
-                candidatosHtml = '<p style="color: #ccc; text-align: center;">Nenhum candidato encontrado para esta proposta.</p>';
             }
-        } else {
-            candidatosHtml = '<p style="color: #ccc; text-align: center;">Nenhum candidato encontrado para esta proposta.</p>';
         }
 
-        listaCandidatosDiv.innerHTML = candidatosHtml;
+        if (candidatosComDetalhes.length > 0) {
+            listaCandidatosDiv.innerHTML = '';
+            
+            candidatosComDetalhes.forEach(candidato => {
+                const candidatoItem = document.createElement('div');
+                candidatoItem.className = 'candidato-item';
+                candidatoItem.style.cssText = 'background-color: #3a3a3a; padding: 15px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px;';
+                
+                candidatoItem.innerHTML = `
+                    <div class="candidato-header" style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${candidato.foto_perfil}" alt="${candidato.nome}" class="candidato-foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #5274D9;">
+                        <div class="candidato-info">
+                            <h3 style="margin: 0; color: #fff; font-size: 1.1em;">${candidato.nome}</h3>
+                            <p style="margin: 0; color: #bbb; font-size: 0.9em;">${candidato.tag}</p>
+                        </div>
+                    </div>
+                    <p class="candidato-mensagem" style="color: #ccc; font-style: italic; margin-left: 60px;">"${candidato.mensagem}"</p>
+                    <div class="botoes-candidato" style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+                        <a href="/perfil?id=${candidato.userId}" target="_blank" class="btn btn-primary" style="background-color: #5274D9; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; transition: background-color 0.3s ease;">Ver Perfil</a>
+                        <button class="btn btn-white btn-ghost small-chat-btn"
+                                data-user-id="${candidato.userId}"
+                                data-nome="${candidato.nome}"
+                                data-avatar="${candidato.foto_perfil}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
+                                <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.165.078.33.251.243 1.09-.451 2.275-.813 3.447-1.282A13.25 13.25 0 0 0 8 15z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                listaCandidatosDiv.appendChild(candidatoItem);
+
+                const btnContatar = candidatoItem.querySelector('.small-chat-btn');
+                btnContatar.addEventListener('click', async () => {
+                    const authUser = auth.currentUser;
+                    if (!authUser) {
+                        alert('Você precisa estar logado para contatar este candidato.');
+                        return;
+                    }
+
+                    const userIdLogado = authUser.uid;
+                    const userIdContato = btnContatar.dataset.userId;
+                    const nomeContato = btnContatar.dataset.nome;
+                    const avatarContato = btnContatar.dataset.avatar;
+
+                    try {
+                        const db = getDatabase();
+                        const conversaLogadoRef = ref(db, `Conversas/${userIdLogado}/${userIdContato}`);
+                        const conversaContatoRef = ref(db, `Conversas/${userIdContato}/${userIdLogado}`);
+
+                        const [snapshotLogado, snapshotContato] = await Promise.all([
+                            get(conversaLogadoRef),
+                            get(conversaContatoRef)
+                        ]);
+
+                        if (snapshotLogado.exists() && snapshotContato.exists()) {
+                            window.location.href = `/chat?user=${userIdContato}`;
+                            return;
+                        }
+
+                        let dadosUserLogado = null;
+                        const snapshotFreelancer = await get(ref(db, `Freelancer/${userIdLogado}`));
+                        if (snapshotFreelancer.exists()) {
+                            dadosUserLogado = snapshotFreelancer.val();
+                        } else {
+                            const snapshotContratante = await get(ref(db, `Contratante/${userIdLogado}`));
+                            if (snapshotContratante.exists()) {
+                                dadosUserLogado = snapshotContratante.val();
+                            }
+                        }
+
+                        if (!dadosUserLogado) {
+                            alert("Erro ao obter seus dados para criar a conversa.");
+                            return;
+                        }
+
+                        const timestampAgora = Date.now();
+                        await Promise.all([
+                            set(conversaLogadoRef, {
+                                nome: nomeContato,
+                                avatar: avatarContato,
+                                timestamp: timestampAgora
+                            }),
+                            set(conversaContatoRef, {
+                                nome: dadosUserLogado.nome || '',
+                                avatar: dadosUserLogado.foto_perfil || '',
+                                timestamp: timestampAgora
+                            })
+                        ]);
+
+                        const mensagensRef = ref(db, `Conversas/${userIdLogado}/${userIdContato}/mensagens`);
+                        await push(mensagensRef, {
+                            autor: userIdLogado,
+                            texto: "Você iniciou uma conversa.",
+                            timestamp: timestampAgora
+                        });
+
+                        alert("Contato salvo! Agora você será redirecionado ao chat.");
+                        window.location.href = `/chat?user=${userIdContato}`;
+                    } catch (error) {
+                        console.error("Erro ao salvar contato:", error);
+                        alert("Erro ao salvar contato. Tente novamente mais tarde.");
+                    }
+                });
+            });
+
+        } else {
+            listaCandidatosDiv.innerHTML = '<p style="color: #ccc; text-align: center;">Nenhum candidato encontrado para esta proposta.</p>';
+        }
 
     } catch (error) {
         console.error("Erro ao carregar candidatos:", error);
@@ -157,7 +241,6 @@ async function abrirModalCandidatos(propostaId) {
     }
 }
 
-// Event listeners para fechar o dialog
 modalCandidatosClose.addEventListener('click', () => {
     modalCandidatos.close();
     listaCandidatosDiv.innerHTML = '';
