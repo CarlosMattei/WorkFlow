@@ -5,6 +5,64 @@
 
 @import "partials/layout.css";
 
+.card-infos {
+    position: relative; 
+    z-index: 10;
+}
+
+.profilePic {
+    position: relative;
+    z-index: 11; 
+}
+.banner.editable {
+    position: relative;
+    overflow: hidden;
+}
+
+.banner.editable::after {
+    content: '';
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 1;
+}
+
+.banner.editable:hover::after {
+    display: block;
+}
+
+.banner-hover-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.banner.editable:hover .banner-hover-content {
+    display: flex;
+}
+
+.banner-hover-content img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+.banner-hover-content span {
+    font-size: 18px;
+    font-weight: bold;
+}
 
 .btn-red {
     background-color: #e74c3c; 
