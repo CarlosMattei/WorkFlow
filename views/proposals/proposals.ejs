@@ -63,7 +63,6 @@
             </button>
         </div>
 
-        <!-- Faça isso funcionar Yago -->
         <dialog id="filterMobileModal" class="filterMobileModal bg-gray-100 pd-3 border border-solid rounded-lg border-gray">
             <div
             class="top flex flex-row flex items-center pd-b-2 border-b border-t-0 border-r-0 border-l-0 mg-b-2 border-solid border-gray">
@@ -115,39 +114,40 @@
     </section>
 
     <script type="module">
-        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
-            authDomain: "workflow-da28d.firebaseapp.com",
-            projectId: "workflow-da28d",
-            storageBucket: "workflow-da28d.appspot.com",
-            messagingSenderId: "939828605253",
-            appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
-            measurementId: "G-3LXB7BR5M1"
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
+    authDomain: "workflow-da28d.firebaseapp.com",
+    projectId: "workflow-da28d",
+    storageBucket: "workflow-da28d.appspot.com",
+    messagingSenderId: "939828605253",
+    appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
+    measurementId: "G-3LXB7BR5M1"
+};
 
-        let app;
-        if (!getApps().length) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            app = getApps()[0];
-        }
-        const db = getDatabase(app);
-        const auth = getAuth(app);
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApps()[0];
+}
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-        const propostasContainer = document.querySelector('.section2 .propostas');
-        const btnFiltrar = document.getElementById('btnFiltrar');
+const propostasContainer = document.querySelector('.section2 .propostas');
+const btnFiltrar = document.getElementById('btnFiltrar');
 
-        let propostas = [];
-        let currentUserId = null;
-        let currentUserName = '';
-        let currentUserPhoto = '';
-        let currentUserTag = '';
+let propostas = [];
+let currentUserId = null;
+let currentUserName = '';
+let currentUserPhoto = '';
+let currentUserTag = '';
+let countdownIntervals = {};
 
-        const modalCandidatarHtml = `
+const modalCandidatarHtml = `
     <div id="modalCandidatar" class="modal" style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;">
         <div class="modal-content" style="background-color: #2a2a2a; margin: auto; padding: 25px; border: 1px solid #444; width: 80%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); color: #ddd;">
             <span class="modal-close" id="closeCandidatarModal" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
@@ -158,23 +158,46 @@
         </div>
     </div>
 `;
-        document.body.insertAdjacentHTML('beforeend', modalCandidatarHtml);
+document.body.insertAdjacentHTML('beforeend', modalCandidatarHtml);
 
+const modalCandidatar = document.getElementById('modalCandidatar');
+const closeCandidatarModal = document.getElementById('closeCandidatarModal');
+const descricaoCandidaturaInput = document.getElementById('descricaoCandidatura');
+const btnConfirmarCandidatura = document.getElementById('btnConfirmarCandidatura');
 
-        const modalCandidatar = document.getElementById('modalCandidatar');
-        const closeCandidatarModal = document.getElementById('closeCandidatarModal');
-        const descricaoCandidaturaInput = document.getElementById('descricaoCandidatura');
-        const btnConfirmarCandidatura = document.getElementById('btnConfirmarCandidatura');
+let currentPropostaId = null;
 
-        let currentPropostaId = null;
+function formatarData(isoString) {
+    const data = new Date(isoString);
+    return isNaN(data) ? "Data inválida" : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
 
-        function formatarData(isoString) {
-            const data = new Date(isoString);
-            return isNaN(data) ? "Data inválida" : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-        }
+function formatarTempo(ms) {
+    if (ms <= 0) return "Expirado";
 
-      function renderizarPropostas(propostasFiltradas) {
+    const segundos = Math.floor(ms / 1000);
+    const minutos = Math.floor(segundos / 60);
+    const horas = Math.floor(minutos / 60);
+    const dias = Math.floor(horas / 24);
+
+    const s = segundos % 60;
+    const m = minutos % 60;
+    const h = horas % 24;
+
+    const partes = [];
+    if (dias > 0) partes.push(`${dias}d`);
+    if (h > 0) partes.push(`${h}h`);
+    if (m > 0) partes.push(`${m}m`);
+    if (s > 0 && dias === 0 && h === 0 && m === 0) partes.push(`${s}s`);
+
+    if (partes.length === 0) return "Menos de 1s";
+    return partes.join(' ');
+}
+
+function renderizarPropostas(propostasFiltradas) {
     propostasContainer.innerHTML = '';
+    Object.values(countdownIntervals).forEach(clearInterval);
+    countdownIntervals = {};
 
     if (propostasFiltradas.length === 0) {
         propostasContainer.innerHTML = '<p>Nenhuma proposta encontrada com os filtros selecionados.</p>';
@@ -184,16 +207,13 @@
     const agora = new Date();
 
     propostasFiltradas.forEach(p => {
-        if (p.dataExpiracao) {
-            const dataExpiracao = new Date(p.dataExpiracao);
-            if (agora > dataExpiracao) {
-                return;
-            }
+        const dataExpiracao = p.dataExpiracao ? new Date(p.dataExpiracao) : null;
+       
+        if (dataExpiracao && agora > dataExpiracao) {
+            return; 
         }
 
-        const tagsHtml = Array.isArray(p.tags)
-            ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
-            : '';
+        const tagsHtml = Array.isArray(p.tags) ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
 
         let iconesDeContatoHtml = '';
         if (p.meiosDeContato) {
@@ -218,13 +238,11 @@
         const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
         const nomeAutor = p.nomeAutor || 'Nome não informado';
         
-        const tempoDeProposta = p.tempoDeProposta || 'Indefinido';
-
         const wrapper = document.createElement('div');
         const card = document.createElement('div');
         card.classList.add('proposta-card');
         card.dataset.propostaId = p.id;
-
+        
         card.innerHTML = `
             <div class="card-header">
                 <div class="card-title">
@@ -250,7 +268,9 @@
                     <div class="contact-icons">
                         ${iconesDeContatoHtml}
                     </div>
-                    <div class="duration-info">Expira em: ${tempoDeProposta}</div>
+                    <div class="duration-info">
+                        <span id="countdown-${p.id}"></span>
+                    </div>
                 </div>
                 <button class="enviar">Se candidatar</button>
             </div>
@@ -258,6 +278,25 @@
 
         wrapper.appendChild(card);
         propostasContainer.appendChild(wrapper);
+
+        if (dataExpiracao) {
+            const countdownEl = document.getElementById(`countdown-${p.id}`);
+            const updateCountdown = () => {
+                const tempoRestante = dataExpiracao.getTime() - new Date().getTime();
+                if (tempoRestante <= 0) {
+                    countdownEl.textContent = "Expirado";
+                    clearInterval(countdownIntervals[p.id]);
+                    card.parentElement.remove(); 
+                } else {
+                    countdownEl.textContent = formatarTempo(tempoRestante) + ' para expirar';
+                }
+            };
+            
+            updateCountdown();
+            countdownIntervals[p.id] = setInterval(updateCountdown, 1000);
+        } else {
+            document.getElementById(`countdown-${p.id}`).textContent = 'Tempo Indefinido';
+        }
     });
     
     adicionarEventoBotaoCandidatarse();
@@ -294,7 +333,6 @@ async function handleCandidatarClick(event) {
     descricaoCandidaturaInput.value = '';
 }
 
-
 closeCandidatarModal.addEventListener('click', () => {
     modalCandidatar.style.display = 'none';
 });
@@ -319,6 +357,16 @@ btnConfirmarCandidatura.addEventListener('click', async () => {
     }
 
     try {
+        const propostaRef = ref(db, `Propostas/${currentPropostaId}`);
+        const propostaSnap = await get(propostaRef);
+        const propostaData = propostaSnap.val();
+
+        if (!propostaData) {
+            alert('A proposta não existe mais.');
+            modalCandidatar.style.display = 'none';
+            return;
+        }
+
         const candidaturaData = {
             userId: currentUserId,
             nome: currentUserName,
@@ -345,11 +393,10 @@ btnConfirmarCandidatura.addEventListener('click', async () => {
                 setTimeout(() => {
                     cardEnviado.classList.remove('enviado');
                     check.remove();
-                    cardEnviado.textContent = 'se candidatar';
+                    cardEnviado.textContent = 'Se candidatar';
                 }, 2000);
             }
         }
-
     } catch (error) {
         console.error("Erro ao enviar candidatura:", error);
         alert('Ocorreu um erro ao enviar sua candidatura. Tente novamente.');
@@ -381,13 +428,13 @@ function filtrarPropostas() {
             trintaDiasAtras.setDate(agora.getDate() - 30);
             dentroDoPeriodo = dataCriacao >= trintaDiasAtras;
         } else if (periodo === 'indefinido') {
-            dentroDoPeriodo = true; 
+            dentroDoPeriodo = true;
         }
 
         const precoMinProposta = parseFloat(p.precoMin) || 0;
         const precoMaxProposta = parseFloat(p.precoMax) || 0;
         const dentroDoPreco = precoMinProposta >= precoMin && precoMaxProposta <= precoMax;
-
+        
         return dentroDaArea && dentroDoPeriodo && dentroDoPreco;
     });
 
@@ -423,7 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
