@@ -44,7 +44,7 @@
     <ion-icon name="chatbubble-ellipses-outline" style="font-size: 24px;"></ion-icon>
 </button>
         <button class="btn btn-white btn-ghost" id="editarinfos">Editar</button>
-        <button class="btn btn-purple" id="contratarButton">Contratar</button>
+        <button class="btn btn-purple" id="contratarButton">Ofertar</button>
       </div>
     </div>
   </section>
@@ -384,6 +384,10 @@
     const editarButton = document.getElementById('editarinfos');
     const chatButton = document.getElementById('chatButton');
     const contratarButton = document.getElementById('contratarButton');
+const btnEnviarContrato = document.querySelector('.modalContratar .btn-purple');
+const mensagemContratoInput = document.getElementById('mensagemContrato');
+const meioDeRetornoInput = document.querySelector('#modalContratar input[type="text"]');
+const selectMeioDeRetorno = document.querySelector('#modalContratar select');
 
     let currentUserUid = null;
     let currentTipoUsuario = null;
@@ -479,7 +483,80 @@
             alert("Erro ao salvar contato. Tente novamente mais tarde.");
         }
     }
+async function iniciarConversaComContrato(userIdContato, nomeContato, avatarContato, mensagem, meioRetorno, linkRetorno) {
+    const authUser = auth.currentUser;
 
+    if (!authUser) {
+        alert('Você precisa estar logado para iniciar uma conversa.');
+        return;
+    }
+
+    const userIdLogado = authUser.uid;
+    const db = getDatabase();
+
+    try {
+        const conversaLogadoRef = ref(db, `Conversas/${userIdLogado}/${userIdContato}`);
+        const conversaContatoRef = ref(db, `Conversas/${userIdContato}/${userIdLogado}`);
+
+        let dadosUserLogado = null;
+        const snapshotFreelancer = await get(ref(db, `Freelancer/${userIdLogado}`));
+        if (snapshotFreelancer.exists()) {
+            dadosUserLogado = snapshotFreelancer.val();
+        } else {
+            const snapshotContratante = await get(ref(db, `Contratante/${userIdLogado}`));
+            if (snapshotContratante.exists()) {
+                dadosUserLogado = snapshotContratante.val();
+            }
+        }
+
+        if (!dadosUserLogado) {
+            alert("Erro ao obter seus dados para criar a conversa.");
+            return;
+        }
+
+        const timestampAgora = Date.now();
+
+        const mensagemCompleta = `
+            Proposta de Contratação
+            Olá, meu nome é ${dadosUserLogado.nome}.
+            ${mensagem}
+            
+            Meio de Contato: ${meioRetorno}
+            Link de Contato: ${linkRetorno}
+        `;
+
+        const novaMensagem = {
+            autor: userIdLogado,
+            texto: mensagemCompleta,
+            timestamp: timestampAgora
+        };
+        
+        const updatesLogado = {};
+        updatesLogado['nome'] = nomeContato;
+        updatesLogado['avatar'] = avatarContato;
+        updatesLogado['timestamp'] = timestampAgora;
+        
+        const novaMensagemRef = push(child(conversaLogadoRef, 'mensagens'));
+        updatesLogado[`mensagens/${novaMensagemRef.key}`] = novaMensagem;
+        
+        const updatesContato = {};
+        updatesContato['nome'] = dadosUserLogado.nome || '';
+        updatesContato['avatar'] = dadosUserLogado.foto_perfil || '';
+        updatesContato['timestamp'] = timestampAgora;
+        updatesContato[`mensagens/${novaMensagemRef.key}`] = novaMensagem;
+
+        await Promise.all([
+            update(conversaLogadoRef, updatesLogado),
+            update(conversaContatoRef, updatesContato)
+        ]);
+
+        alert("Proposta de contratação enviada com sucesso! Você será redirecionado ao chat.");
+        window.location.href = `/chat?user=${userIdContato}`;
+    } catch (error) {
+        console.error("Erro ao enviar proposta de contratação:", error);
+        alert("Erro ao enviar proposta. Tente novamente mais tarde.");
+    }
+}
 
     onAuthStateChanged(auth, async (user) => {
     if (editarButton) editarButton.style.display = 'none';
@@ -610,6 +687,27 @@ inputBanner.addEventListener('change', async () => {
             console.error("Erro ao atualizar perfil:", error);
         }
     });
+    if (btnEnviarContrato) {
+    btnEnviarContrato.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const userIdToContact = getUidFromURL(); 
+        const nomeToContact = h1Nome.textContent; 
+        const avatarToContact = imgPerfil.src;
+
+        const mensagem = mensagemContratoInput.value.trim();
+        const meioRetorno = selectMeioDeRetorno.value;
+        const linkRetorno = meioDeRetornoInput.value.trim();
+
+        if (mensagem === '' || linkRetorno === '') {
+            alert('Por favor, preencha todos os campos da proposta.');
+            return;
+        }
+
+        closeModalContratar(); 
+        await iniciarConversaComContrato(userIdToContact, nomeToContact, avatarToContact, mensagem, meioRetorno, linkRetorno);
+    });
+}
 </script>
 <script>
   function mostrarCards(tipo) {
