@@ -87,7 +87,7 @@ onAuthStateChanged(auth, async (user) => {
                     }))
                     localStorage.setItem('cacheUsuarioTempo', Date.now())
                 }
-                const photoUrl = userData?.foto_perfil || DEFAULT_USER_PHOTO
+                const photoUrl = userData?.foto_perfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
                 userPhoto.style.backgroundImage = `url('${photoUrl}')`
                 userPhoto.style.display = 'block'
@@ -95,7 +95,7 @@ onAuthStateChanged(auth, async (user) => {
                 if (userPhotoDrop) userPhotoDrop.src = photoUrl
             } catch (error) {
                 console.error("Erro ao buscar avatar:", error);
-                userPhoto.style.backgroundImage = `url('${DEFAULT_USER_PHOTO}')`;
+                userPhoto.style.backgroundImage = `url('https://cdn-icons-png.flaticon.com/512/149/149071.png')`;
                 userPhoto.style.display = 'block';
             }
         }
@@ -296,7 +296,7 @@ function carregarNotificacoesInfo(uid) {
                 }
             }
             if (!userData) {
-                userData = { nome: "Usuário", foto_perfil: "https://via.placeholder.com/40" };
+                userData = { nome: "Usuário", foto_perfil: "https://cdn-icons-png.flaticon.com/512/149/149071.png" };
             }
 
             const item = document.createElement('div');

@@ -78,7 +78,7 @@ async function carregarComentario(idProjeto) {
             if (userSnapshot.exists()) {
                 const usuario = userSnapshot.val()
                 nome = usuario.nome || nome
-                foto = usuario.foto_perfil || foto
+                foto = usuario.foto_perfil ||"https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             const div = document.createElement('div')
             const isOwn = window.usuarioLogado && c.userId === window.usuarioLogado.id;

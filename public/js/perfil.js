@@ -306,7 +306,7 @@ function formatarTempoComentario(timestamp) {
     }
 }
 
-function criarCardProjeto(id, projeto, aba = 'projetos', currentUserId = null, isProjectLikedByViewer = false, autorNome = 'Desconhecido', autorFotoUrl = 'https://via.placeholder.com/50', visualizacoes = 0, curtidas = 0, comentarios = 0, cardIndex = 0, isProjectFavoritedByViewer = false) {
+function criarCardProjeto(id, projeto, aba = 'projetos', currentUserId = null, isProjectLikedByViewer = false, autorNome = 'Desconhecido', autorFotoUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png', visualizacoes = 0, curtidas = 0, comentarios = 0, cardIndex = 0, isProjectFavoritedByViewer = false) {
     const card = document.createElement('div');
     card.className = 'card_projeto';
     card.dataset.projetoId = id;
@@ -453,7 +453,7 @@ function criarCardProjeto(id, projeto, aba = 'projetos', currentUserId = null, i
 
 function criarCardProposta(p, aba = 'projetos') {
     const tagsHtml = Array.isArray(p.tags) ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
-    const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
+    const fotoUrl = p.fotoAutorUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
     const nomeAutor = p.nomeAutor || 'Nome não informado';
     const isDonoDoPerfil = p.autorId === auth.currentUser?.uid;
 
@@ -663,7 +663,7 @@ function criarComentarioHTML(comentario) {
     return `
         <div id="containerComentarios" class="containerComentarios chat-mensagens flex flex-col gap-3 pd-2 bg-gray-50 rounded-md">
             <div class="user-info">
-                <img src="${comentario.foto || 'https://via.placeholder.com/50'}" alt="Usuário">
+                <img src="${comentario.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" alt="Usuário">
                 <div class="user-details">
                     <span class="user-name">${comentario.nome || 'Anônimo'}</span>
                     <span class="message-time">${comentario.tempo || 'há pouco'}</span>
@@ -687,7 +687,7 @@ async function obterComentariosDoProjeto(projetoId) {
         return {
             id: comentarioId,
             nome: autorData.data.nome || 'Anônimo',
-            foto: autorData.data.foto_perfil || 'https://via.placeholder.com/50',
+            foto: autorData.data.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
             texto: comentario.texto,
             timestamp: comentario.timestamp,
         };
@@ -750,7 +750,7 @@ async function criarBlocoExtraProjetoHTML(projeto, autorData, comentarios) {
                     <div class="card-autor-header">
                         <div class="autor-info">
                             <div class="autor-avatar">
-                                <img src="${autorData.foto_perfil || 'https://via.placeholder.com/50'}" id="modalUserPhoto" alt="Foto do perfil">
+                                <img src="${autorData.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" id="modalUserPhoto" alt="Foto do perfil">
                             </div>
                             <div class="autor-details">
                                 <h3 id="modalAutor">${autorData.nome || 'Autor Desconhecido'}</h3>

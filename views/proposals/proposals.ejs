@@ -235,7 +235,7 @@ function renderizarPropostas(propostasFiltradas) {
                 .join('');
         }
 
-        const fotoUrl = p.fotoAutorUrl || 'https://via.placeholder.com/40';
+        const fotoUrl = p.fotoAutorUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
         const nomeAutor = p.nomeAutor || 'Nome não informado';
         
         const wrapper = document.createElement('div');
@@ -479,11 +479,11 @@ onAuthStateChanged(auth, async (user) => {
         if (freelancerSnap.exists()) {
             const userData = freelancerSnap.val();
             currentUserName = userData.nome || 'Usuário Anônimo';
-            currentUserPhoto = userData.foto_perfil || 'https://via.placeholder.com/50';
+            currentUserPhoto = userData.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
             currentUserTag = userData.tag || 'Freelancer';
         } else {
             currentUserName = 'Usuário Logado';
-            currentUserPhoto = 'https://via.placeholder.com/50';
+            currentUserPhoto = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
             currentUserTag = 'Usuário';
         }
     } else {
