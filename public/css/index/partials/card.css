@@ -249,7 +249,7 @@ h2 {
 .project-overlay-content .delete svg path,
 .project-overlay-content .delete svg polyline {
   stroke-width: 2;
-  stroke: black;
+  stroke: #D9534F;
   transition: all 0.3s ease;
   transform-origin: center;
 }
