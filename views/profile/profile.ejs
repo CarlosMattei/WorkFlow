@@ -277,7 +277,7 @@
           <option id="Whatsapp">Whatsapp</option>
           <option id="GitHub">GitHub</option>
         </select>
-        <input type="text" name="meioDeRetorno" id="meioDeRetorno" class="form-control sm" placeholder="Cole o link de contato nessa área">
+        <input type="text" name="meioDeRetorno" id="meioDeRetorno" class="form-control sm" placeholder="Cole o link ou número nessa área">
       </div>
       <div class="buttonContainerModal flex flex-row justify-end mg-t-4">
         <button type="submit" class="btn btn-purple">Enviar</button>
@@ -522,7 +522,7 @@ async function iniciarConversaComContrato(userIdContato, nomeContato, avatarCont
             ${mensagem}
             
             Meio de Contato: ${meioRetorno}
-            Link de Contato: ${linkRetorno}
+            Contato: ${linkRetorno}
         `;
 
         const novaMensagem = {
