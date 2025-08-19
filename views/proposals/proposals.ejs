@@ -148,13 +148,13 @@ let currentUserTag = '';
 let countdownIntervals = {};
 
 const modalCandidatarHtml = `
-    <div id="modalCandidatar" class="modal" style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;">
-        <div class="modal-content" style="background-color: #2a2a2a; margin: auto; padding: 25px; border: 1px solid #444; width: 80%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); color: #ddd;">
-            <span class="modal-close" id="closeCandidatarModal" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-            <h2 style="color: #5274D9; margin-bottom: 20px;">Enviar Candidatura</h2>
-            <p style="margin-bottom: 15px;">Escreva uma breve descrição sobre por que você é o melhor candidato para esta proposta:</p>
-            <textarea id="descricaoCandidatura" rows="8" placeholder="Sua mensagem para o contratante..." style="width: calc(100% - 20px); padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; resize: vertical;"></textarea>
-            <button id="btnConfirmarCandidatura" style="background-color: #5274D9; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.3s ease;">Confirmar Candidatura</button>
+    <div id="modalCandidatar" class="modal" style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: (0, 0, 0, 0.9); justify-content: center; align-items: center;">
+        <div class="modal-content pd-3 bg-gray-75 border border-solid text-white border-gray-25 rounded-lg" style="margin: auto; width: 80%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <span class="modal-close" id="closeCandidatarModal" style="color: var(--white); float: right; font-size: 28px; cursor: pointer;">&times;</span>
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 20px;">Enviar Candidatura</h2>
+            <p class="text text-white text-md">Escreva uma breve descrição sobre por que você é o melhor candidato para esta proposta:</p>
+            <textarea class="form-control sm"  id="descricaoCandidatura" rows="8" placeholder="Sua mensagem para o contratante..." style="padding: 10px; margin-bottom: 20px; resize: vertical;"></textarea>
+            <button id="btnConfirmarCandidatura" class="btn btn-primary">Confirmar Candidatura</button>
         </div>
     </div>
 `;
@@ -251,6 +251,9 @@ function renderizarPropostas(propostasFiltradas) {
                     <div class="card-price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
                 </div>
                 <p class="card-date">Criado em ${formatarData(p.datacriacao)}</p>
+                    <div class="duration-info">
+                        <span id="countdown-${p.id}"></span>
+                    </div>
             </div>
             
             <div class="card-body">
@@ -268,9 +271,6 @@ function renderizarPropostas(propostasFiltradas) {
                 <div class="proposal-details">
                     <div class="contact-icons">
                         ${iconesDeContatoHtml}
-                    </div>
-                    <div class="duration-info">
-                        <span id="countdown-${p.id}"></span>
                     </div>
                 </div>
                 <button class="enviar">Se candidatar</button>
