@@ -393,13 +393,13 @@ body {
     border: none;
     border-radius: 12px;
     padding: 20px;
-    background: var(--gray-75);
     color: var(--white);
     max-width: 500px;
     width: 90%;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    background: radial-gradient(circle at 50% 200%, var(--primary-dark), var(--gray-75));
 }
 
 .dialog-turbo::backdrop {
@@ -425,11 +425,13 @@ body {
 
 @keyframes slide-in {
     from {
-        transform: translateY(-10%);
+        transform: translate(-50%, -40%);
         opacity: 0;
+        filter: blur(1.5rem);
     }
     to {
-        transform: translateY(0);
+        transform: translate(-50%, -50%);
         opacity: 1;
+        filter: blur(0);
     }
 }
