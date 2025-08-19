@@ -16,7 +16,7 @@
         <img src="/assets/image/logoWorkFlow-nome.svg" alt="Logo" class="footer-logo">
         <div class="linhaDivisoria"></div>
 
-        <span class="footer-text">Junte-se a Plataforma <span style="font-weight: bold;">WorkFLow</span> e aproveite o máximo de oportunidades!</span>
+        <span class="footer-text text-xs text-white">Junte-se a Plataforma <span style="font-weight: bold;">WorkFLow</span> e aproveite o máximo de oportunidades!</span>
     </div>
     <a class="aRegister" id="aRegister" href="/register">
         <button class="btn btn-purple text-sm registrar buttonNav" id="btnCriarConta">Criar Conta</button>
@@ -49,7 +49,7 @@
     }
 
     .footer-text {
-        font-size: 20px;
+        font-size: clamp(5pt, 10pt, 12pt);
         color: white;
     }
     .linhaDivisoria {
@@ -57,6 +57,21 @@
         background: var(--gray-25);
         height: 25px;
         align-self: center;
+    }
+
+    @media (max-width: 768px) {
+        .site-footer {
+            flex-direction: column;
+            align-items: center;
+        }
+        .footer-left {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .linhaDivisoria {
+            display: none;
+        }
     }
 </style>
 <script src="/js/theme.js"></script>

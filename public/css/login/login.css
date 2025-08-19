@@ -1,7 +1,7 @@
 @import "../globals/globals.css";
 
 body {
-    background-color: var(--base-100);
+    background: linear-gradient(var(--gray-100) 0%, var(--base-100) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
