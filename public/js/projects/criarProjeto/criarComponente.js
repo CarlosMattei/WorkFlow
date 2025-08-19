@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (type) {
                 case 'texto':
                     html = `
-            <div class="Ptext componente-removivel w-full" data-tipo="texto"  style="position: relative;">
+            <div class="Ptext componente-removivel w-full" data-tipo="texto"  style="position: relative; z-index: 9999 ">
               <button class="btn-remover" title="Remover componente">&times;</button>
               <span class="drag-handle">≡</span>
               <p class="text-lg">Novo texto adicionado ao projeto.</p>
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'titulo':
                     html = `
-            <div class="PTitulo pd-y-3 w-full componente-removivel" data-tipo="titulo" style="position: relative;">
+            <div class="PTitulo pd-y-3 w-full componente-removivel" data-tipo="titulo" style="position: relative; z-index: 9999">
               <button class="btn-remover" title="Remover componente">&times;</button>
               <span class="drag-handle">≡</span>
               <h1 class="text-3xl text-white mg-0">Novo Título</h1>
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'imagem':
                     html = `
-            <div class="Pimage w-full componente-removivel" data-tipo="imagem" style="position: relative;">
+            <div class="Pimage w-full componente-removivel" data-tipo="imagem" style="position: relative; z-index: 9999">
               <button class="btn-remover" title="Remover componente">&times;</button>
               <span class="drag-handle">≡</span>
               <img src="assets/image/createproject/Imagem.jpg" alt="Imagem adicionada" style="width: 100%;">
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'paleta':
                     html = `
-            <div class="componente-removivel w-full" data-tipo="paleta" style="position: relative;">
+            <div class="componente-removivel w-full" data-tipo="paleta" style="position: relative; z-index: 9999">
               <button class="btn-remover" title="Remover componente">&times;</button>
               <span class="drag-handle" title="Ordenar componente">≡</span>
               <div class="PTitulo pd-y-3 w-full">

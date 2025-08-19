@@ -1,319 +1,440 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Projetos</title>
     <link rel="stylesheet" href="/css/index/index.css" />
 
     <style>
-        .preloader-container {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          backdrop-filter: blur(40px);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 9999;
-          transition: opacity 0.5s ease;
-        }
-      </style>
-</head>
+      .preloader-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(40px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      body:has(#modal[style*="display: flex"]) {
+        overflow: hidden;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
     <div class="preloader-container" id="preloader">
-        <div class="loader">
-            <img src="/assets/vetors/loader.gif" alt="" style="width: 150px; height: 100%;">
-        </div>
+      <div class="loader">
+        <img
+          src="/assets/vetors/loader.gif"
+          alt=""
+          style="width: 150px; height: 100%"
+        />
       </div>
+    </div>
 
     <section class="section-1 pd-t-5">
-        <div class="categorias-container bg-gray-50 rounded-xl">
-            <div class="flex rounded-lg categorias bg-gray-50 gap-1 pd-1">
-            </div>
-        </div>
+      <div class="categorias-container bg-gray-50 rounded-xl">
+        <div class="flex rounded-lg categorias bg-gray-50 gap-1 pd-1"></div>
+      </div>
     </section>
 
     <section class="section-2">
-        <main class="card-zone-top" id="card-zone"></main>
+      <main class="card-zone-top" id="card-zone"></main>
     </section>
 
     <section class="section-3">
-        <main class="card-zone" id="card-zone">
-
-        </main>
+      <main class="card-zone" id="card-zone"></main>
     </section>
 
-
-<!-- Cavalo -->
-    <div class="modal-overlay" id="modal">
-        <div class="floating-island" id="floatingIsland">
-            <div class="island-content">
-                <div class="island-left">
-                    <img src="" alt="Profile pic" id="islandUserPhoto" class="island-user-photo">
-                    <div class="island-info">
-                        <h3 id="islandProjectTitle">Nome do Projeto</h3>
-                        <p id="islandCreatorName">Criado por <span id="islandCreatorSpan"></span></p>
-                    </div>
-                </div>
-                <div class="island-right">
-                    <button class="island-btn comment-btn" id="commentBtn" title="Comentar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <button class="island-btn like-btn" id="likeBtn" title="Curtir">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <button class="island-btn close-btn" id="modalCloseBtn" title="Fechar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
+    <!-- Cavalo -->
+    <div
+      class="modal-overlay"
+      id="modal">
+      <div class="floating-island" id="floatingIsland">
+        <div class="island-content">
+          <div class="island-left">
+            <img
+              src=""
+              alt="Profile pic"
+              id="islandUserPhoto"
+              class="island-user-photo"
+            />
+            <div class="island-info">
+              <h3 id="islandProjectTitle">Nome do Projeto</h3>
+              <p id="islandCreatorName">
+                Criado por <span id="islandCreatorSpan"></span>
+              </p>
             </div>
+          </div>
+          <div class="island-right">
+            <button
+              class="island-btn comment-btn"
+              id="commentBtn"
+              title="Comentar"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="island-btn like-btn" id="likeBtn" title="Curtir">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              class="island-btn close-btn"
+              id="modalCloseBtn"
+              title="Fechar"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6L6 18M6 6L18 18"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal">
+        <div
+          class="modal-header flex flex-col justify-center items-center pd-y-16"
+        >
+          <div class="modal-titulo">
+            <h1 class="text-5xl mg-0">Lorem Ipsum</h1>
+          </div>
+          <div class="modal-creator mg-0">
+            <p>Projeto criado por <a href="" class="user-name-modal"></a></p>
+          </div>
         </div>
 
-        <div class="modal">
-            <div class="modal-header flex flex-col justify-center items-center pd-y-16">
-                <div class="modal-titulo">
-                    <h1 class="text-5xl mg-0">Lorem Ipsum</h1>
-                </div>
-                <div class="modal-creator mg-0">
-                    <p>Projeto criado por <a href="" class="user-name-modal"></a></p>
-                </div>
-            </div>
+        <div class="conteudoProjeto pd-x-10" id="modal-componentes"></div>
 
-            <div class="conteudoProjeto pd-x-10" id="modal-componentes">
+        <div
+          class="section-infos flex justify-between items-start gap-8 pd-4 mg-4 rounded-2xl bg-gradient-primary border border-gray-50"
+        >
+          <div class="project-info-container flex flex-col gap-6 flex-1">
+            <div class="titulo-container">
+              <h1
+                id="txtTituloTag"
+                class="text-2xl font-bold text-white mg-0 mg-b-4"
+              >
+                Lorem Ipsun
+              </h1>
             </div>
-
             <div
-                class="section-infos flex justify-between items-start gap-8 pd-4 mg-4 rounded-2xl bg-gradient-primary border border-gray-50">
-                <div class="project-info-container flex flex-col gap-6 flex-1">
-                    <div class="titulo-container">
-                        <h1 id="txtTituloTag" class="text-2xl font-bold text-white mg-0 mg-b-4">Lorem Ipsun</h1>
-                    </div>
-                    <div id="modalTagsContainer" class="tags-container flex flex-wrap gap-2 mg-b-4">
-                        <span
-                            class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50">UI
-                            Design</span>
-                        <span
-                            class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50">Design
-                            WEB</span>
-                        <span
-                            class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50">UX</span>
-                    </div>
-                    <div class="data-container border-t border-gray-50 pd-t-4">
-                        <p id="data-criado" class="data-criado text-sm text-gray mg-0">criado em 23 de maio de 2023</p>
-                    </div>
-                </div>
-
-                <div class="author-profile-container bg-gray-75 flex flex-1 flex-col max-w-full" style="width: 400px;">
-                    <div class="card-autor">
-                        <div class="card-autor-header">
-                            <div class="autor-info">
-                                <div class="autor-avatar">
-                                    <img src="" id="modalUserPhoto" alt="Foto do perfil">
-                                </div>
-                                <div class="autor-details">
-                                    <h3 id="modalAutor">Nome do Autor</h3>
-                                    <p id="modalTag">Designer Web</p>
-                                    <div class="autor-stats">
-                                        <span class="stat">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                            24 projetos
-                                        </span>
-                                        <span class="stat">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M12 20.94C11.5 20.94 11.05 20.79 10.65 20.49C10.25 20.19 9.95 19.79 9.75 19.29C9.55 18.79 9.5 18.25 9.6 17.67C9.7 17.09 9.95 16.57 10.35 16.11C10.75 15.65 11.25 15.3 11.85 15.06C12.45 14.82 13.1 14.7 13.8 14.7C14.5 14.7 15.15 14.82 15.75 15.06C16.35 15.3 16.85 15.65 17.25 16.11C17.65 16.57 17.9 17.09 18 17.67C18.1 18.25 18.05 18.79 17.85 19.29C17.65 19.79 17.35 20.19 16.95 20.49C16.55 20.79 16.1 20.94 15.6 20.94H12Z"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                                <path
-                                                    d="M12 2C13.1 2 14.1 2.4 14.9 3.2C15.7 4 16.1 5 16.1 6.1C16.1 7.2 15.7 8.2 14.9 9C14.1 9.8 13.1 10.2 12 10.2C10.9 10.2 9.9 9.8 9.1 9C8.3 8.2 7.9 7.2 7.9 6.1C7.9 5 8.3 4 9.1 3.2C9.9 2.4 10.9 2 12 2Z"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                            </svg>
-                                            4.8 ⭐
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="autor-actions">
-                                <button class="btn flex flex-1 gap-3 pd-y-5 btn-success" id="contactar">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M22 2H2V22L6 18H22V2Z" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    Contatar
-                                </button>
-                                <button id="btnVerPerfil" class="btn pd-y-5 gap-3 flex flex-1 btn-purple">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
-                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    Ver Perfil
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              id="modalTagsContainer"
+              class="tags-container flex flex-wrap gap-2 mg-b-4"
+            >
+              <span
+                class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50"
+                >UI Design</span
+              >
+              <span
+                class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50"
+                >Design WEB</span
+              >
+              <span
+                class="tag-span bg-gray-25 text-white pd-2 pd-x-4 rounded-full text-sm font-medium border border-gray-50"
+                >UX</span
+              >
             </div>
+            <div class="data-container border-t border-gray-50 pd-t-4">
+              <p id="data-criado" class="data-criado text-sm text-gray mg-0">
+                criado em 23 de maio de 2023
+              </p>
+            </div>
+          </div>
 
-            <!-- Chat do Projeto -->
-            <div id="chat"
-                class="chat-projeto-container flex flex-col gap-4 pd-3 mg-3 rounded-2xl bg-gray-75 border border-gray-50">
-                <div class="chat-header flex items-center gap-2 mg-b-0">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <div
+            class="author-profile-container bg-gray-75 flex flex-1 flex-col max-w-full"
+            style="width: 400px"
+          >
+            <div class="card-autor">
+              <div class="card-autor-header">
+                <div class="autor-info">
+                  <div class="autor-avatar">
+                    <img src="" id="modalUserPhoto" alt="Foto do perfil" />
+                  </div>
+                  <div class="autor-details">
+                    <h3 id="modalAutor">Nome do Autor</h3>
+                    <p id="modalTag">Designer Web</p>
+                    <div class="autor-stats">
+                    </div>
+                  </div>
+                </div>
+                <div class="autor-actions">
+                  <button
+                    class="btn flex flex-1 gap-3 pd-y-5 btn-success"
+                    id="contactar"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M22 2H2V22L6 18H22V2Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
                     </svg>
-                    <h2 class="text-lg font-bold mg-0 text-white">Chat</h2>
+                    Contatar
+                  </button>
+                  <button
+                    id="btnVerPerfil"
+                    class="btn pd-y-5 gap-3 flex flex-1 btn-purple"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <circle
+                        cx="12"
+                        cy="7"
+                        r="4"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    Ver Perfil
+                  </button>
                 </div>
-                <form id="chatForm" class="chat-form flex gap-2 items-center" autocomplete="off"
-                    onsubmit="return false;">
-                    <input id="commentInput" type="text" class="form-control" placeholder="Digite sua mensagem..."
-                        maxlength="300" style="margin-bottom:0;" />
-                    <button id="btnEnviarComentario" class="btn btn-success mg-0" type="submit" title="Enviar">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </form>
-                <div id="containerComentarios" class="chat-mensagens flex flex-col gap-3 pd-2 bg-gray-50 rounded-md"
-                    style="max-height: 220px; overflow-y: auto; min-height: 120px;"></div>
+              </div>
             </div>
-            <!-- Fim do Chat do Projeto -->
-
+          </div>
         </div>
+
+        <!-- Chat do Projeto -->
+        <div
+          id="chat"
+          class="chat-projeto-container flex flex-col gap-4 pd-3 mg-3 rounded-2xl bg-gray-75 border border-gray-50"
+        >
+          <div class="chat-header flex items-center gap-2 mg-b-0">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <h2 class="text-lg font-bold mg-0 text-white">Chat</h2>
+          </div>
+          <form
+            id="chatForm"
+            class="chat-form flex gap-2 items-center"
+            autocomplete="off"
+            onsubmit="return false;"
+          >
+            <input
+              id="commentInput"
+              type="text"
+              class="form-control"
+              placeholder="Digite sua mensagem..."
+              maxlength="300"
+              style="margin-bottom: 0"
+            />
+            <button
+              id="btnEnviarComentario"
+              class="btn btn-success mg-0"
+              type="submit"
+              title="Enviar"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22 2L11 13"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M22 2L15 22L11 13L2 9L22 2Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </form>
+          <div
+            id="containerComentarios"
+            class="chat-mensagens flex flex-col gap-3 pd-2 bg-gray-50 rounded-md"
+            style="max-height: 220px; overflow-y: auto; min-height: 120px"
+          ></div>
+        </div>
+        <!-- Fim do Chat do Projeto -->
+      </div>
     </div>
 
     <style>
-        .categorias :hover{
-            background-color: #5274D9;
-            color: white;
-        }
-        .island-btn.like-btn.curtido svg path {
-            fill: #F84241;
-            stroke: white;
-        }
+      .categorias :hover {
+        background-color: #5274d9;
+        color: white;
+      }
+      .island-btn.like-btn.curtido svg path {
+        fill: #f84241;
+        stroke: white;
+      }
 
-        .input-box {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            gap: 10px;
-        }
+      .input-box {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        gap: 10px;
+      }
 
-        .input-box input {
-            flex: 1;
-            padding: 10px 14px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            outline: none;
-        }
+      .input-box input {
+        flex: 1;
+        padding: 10px 14px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        outline: none;
+      }
 
-        .input-box button {
-            padding: 10px 18px;
-            border: none;
-            background: #3c38a6;
-            color: white;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+      .input-box button {
+        padding: 10px 18px;
+        border: none;
+        background: #3c38a6;
+        color: white;
+        font-weight: bold;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
 
-        .input-box button:hover {
-            background: #574fd9;
-        }
+      .input-box button:hover {
+        background: #574fd9;
+      }
 
-        .button_categoria.active {
-            background-color: #3c38a6;
-        }
+      .button_categoria.active {
+        background-color: #3c38a6;
+      }
 
-        .favoritado {
-            fill: #30BFA5;
-            stroke: #30BFA5;
-        }
+      .favoritado {
+        fill: #30bfa5;
+        stroke: #30bfa5;
+      }
 
-        .favoritar svg:hover path {
-            fill: #5274D9;
-            stroke: #5274D9;
-            transition: fill 0.2s ease, stroke 0.2s ease;
-        }
+      .favoritar svg:hover path {
+        fill: #5274d9;
+        stroke: #5274d9;
+        transition: fill 0.2s ease, stroke 0.2s ease;
+      }
 
-        .animar-favorito path {
-            animation: pulsarFavorito 0.4s ease;
-        }
+      .animar-favorito path {
+        animation: pulsarFavorito 0.4s ease;
+      }
 
-        .animar-desfavorito path {
-            animation: desfavorito 0.4s ease;
-        }
+      .animar-desfavorito path {
+        animation: desfavorito 0.4s ease;
+      }
 
-        @keyframes pulsarFavorito {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.3);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+      @keyframes pulsarFavorito {
+        0% {
+          transform: scale(1);
         }
 
-        @keyframes desfavorito {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(0.8);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+        50% {
+          transform: scale(1.3);
         }
 
-        @media (max-width: 600px) {
-            .pd-x-10 {
-                padding-inline: 4px;
-            }
+        100% {
+          transform: scale(1);
         }
+      }
+
+      @keyframes desfavorito {
+        0% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(0.8);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pd-x-10 {
+          padding-inline: 4px;
+        }
+      }
     </style>
 
     <script type="module" src="/js/projects/mostrarProjeto.js"></script>
@@ -323,138 +444,142 @@
     <script src="/js/nav-buttons.js"></script>
 
     <script>
-        window.onload = () => {
-            const searchInput = document.querySelector('.searchbar-input');
-            if (!searchInput) return;
+      window.onload = () => {
+        const searchInput = document.querySelector(".searchbar-input");
+        if (!searchInput) return;
 
-            function filtrarCards(textoBusca) {
-                const busca = textoBusca.toLowerCase().trim();
-                const cards = document.querySelectorAll('.card_projeto');
+        function filtrarCards(textoBusca) {
+          const busca = textoBusca.toLowerCase().trim();
+          const cards = document.querySelectorAll(".card_projeto");
 
-                cards.forEach(card => {
-                    const titulo = card.querySelector('h1')?.textContent.toLowerCase() || '';
-                    card.style.display = titulo.includes(busca) ? '' : 'none';
-                });
+          cards.forEach((card) => {
+            const titulo =
+              card.querySelector("h1")?.textContent.toLowerCase() || "";
+            card.style.display = titulo.includes(busca) ? "" : "none";
+          });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const buscaUrl = urlParams.get("busca");
+
+        if (buscaUrl) {
+          searchInput.value = buscaUrl;
+
+          const cardZone = document.getElementById("card-zone");
+
+          const observer = new MutationObserver((mutations, obs) => {
+            const cards = cardZone.querySelectorAll(".card_projeto");
+            if (cards.length > 0) {
+              filtrarCards(buscaUrl);
+              obs.disconnect();
             }
+          });
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const buscaUrl = urlParams.get('busca');
+          observer.observe(cardZone, { childList: true, subtree: true });
+          const initialCards = cardZone.querySelectorAll(".card_projeto");
+          if (initialCards.length > 0) {
+            filtrarCards(buscaUrl);
+            observer.disconnect();
+          }
+        }
 
-            if (buscaUrl) {
-                searchInput.value = buscaUrl;
+        searchInput.addEventListener("input", (e) => {
+          filtrarCards(e.target.value);
+        });
+      };
 
-                const cardZone = document.getElementById('card-zone');
+      // Funcionalidades para o card-autor
+      document.addEventListener("DOMContentLoaded", () => {
+        // Adicionar índices aos cards de projeto para animação
+        const projetoCards = document.querySelectorAll(".projeto-card");
+        projetoCards.forEach((card, index) => {
+          card.style.setProperty("--card-index", index);
+        });
 
-                const observer = new MutationObserver((mutations, obs) => {
-                    const cards = cardZone.querySelectorAll('.card_projeto');
-                    if (cards.length > 0) {
-                        filtrarCards(buscaUrl);
-                        obs.disconnect();
-                    }
-                });
+        // Adicionar funcionalidade aos cards de projeto
+        projetoCards.forEach((card) => {
+          card.addEventListener("click", () => {
+            // Adicionar efeito de clique
+            card.style.transform = "scale(0.95)";
+            setTimeout(() => {
+              card.style.transform = "";
+            }, 150);
 
-                observer.observe(cardZone, { childList: true, subtree: true });
-                const initialCards = cardZone.querySelectorAll('.card_projeto');
-                if (initialCards.length > 0) {
-                    filtrarCards(buscaUrl);
-                    observer.disconnect();
-                }
+            // Aqui você pode adicionar navegação para o projeto específico
+            console.log(
+              "Projeto clicado:",
+              card.querySelector("h5")?.textContent
+            );
+          });
+
+          // Adicionar tooltip hover
+          card.addEventListener("mouseenter", () => {
+            const title = card.querySelector("h5")?.textContent;
+            const category = card.querySelector("p")?.textContent;
+            if (title && category) {
+              card.title = `${title} - ${category}`;
             }
+          });
+        });
 
-            searchInput.addEventListener('input', (e) => {
-                filtrarCards(e.target.value);
-            });
-        };
+        // Melhorar funcionalidade dos botões
+        const btnContactar = document.getElementById("contactar");
+        const btnVerPerfil = document.getElementById("btnVerPerfil");
 
-        // Funcionalidades para o card-autor
-        document.addEventListener('DOMContentLoaded', () => {
-            // Adicionar índices aos cards de projeto para animação
-            const projetoCards = document.querySelectorAll('.projeto-card');
-            projetoCards.forEach((card, index) => {
-                card.style.setProperty('--card-index', index);
-            });
-
-            // Adicionar funcionalidade aos cards de projeto
-            projetoCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    // Adicionar efeito de clique
-                    card.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        card.style.transform = '';
-                    }, 150);
-
-                    // Aqui você pode adicionar navegação para o projeto específico
-                    console.log('Projeto clicado:', card.querySelector('h5')?.textContent);
-                });
-
-                // Adicionar tooltip hover
-                card.addEventListener('mouseenter', () => {
-                    const title = card.querySelector('h5')?.textContent;
-                    const category = card.querySelector('p')?.textContent;
-                    if (title && category) {
-                        card.title = `${title} - ${category}`;
-                    }
-                });
-            });
-
-            // Melhorar funcionalidade dos botões
-            const btnContactar = document.getElementById('contactar');
-            const btnVerPerfil = document.getElementById('btnVerPerfil');
-
-            if (btnContactar) {
-                btnContactar.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Adicionar efeito de loading
-                    const originalText = btnContactar.innerHTML;
-                    btnContactar.innerHTML = `
+        if (btnContactar) {
+          btnContactar.addEventListener("click", (e) => {
+            e.preventDefault();
+            // Adicionar efeito de loading
+            const originalText = btnContactar.innerHTML;
+            btnContactar.innerHTML = `
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-spin">
                             <path d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         Enviando...
                     `;
-                    btnContactar.disabled = true;
+            btnContactar.disabled = true;
 
-                    // Simular envio (substitua por sua lógica real)
-                    setTimeout(() => {
-                        btnContactar.innerHTML = originalText;
-                        btnContactar.disabled = false;
-                        // Mostrar feedback de sucesso
-                        showNotification('Mensagem enviada com sucesso!', 'success');
-                    }, 2000);
-                });
-            }
+            // Simular envio (substitua por sua lógica real)
+            setTimeout(() => {
+              btnContactar.innerHTML = originalText;
+              btnContactar.disabled = false;
+              // Mostrar feedback de sucesso
+              showNotification("Mensagem enviada com sucesso!", "success");
+            }, 2000);
+          });
+        }
 
-            if (btnVerPerfil) {
-                btnVerPerfil.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Adicionar efeito de transição
-                    btnVerPerfil.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        btnVerPerfil.style.transform = '';
-                    }, 150);
+        if (btnVerPerfil) {
+          btnVerPerfil.addEventListener("click", (e) => {
+            e.preventDefault();
+            // Adicionar efeito de transição
+            btnVerPerfil.style.transform = "scale(0.95)";
+            setTimeout(() => {
+              btnVerPerfil.style.transform = "";
+            }, 150);
 
-                    // Aqui você pode adicionar navegação para o perfil
-                    console.log('Ver perfil clicado');
-                });
-            }
+            // Aqui você pode adicionar navegação para o perfil
+            console.log("Ver perfil clicado");
+          });
+        }
 
-            // Função para mostrar notificações
-            function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `notification notification-${type}`;
-                notification.innerHTML = `
+        // Função para mostrar notificações
+        function showNotification(message, type = "info") {
+          const notification = document.createElement("div");
+          notification.className = `notification notification-${type}`;
+          notification.innerHTML = `
                     <div class="notification-content">
                         <span>${message}</span>
                         <button class="notification-close">&times;</button>
                     </div>
                 `;
 
-                // Adicionar estilos inline para a notificação
-                notification.style.cssText = `
+          // Adicionar estilos inline para a notificação
+          notification.style.cssText = `
                     position: fixed;
                     top: 20px;
                     right: 20px;
-                    background: ${type === 'success' ? '#30bfa5' : '#3c38a6'};
+                    background: ${type === "success" ? "#30bfa5" : "#3c38a6"};
                     color: white;
                     padding: 12px 20px;
                     border-radius: 8px;
@@ -465,34 +590,33 @@
                     max-width: 300px;
                 `;
 
-                document.body.appendChild(notification);
+          document.body.appendChild(notification);
 
-                // Animar entrada
-                setTimeout(() => {
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
+          // Animar entrada
+          setTimeout(() => {
+            notification.style.transform = "translateX(0)";
+          }, 100);
 
-                // Auto-remover após 5 segundos
-                setTimeout(() => {
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
-                }, 5000);
+          // Auto-remover após 5 segundos
+          setTimeout(() => {
+            notification.style.transform = "translateX(100%)";
+            setTimeout(() => {
+              document.body.removeChild(notification);
+            }, 300);
+          }, 5000);
 
-                // Botão de fechar
-                const closeBtn = notification.querySelector('.notification-close');
-                closeBtn.addEventListener('click', () => {
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
-                });
-            }
-        });
+          // Botão de fechar
+          const closeBtn = notification.querySelector(".notification-close");
+          closeBtn.addEventListener("click", () => {
+            notification.style.transform = "translateX(100%)";
+            setTimeout(() => {
+              document.body.removeChild(notification);
+            }, 300);
+          });
+        }
+      });
     </script>
 
     <script src="js/preloader.js"></script>
-</body>
-
+  </body>
 </html>

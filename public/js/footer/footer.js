@@ -24,4 +24,7 @@ onAuthStateChanged(auth, (user) => {
         footerLogado.style.display = 'none'
         footerNaoLogado.style.display = 'flex'
     }
+    if(window.location.pathname == '/criarProjeto') {
+        footerLogado.style.display = 'none'
+    }
 })

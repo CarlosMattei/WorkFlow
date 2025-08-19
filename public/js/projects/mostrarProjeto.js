@@ -74,7 +74,7 @@ async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, u
     <div class="autor pd-x-1 pd-y-2 flex items-center gap-2">
         <img class='autor-img rounded-full' src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile pic"
             style="width: 32px; height: 32px; object-fit: cover;">
-        <h2 class="username text-sm text-white truncate" title="@Christopher" style="max-width: 100px;">
+        <h2 class="username text-sm text-white truncate" title="@Christopher" style="max-width: 100px; margin-top: 12px">
             @Christopher
         </h2>
     </div>
