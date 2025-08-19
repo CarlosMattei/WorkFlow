@@ -2,6 +2,8 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12
 import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+let contatosPreenchidos = {};
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const firebaseConfig = {
@@ -30,7 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextButtons = document.querySelectorAll(".buttonProximo .btn-primary, .buttonProximoAnterior .btn-primary");
     const backButtons = document.querySelectorAll("button.btn-secondary");
     const createProposalButton = document.querySelector('.buttonsContinuarVoltar .btn-primary');
-    
+
+    const modals = document.querySelectorAll('.modal');
+    const checkboxes = document.querySelectorAll('.cardContato input[type="checkbox"]');
+    const closeButtons = document.querySelectorAll('.modal .close');
+    const confirmButtons = document.querySelectorAll('.modal .confirm');
+
     let currentStep = 0;
 
     function updateSteps() {
@@ -47,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.add("active");
             }
         });
-        
+
         stepLines.forEach((line, index) => {
             if (index < currentStep) {
                 line.style.background = "linear-gradient(90deg, var(--primary), var(--base-70))";
@@ -72,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Por favor, preencha todos os campos da Etapa 1.');
                     return;
                 }
-                
+
                 const min = parseFloat(priceMin.replace(',', '.'));
                 const max = parseFloat(priceMax.replace(',', '.'));
-                
+
                 if (isNaN(min) || isNaN(max) || min < 0 || max < 0) {
                     alert('Por favor, insira valores numéricos para o preço.');
                     return;
@@ -99,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             }
-            
+
             if (currentStep < stepsSections.length - 1) {
                 currentStep++;
                 updateSteps();
@@ -117,100 +124,139 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-   createProposalButton.addEventListener('click', (e) => {
-    e.preventDefault();
-
-    const tempoDeProposta = document.getElementById('tempoDeProposta').value.trim();
-    if (!tempoDeProposta) {
-        alert('Por favor, preencha o campo de tempo de proposta na Etapa 3.');
-        return;
-    }
-
-    const titulo = document.getElementById('title').value.trim();
-    const category = document.getElementById('category').value;
-    const description = document.getElementById('description').value.trim();
-    const precoMin = document.getElementById('price-min').value.trim();
-    const precoMax = document.getElementById('price-max').value.trim();
-    const contatoChat = document.getElementById('contatoChat').checked;
-    const contatoEmail = document.getElementById('contatoEmail').checked;
-    const contatoWhatsapp = document.getElementById('contatoWhatsapp').checked;
-    const contatoLinkedin = document.getElementById('contatLinkedin').checked;
-    const contatoGithub = document.getElementById('contatGithub').checked;
-    const contatoOutro = document.getElementById('contatoOutro').checked;
-    const menoresDeIdade = document.getElementById('menoresDeIdade').checked;
-
-    const user = auth.currentUser;
-    if (!user) {
-        alert('Você precisa estar logado para criar a proposta.');
-        return;
-    }
-
-    const dataCriacao = new Date();
-    let dataExpiracao = null;
-
-    if (tempoDeProposta.toLowerCase() !== 'indefinido') {
-        const partesTempo = tempoDeProposta.toLowerCase().match(/(\d+)\s*(d|h|m)/);
-        if (partesTempo) {
-            const valor = parseInt(partesTempo[1], 10);
-            const unidade = partesTempo[2];
-            let milissegundos = 0;
-
-            if (unidade === 'd') {
-                milissegundos = valor * 24 * 60 * 60 * 1000;
-            } else if (unidade === 'h') {
-                milissegundos = valor * 60 * 60 * 1000;
-            } else if (unidade === 'm') {
-                milissegundos = valor * 60 * 1000;
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const modalId = `modal${e.target.id.replace('contato', '')}`;
+            const modal = document.getElementById(modalId);
+            if (e.target.checked) {
+                modal.style.display = 'flex';
             }
-            
-            dataExpiracao = new Date(dataCriacao.getTime() + milissegundos).toISOString();
-        }
-    }
-    
-    const uid = user.uid;
-    get(ref(db, `Contratante/${uid}`)).then(snapshot => {
-        if (!snapshot.exists()) {
-            alert('Dados do contratante não encontrados.');
+        });
+    });
+
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const modal = document.getElementById(e.target.getAttribute('data-modal'));
+            modal.style.display = 'none';
+            const checkbox = document.getElementById(modal.id.replace('modal', 'contato'));
+            checkbox.checked = false;
+            delete contatosPreenchidos[checkbox.id.replace('contato', '').toLowerCase()];
+        });
+    });
+
+    confirmButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const modalId = e.target.getAttribute('data-modal');
+            const modal = document.getElementById(modalId);
+            const input = modal.querySelector('input');
+            const contatoKey = modal.id.replace('modal', '').toLowerCase();
+
+            if (input.value.trim() === '') {
+                alert('Por favor, preencha o campo.');
+                return;
+            }
+
+            contatosPreenchidos[contatoKey] = input.value.trim();
+
+            modal.style.display = 'none';
+        });
+    });
+
+    createProposalButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const tempoDeProposta = document.getElementById('tempoDeProposta').value.trim();
+        if (!tempoDeProposta) {
+            alert('Por favor, preencha o campo de tempo de proposta na Etapa 3.');
             return;
         }
 
-        const dadosUsuario = snapshot.val();
-        
-        const novaProposta = {
-            titulo: titulo,
-            descricao: description,
-            precoMin: parseFloat(precoMin.replace(',', '.')),
-            precoMax: parseFloat(precoMax.replace(',', '.')),
-            meiosDeContato: {
-                chat: contatoChat,
-                email: contatoEmail,
-                whatsapp: contatoWhatsapp,
-                linkedin: contatoLinkedin,
-                github: contatoGithub,
-                outro: contatoOutro
-            },
-            tempoDeProposta: tempoDeProposta,
-            dataExpiracao: dataExpiracao, 
-            menoresDeIdade: menoresDeIdade,
-            datacriacao: dataCriacao.toISOString(),
-            autorId: uid,
-            nomeAutor: dadosUsuario.nome || "Nome não informado",
-            fotoAutorUrl: dadosUsuario.foto_perfil || "",
-            tags: [category]
-        };
+        const titulo = document.getElementById('title').value.trim();
+        const category = document.getElementById('category').value;
+        const description = document.getElementById('description').value.trim();
+        const precoMin = document.getElementById('price-min').value.trim();
+        const precoMax = document.getElementById('price-max').value.trim();
+        const contatoChat = document.getElementById('contatoChat').checked;
+        const contatoEmail = document.getElementById('contatoEmail').checked;
+        const contatoWhatsapp = document.getElementById('contatoWhatsapp').checked;
+        const contatoLinkedin = document.getElementById('contatLinkedin').checked;
+        const contatoGithub = document.getElementById('contatGithub').checked;
+        const contatoOutro = document.getElementById('contatoOutro').checked;
+        const menoresDeIdade = document.getElementById('menoresDeIdade').checked;
 
-        const propostasRef = ref(db, 'Propostas');
-        push(propostasRef, novaProposta)
-            .then(() => {
-                alert('Proposta criada com sucesso!');
-                window.location.href = "propostas";
-            })
-            .catch(error => {
-                console.error("Erro ao salvar proposta:", error);
-                alert('Erro ao criar proposta.');
-            });
+        const user = auth.currentUser;
+        if (!user) {
+            alert('Você precisa estar logado para criar a proposta.');
+            return;
+        }
+
+        const dataCriacao = new Date();
+        let dataExpiracao = null;
+
+        if (tempoDeProposta.toLowerCase() !== 'indefinido') {
+            const partesTempo = tempoDeProposta.toLowerCase().match(/(\d+)\s*(dia|dias|semana|mes|mes)/);
+            if (partesTempo) {
+                const valor = parseInt(partesTempo[1], 10);
+                const unidade = partesTempo[2];
+                let milissegundos = 0;
+
+                if (unidade === 'dia' || unidade === 'dias') {
+                    milissegundos = valor * 24 * 60 * 60 * 1000;
+                } else if (unidade === 'semana') {
+                    milissegundos = valor * 7 * 24 * 60 * 60 * 1000;
+                } else if (unidade === 'mês' || unidade === 'mes') {
+                    milissegundos = valor * 30 * 24 * 60 * 60 * 1000;
+                }
+
+                dataExpiracao = new Date(dataCriacao.getTime() + milissegundos).toISOString();
+            }
+        }
+
+        const uid = user.uid;
+        get(ref(db, `Contratante/${uid}`)).then(snapshot => {
+            if (!snapshot.exists()) {
+                alert('Dados do contratante não encontrados.');
+                return;
+            }
+
+            const dadosUsuario = snapshot.val();
+
+            const novaProposta = {
+                titulo: titulo,
+                descricao: description,
+                precoMin: parseFloat(precoMin.replace(',', '.')),
+                precoMax: parseFloat(precoMax.replace(',', '.')),
+                meiosDeContato: {
+                    chat: contatoChat,
+                    email: contatoEmail,
+                    whatsapp: contatoWhatsapp,
+                    linkedin: contatoLinkedin,
+                    github: contatoGithub,
+                    outro: contatoOutro
+                },
+                contatosDetalhes: contatosPreenchidos,
+                tempoDeProposta: tempoDeProposta,
+                dataExpiracao: dataExpiracao,
+                menoresDeIdade: menoresDeIdade,
+                datacriacao: dataCriacao.toISOString(),
+                autorId: uid,
+                nomeAutor: dadosUsuario.nome || "Nome não informado",
+                fotoAutorUrl: dadosUsuario.foto_perfil || "",
+                tags: [category]
+            };
+
+            const propostasRef = ref(db, 'Propostas');
+            push(propostasRef, novaProposta)
+                .then(() => {
+                    alert('Proposta criada com sucesso!');
+                    window.location.href = "propostas";
+                })
+                .catch(error => {
+                    console.error("Erro ao salvar proposta:", error);
+                    alert('Erro ao criar proposta.');
+                });
+        });
     });
-});
 
     updateSteps();
 });

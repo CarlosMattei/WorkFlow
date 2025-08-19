@@ -114,7 +114,7 @@
     </section>
 
     <script type="module">
-      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -208,7 +208,7 @@ function renderizarPropostas(propostasFiltradas) {
 
     propostasFiltradas.forEach(p => {
         const dataExpiracao = p.dataExpiracao ? new Date(p.dataExpiracao) : null;
-       
+        
         if (dataExpiracao && agora > dataExpiracao) {
             return; 
         }
@@ -230,7 +230,8 @@ function renderizarPropostas(propostasFiltradas) {
                 .filter(([, value]) => value) 
                 .map(([key]) => {
                     const iconName = iconMap[key] || 'ellipsis-horizontal-outline';
-                    return `<ion-icon name="${iconName}" class="contact-icon" title="${key}"></ion-icon>`;
+                    const contatoDetalhe = p.contatosDetalhes?.[key] || '';
+                    return `<ion-icon name="${iconName}" class="contact-icon" data-contato="${contatoDetalhe}" title="${key}"></ion-icon>`;
                 })
                 .join('');
         }
@@ -300,6 +301,55 @@ function renderizarPropostas(propostasFiltradas) {
     });
     
     adicionarEventoBotaoCandidatarse();
+    adicionarEventosDeContato();
+}
+
+function adicionarEventosDeContato() {
+    document.querySelectorAll('.contact-icon').forEach(icon => {
+        const contato = icon.dataset.contato;
+        if (contato) {
+            const parent = icon.parentElement;
+
+            const tooltip = document.createElement('span');
+            tooltip.classList.add('tooltip');
+            tooltip.textContent = contato;
+            parent.appendChild(tooltip);
+
+            icon.addEventListener('mouseover', () => {
+                tooltip.style.visibility = 'visible';
+                tooltip.style.opacity = '1';
+            });
+
+            icon.addEventListener('mouseout', () => {
+                tooltip.style.visibility = 'hidden';
+                tooltip.style.opacity = '0';
+            });
+
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (tooltip.style.visibility === 'visible') {
+                    tooltip.style.visibility = 'hidden';
+                    tooltip.style.opacity = '0';
+                } else {
+                    document.querySelectorAll('.tooltip').forEach(t => {
+                        t.style.visibility = 'hidden';
+                        t.style.opacity = '0';
+                    });
+                    tooltip.style.visibility = 'visible';
+                    tooltip.style.opacity = '1';
+                }
+            });
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('contact-icon')) {
+            document.querySelectorAll('.tooltip').forEach(t => {
+                t.style.visibility = 'hidden';
+                t.style.opacity = '0';
+            });
+        }
+    });
 }
 
 function adicionarEventoBotaoCandidatarse() {

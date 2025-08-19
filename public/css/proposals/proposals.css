@@ -3,6 +3,46 @@
 @import "partials/layout.css";
 @import "partials/filters.css";
 @import "partials/background.css";
+.contact-icons {
+    position: relative;
+    display: flex;
+    gap: 8px;
+}
+
+.contact-icon {
+    cursor: pointer;
+    position: relative;
+    color: var(--primary);
+}
+
+.tooltip {
+    visibility: hidden;
+    width: auto;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; 
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    white-space: nowrap;
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
 
 body {
     overflow: hidden;
