@@ -13,7 +13,8 @@
                         <span>b</span>
                         <span>o</span>
                     </p>
-                    <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon></button>
+                    <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon>
+                </button>
                 <div class="hamburger">
                     <span></span>
                     <span></span>
@@ -45,7 +46,6 @@
                 <button class="btn btn-purple text-sm registrar buttonNav" id="btnCriarConta">Criar Conta</button>
             </a>
             <div id="userControls" class="userControls" style="display:none; align-items: center; gap: 12px;">
-                <button id="btnAdd" class="buttonAdd btn btn-purple" title="Adicionar novo">Criar</button>
                 <button id="btnProjetoTurbo" class="btnProjetoTurbo large btn lg-only" title="Impulsionar seu projeto">
                     <p class="flex flex-row text-white text-sm mg-0 pd-x-1">
                         <span>T</span>
@@ -54,18 +54,23 @@
                         <span>b</span>
                         <span>o</span>
                     </p>
-                    <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon></button>
+                    <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon>
+                </button>
+                <button id="btnAdd" class="buttonAdd btn btn-purple" title="Adicionar novo">Criar</button>
+
                 <div class="mobile-only w-full flex-col gap-2">
                     <a href="/notification"><button class="btn btn-gray w-full">Notificações</button></a>
                     <a onclick="window.location.href='/chat'"><button class="btn btn-gray w-full">Chat</button></a>
-                    <a onclick="window.location.href='/settings'"><button class="btn btn-gray w-full">Configurações</button></a>
+                    <a onclick="window.location.href='/settings'"><button
+                            class="btn btn-gray w-full">Configurações</button></a>
                     <a href="/notification"><button class="btn btn-gray w-full">Meu Perfil</button></a>
                     <button class="btn btn-danger w-full">Sair</button>
                 </div>
                 <div class="container-row flex-row gap-2">
                     <div class="containerNotifyChat flex flex-row gap-2">
                         <div class="notificacoes" id="notificacoes">
-                            <button id="btnNotificacoes" class="btnNotificacoes btn btn-gray"><ion-icon name="notifications-outline"
+                            <button id="btnNotificacoes" class="btnNotificacoes btn btn-gray"><ion-icon
+                                    name="notifications-outline"
                                     style="color: var(--white); font-size: 25px;"></ion-icon>
                                 <span id="badge-mensagens" style="
                                     position: absolute;
@@ -142,21 +147,25 @@
 <dialog id="dialogTurbo" class="dialog-turbo border-4 border-solid border-primary">
     <div class="dialog-content text-center">
         <h2 class="text-3xl text-white mg-0">Projeto <span class="font-bold text-3xl">Turbo</span></h2>
-        <p class="text-xl text-white mg-0">Turbine seu projeto para ele ser visto no <span class="text-primary text-xl">topo!</span></p>
+        <p class="text-xl text-white mg-0">Turbine seu projeto para ele ser visto no <span
+                class="text-primary text-xl">topo!</span></p>
         <div class="turbo-options">
-        <div class="price">
-            <div class="line bg-gray-50 mg-y-2" style="width: 100%; height: 2px;"></div>
-            <p class="text-white text-lg mg-0"><span class="text-primary text-3xl font-bold">R$ 30</span> <span class="text text-gray-25 text-md">/ hora</span></p>
-            <div class="line bg-gray-50 mg-y-2" style="width: 100%; height: 2px;"></div>
-        </div>
-        <p class="mg-0 text-left text-xl">Benefícios</p>
-        <div class="beneficios">
-            <ul class="flex flex-col gap-3" style="list-style-position: inside;">
-                <li class="text-left text-white text-lg mg-0">Tenha seu projeto no topo da galeria de projetos.</li>
-                <li class="text-left text-white text-lg mg-0">Seja visto por mais clientes e contratantes e freelancers.</li>
-                <li class="text-left text-white text-lg mg-0">Seu projeto é colocado automaticamente no melhor horário.</li>
-            </ul>
-        </div>
+            <div class="price">
+                <div class="line bg-gray-50 mg-y-2" style="width: 100%; height: 2px;"></div>
+                <p class="text-white text-lg mg-0"><span class="text-primary text-3xl font-bold">R$ 30</span> <span
+                        class="text text-gray-25 text-md">/ hora</span></p>
+                <div class="line bg-gray-50 mg-y-2" style="width: 100%; height: 2px;"></div>
+            </div>
+            <p class="mg-0 text-left text-xl">Benefícios</p>
+            <div class="beneficios">
+                <ul class="flex flex-col gap-3" style="list-style-position: inside;">
+                    <li class="text-left text-white text-lg mg-0">Tenha seu projeto no topo da galeria de projetos.</li>
+                    <li class="text-left text-white text-lg mg-0">Seja visto por mais clientes e contratantes e
+                        freelancers.</li>
+                    <li class="text-left text-white text-lg mg-0">Seu projeto é colocado automaticamente no melhor
+                        horário.</li>
+                </ul>
+            </div>
             <button class="btn btn-purple">Aproveitar</button>
             <a class="close-dialog cursor-pointer">Não quero, Obrigado(a)</a>
         </div>
@@ -479,6 +488,7 @@
         .sm-only {
             display: none !important;
         }
+
         .lg-only {
             display: flex !important;
         }
@@ -488,6 +498,7 @@
         .sm-only {
             display: flex !important;
         }
+
         .lg-only {
             display: none !important;
         }
@@ -542,22 +553,22 @@
     });
 
     const btnsProjetoTurbo = document.querySelectorAll('.btnProjetoTurbo');
-        const dialogTurbo = document.getElementById('dialogTurbo');
-        const btnCloseDialog = dialogTurbo.querySelector('.close-dialog');
+    const dialogTurbo = document.getElementById('dialogTurbo');
+    const btnCloseDialog = dialogTurbo.querySelector('.close-dialog');
 
-        btnsProjetoTurbo.forEach(btn => {
-            btn.addEventListener('click', () => {
-                dialogTurbo.showModal();
-            });
+    btnsProjetoTurbo.forEach(btn => {
+        btn.addEventListener('click', () => {
+            dialogTurbo.showModal();
         });
+    });
 
-        btnCloseDialog.addEventListener('click', () => {
+    btnCloseDialog.addEventListener('click', () => {
+        dialogTurbo.close();
+    });
+
+    dialogTurbo.addEventListener('click', (e) => {
+        if (e.target === dialogTurbo) {
             dialogTurbo.close();
-        });
-
-        dialogTurbo.addEventListener('click', (e) => {
-            if (e.target === dialogTurbo) {
-                dialogTurbo.close();
-            }
-        });
+        }
+    });
 </script>
