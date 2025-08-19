@@ -146,6 +146,8 @@ body {
     border: none;
 }
 
+   
+
 .registrar {
     background-color: var(--primary);
     color: #FFFFFF;
@@ -204,11 +206,17 @@ body {
         padding-top: 20px;
     }
 
-    .container-row {
+    .btnProjetoTurbo .large {
         display: none;
     }
 
+    .btnProjetoTurbo .mobile {
+        display: flex;
+    }  
 
+    .container-row {
+        display: none;
+    }
 
     .links, .searchbarContainer {
         display: none;
@@ -358,5 +366,70 @@ body {
 
     .buttonAdd {
         width: 100%;
+    }
+}
+
+.btnProjetoTurbo, .btnProjetoTurbo .mobile, .btnProjetoTurbo .large {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%);
+    box-shadow: 0 0 0 1px var(--gray-50), inset -3px 30px 23px 7px var(--gray-100);
+    color: var(--white);
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.btnProjetoTurbo:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 0 1px var(--gray-50),
+}
+
+.btnProjetoTurbo .sm {
+    display: none;
+}
+
+.dialog-turbo {
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--gray-75);
+    color: var(--white);
+    max-width: 500px;
+    width: 90%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dialog-turbo::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.turbo-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dialog-turbo[open] {
+    animation: slide-in 0.3s ease-out;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateY(-10%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
