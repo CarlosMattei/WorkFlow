@@ -181,7 +181,8 @@
 .modalEditar, .modalContratar{
   max-width: 800px;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: fixed;
   top: 50%;
   left: 50%;

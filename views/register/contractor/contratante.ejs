@@ -4,16 +4,17 @@
   <title>Cadastro Contratante</title>
   <link rel="icon" type="image/x-icon" href="/assets/icons/icon.ico">
   <link rel="stylesheet" href="/css/cadastro/contratante.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 
 <link rel="stylesheet" href="/css/cadastro/contratante.css">
 <section class="section-2">
-  <a href="/register" style="position: fixed; top: 20px; left: 20px; z-index: 9999;">
-    <button
-      style="width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; background-color: #007BFF; color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-      < </button>
+  <a href="/register" style="position: fixed; top: 30px; left: 30px; z-index: 9999;">
+    <button style="width: 40px; height: 40px; border-radius: 15px; background-color: var(--gray-50); color: var(--white); border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"> <ion-icon name="arrow-back-outline"></ion-icon> </button>
   </a>
   <div class="banner">
+    <div class="banneroverlay"></div>
     <img class="banner-logo" src="/assets/image/logoWorkFlow-com-nome.svg" alt="logoWorkFlow">
 
 
@@ -164,8 +165,8 @@
   }
 
   .projetos-track img {
-    width: 100%;
-    height: 150px;
+    aspect-ratio: 4 / 3;
+    width: auto;
     object-fit: cover;
     margin-bottom: 12px;
     border-radius: 8px;
