@@ -199,8 +199,6 @@
                   <div class="autor-details">
                     <h3 id="modalAutor">Nome do Autor</h3>
                     <p id="modalTag">Designer Web</p>
-                    <div class="autor-stats">
-                    </div>
                   </div>
                 </div>
                 <div class="autor-actions">
@@ -343,7 +341,13 @@
         background-color: #5274d9;
         color: white;
       }
-      .island-btn.like-btn.curtido svg path {
+
+      .like-btn.descurtido svg path {
+        fill: none;
+        stroke: white;
+      }
+
+      .like-btn.curtido svg path {
         fill: #f84241;
         stroke: white;
       }

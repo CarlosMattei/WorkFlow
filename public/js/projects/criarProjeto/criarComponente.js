@@ -131,51 +131,89 @@ document.addEventListener('DOMContentLoaded', () => {
     function atualizarGaleria(novaComp, gridType) {
         const galeria = novaComp.querySelector('.galeria-imagens');
 
+        const imagensExistentes = Array.from(galeria.querySelectorAll('img')).map(img => img.src);
+
         galeria.innerHTML = '';
         galeria.style.display = 'grid';
         galeria.style.gridGap = '12px';
 
         let slots = [];
+
         switch (gridType) {
             case '2x1':
                 galeria.style.gridTemplateColumns = '1fr 1fr';
                 galeria.style.gridAutoRows = '240px';
+                galeria.style.gridTemplateRows = 'none';   
+                galeria.style.gridTemplateAreas = 'none';  
                 slots = [1, 1];
                 break;
+
             case '2x2':
                 galeria.style.gridTemplateColumns = '1fr 1fr';
                 galeria.style.gridAutoRows = '240px';
+                galeria.style.gridTemplateRows = 'none';
+                galeria.style.gridTemplateAreas = 'none';
                 slots = [1, 1, 1, 1];
                 break;
+
             case '3x1':
                 galeria.style.gridTemplateColumns = '1fr 1fr 1fr';
                 galeria.style.gridAutoRows = '240px';
+                galeria.style.gridTemplateRows = 'none';
+                galeria.style.gridTemplateAreas = 'none';
                 slots = [1, 1, 1];
                 break;
+
             case '1+2':
                 galeria.style.gridTemplateColumns = '2fr 1fr';
                 galeria.style.gridAutoRows = '240px';
+                galeria.style.gridTemplateRows = 'none';
+                galeria.style.gridTemplateAreas = 'none';
                 slots = ['grande', 'pequeno', 'pequeno'];
+                break;
+
+            case 'topo-grande':
+                galeria.style.gridTemplateColumns = '1fr 1fr';
+                galeria.style.gridAutoRows = '240px';
+                galeria.style.gridTemplateRows = 'none';
+                galeria.style.gridTemplateAreas = 'none';
+                slots = ['grande', 'pequeno', 'pequeno'];
+                break;
+
+            case 'mosaico':
+                galeria.style.gridTemplateColumns = '2fr 1fr';
+                galeria.style.gridTemplateRows = '200px 200px 200px';
+                galeria.style.gridAutoRows = 'unset'; 
+                galeria.style.gridTemplateAreas = `
+                    "grande pequeno1"
+                    "grande pequeno2"
+                    "baixo1 baixo2"
+                `;
+                slots = ['grande', 'pequeno1', 'pequeno2', 'baixo1', 'baixo2'];
                 break;
         }
 
-
-        slots.forEach(tipo => {
+        slots.forEach((tipo, index) => {
             const div = document.createElement('div');
-            div.classList.add('slot-imagem', 'flex', 'flex-col', 'items-center', 'justify-center', 'text-xs', 'rounded', 'border', 'border-dashed', 'transition-all', 'duration-200', 'cursor-pointer');
-
+            div.classList.add(
+                'slot-imagem', 'flex', 'flex-col', 'items-center', 'justify-center',
+                'text-xs', 'rounded', 'border', 'border-dashed', 'transition-all', 'duration-200', 'cursor-pointer'
+            );
             div.style.background = 'linear-gradient(135deg, #1E1E1E, #2C2C2C)';
             div.style.color = 'rgba(217, 217, 217, 0.7)';
             div.style.position = 'relative';
 
-            if (tipo === 'grande') div.style.gridRow = 'span 2';
+
+            if (tipo === 'grande') {
+                div.style.gridRow = 'span 2';
+                if (gridType === 'topo-grande') div.style.gridColumn = '1 / -1';
+            }
 
             div.innerHTML = `
-                <ion-icon name="image-outline" size="large" style="color: #D9D9D9;"></ion-icon>
-
-                <span>Clique duas vezes para escolher</span>
-                <div class="tooltip-recomendacao"></div>
-                `;
+            <ion-icon name="image-outline" size="large" style="color:#D9D9D9; pointer-events:none; user-select:none;"></ion-icon>
+            <span style="user-select:none; pointer-events:none;">Clique duas vezes para escolher</span>
+            <div class="tooltip-recomendacao" style="pointer-events:none; user-select:none;"></div>
+        `;
 
             const tooltip = div.querySelector('.tooltip-recomendacao');
             tooltip.style.position = 'absolute';
@@ -194,17 +232,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
             switch (tipo) {
                 case 'grande':
-                    tooltip.textContent = 'Tamanho recomendado: 1200x800px';
+                    tooltip.textContent = 'Tamanho recomendado: 800x800px';
                     break;
+                case 'medio':
+                    tooltip.textContent = 'Tamanho recomendado: 800x400px';
+                    break;
+
                 case 'pequeno':
-                    tooltip.textContent = 'Tamanho recomendado: 600x800px';
+                    tooltip.textContent = 'Tamanho recomendado: 600x600px';
                     break;
                 default:
-                    tooltip.textContent = 'Tamanho recomendado: 800x600px';
+                    if (gridType === '3x1') tooltip.textContent = 'Tamanho recomendado: 600x600px';
+                    else if (gridType === 'topo-grande') tooltip.textContent = 'Tamanho recomendado: 800x800px';
+                    else if (gridType === 'mosaico') tooltip.textContent = tipo === 'grande' ? '800x800px' : '600x600px';
+                    else tooltip.textContent = 'Tamanho recomendado: 800x600px';
             }
 
             div.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
             div.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+
+            const img = document.createElement('img');
+            img.style.display = 'none';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            div.appendChild(img);
+
+
+            if (gridType === 'mosaico') {
+                switch (tipo) {
+                    case 'grande':
+                        div.style.gridArea = 'grande';
+                        break;
+                    case 'pequeno1':
+                        div.style.gridArea = 'pequeno1';
+                        break;
+                    case 'pequeno2':
+                        div.style.gridArea = 'pequeno2';
+                        break;
+                    case 'baixo1':
+                        div.style.gridArea = 'baixo1';
+                        break;
+                    case 'baixo2':
+                        div.style.gridArea = 'baixo2';
+                        break;
+                }
+            }
+
+            if (imagensExistentes[index]) {
+                img.src = imagensExistentes[index];
+                img.style.display = 'block';
+                div.querySelector('ion-icon').style.display = 'none';
+                div.querySelector('span').style.display = 'none';
+            }
+
+            div.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                configurarEdicaoImagem(img);
+                img.dispatchEvent(new Event('dblclick'));
+            });
+
+            img.addEventListener('load', () => {
+                div.querySelector('ion-icon').style.display = 'none';
+                div.querySelector('span').style.display = 'none';
+                img.style.display = 'block';
+            });
 
             galeria.appendChild(div);
         });
@@ -315,8 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="opcoes-grid flex gap-2 mg-b-3">
       <button class="btn-grid btn btn-primary px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="2x1">2×1</button>
       <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="2x2">2×2</button>
-      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="1+2">1+2</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="1+2">1+2 Vertical</button>
       <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="3x1">3x1</button>
+        <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="topo-grande">1+2 Horizontal</button>
+        <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="mosaico">Mosaico</button>
+
+
     </div>
 
     <div class="galeria-imagens rounded-lg p-3 border" style="background: rgba(22, 22, 23, 0.8); border-color: #414141;"></div>

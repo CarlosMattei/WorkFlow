@@ -1,5 +1,5 @@
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, update, child, serverTimestamp, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, update, child, serverTimestamp, remove ,push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { iconeCurtida } from "/js/projects/curtirProjeto.js"
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -537,17 +537,19 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
         onValue(curtidaRef, (snapshot) => {
             if (snapshot.exists()) {
                 likeBtn.classList.add('curtido');
+                likeBtn.classList.remove('descurtido')
             } else {
-                likeBtn.classList.remove('curtido');
+                likeBtn.classList.add('descurtido');
+                likeBtn.classList.remove('curtido')
             }
         });
 
         likeBtn.onclick = async () => {
             const snapshot = await get(curtidaRef);
             if (snapshot.exists()) {
-                await remove(curtidaRef); // Descurtir
+                await remove(curtidaRef);
             } else {
-                await set(curtidaRef, true); // Curtir (sem timestamp)
+                await set(curtidaRef, true); 
             }
         };
     }
