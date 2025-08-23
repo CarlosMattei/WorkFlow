@@ -192,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 slots = ['grande', 'pequeno1', 'pequeno2', 'baixo1', 'baixo2'];
                 break;
         }
+        galeria.setAttribute('data-gridtype', gridType)
 
         slots.forEach((tipo, index) => {
             const div = document.createElement('div');
