@@ -505,14 +505,24 @@ footer {
     align-items: center;
     flex-direction: column;
     margin: 10px 0;
+    overflow: hidden;
     padding: 10px;
     background-color: #1e1e1e;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     width: 97%;
+    max-height: 500px;
+    height: 100%;
     text-align: center;
     position: relative;
     z-index: 999;
+}
+
+#previewImagemContainer img {
+    height: 100%;
+    aspect-ratio: auto;
+    width: 100%;
+    object-fit: contain;
 }
 
 .messages.no-scroll {
