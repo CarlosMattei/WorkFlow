@@ -1,5 +1,5 @@
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, update, child, serverTimestamp, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, update, child, serverTimestamp, remove, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { iconeCurtida } from "/js/projects/curtirProjeto.js"
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -28,6 +28,104 @@ const auth = getAuth();
 
 const container = document.getElementById("card-zone");
 const modal = document.getElementById("modal");
+
+function exibirGaleria(container, conteudo) {
+    const { gridType, slots: originalSlots } = conteudo;
+    let slots = originalSlots;
+
+    const galeria = document.createElement('div');
+    galeria.classList.add('galeria-imagens');
+    galeria.style.display = 'grid';
+    galeria.style.gridGap = '12px';
+    galeria.style.marginBottom = '20px';
+
+    switch (gridType) {
+        case '2x1':
+            galeria.style.gridTemplateColumns = '1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            galeria.style.gridTemplateRows = 'none';
+            galeria.style.gridTemplateAreas = 'none';
+            break;
+
+        case '2x2':
+            galeria.style.gridTemplateColumns = '1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            galeria.style.gridTemplateRows = 'none';
+            galeria.style.gridTemplateAreas = 'none';
+            break;
+
+        case '3x1':
+            galeria.style.gridTemplateColumns = '1fr 1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            galeria.style.gridTemplateRows = 'none';
+            galeria.style.gridTemplateAreas = 'none';
+            break;
+
+        case '1+2':
+            galeria.style.gridTemplateColumns = '2fr 1fr';
+            galeria.style.gridTemplateRows = '240px 240px';
+            galeria.style.gridTemplateAreas = `
+                "grande pequeno1"
+                "grande pequeno2"
+            `;
+            slots = [
+                { id: 'grande', img: originalSlots[0]?.img || null },
+                { id: 'pequeno1', img: originalSlots[1]?.img || null },
+                { id: 'pequeno2', img: originalSlots[2]?.img || null }
+            ];
+            break;
+
+        case 'topo-grande':
+            galeria.style.gridTemplateColumns = '1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            galeria.style.gridTemplateRows = 'none';
+            galeria.style.gridTemplateAreas = 'none';
+            slots = [
+                { id: 'grande', img: originalSlots[0]?.img || null },
+                { id: 'pequeno1', img: originalSlots[1]?.img || null }
+            ];
+            break;
+
+        case 'mosaico':
+            galeria.style.gridTemplateColumns = '2fr 1fr';
+            galeria.style.gridTemplateRows = '200px 200px 200px';
+            galeria.style.gridAutoRows = 'unset';
+            galeria.style.gridTemplateAreas = `
+                "grande pequeno1"
+                "grande pequeno2"
+                "baixo1 baixo2"
+            `;
+            slots = [
+                { id: 'grande', img: originalSlots[0]?.img || null },
+                { id: 'pequeno1', img: originalSlots[1]?.img || null },
+                { id: 'pequeno2', img: originalSlots[2]?.img || null },
+                { id: 'baixo1', img: originalSlots[3]?.img || null },
+                { id: 'baixo2', img: originalSlots[4]?.img || null }
+            ];
+            break;
+    }
+
+    slots.forEach(slot => {
+        const div = document.createElement('div');
+        div.classList.add('slot-imagem');
+
+        if (slot.id) div.style.gridArea = slot.id;
+
+        if (slot.img) {
+            const img = document.createElement('img');
+            img.src = slot.img;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '8px';
+            div.appendChild(img);
+        }
+
+        galeria.appendChild(div);
+    });
+
+    container.appendChild(galeria);
+}
 
 async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, userId }, cardIndex = 0) {
     const card = document.createElement("div");
@@ -133,7 +231,7 @@ async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, u
                 }
             })
         }
-        else{
+        else {
             svgCurtida.style.display = 'none'
         }
     })
@@ -160,7 +258,7 @@ async function criarCardProjeto(id, { titulo, descricao, dataCriacao, capaUrl, u
                 }
             })
         }
-        else{
+        else {
             svgFavorito.style.display = 'none'
             const likeBtn = document.getElementById('likeBtn');
             likeBtn.style.display = 'none'
@@ -364,6 +462,10 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
 
                             containerComponentes.appendChild(paletaDiv);
                         }
+                        else if (comp.tipo === 'galeria') {
+                            exibirGaleria(compDiv, comp.conteudo)
+                        }
+
                         else {
                             compDiv.textContent = `Tipo: ${comp.tipo || 'N/A'} - Conteúdo: ${comp.conteudo || 'Sem conteúdo'}`;
                         }
@@ -537,17 +639,19 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
         onValue(curtidaRef, (snapshot) => {
             if (snapshot.exists()) {
                 likeBtn.classList.add('curtido');
+                likeBtn.classList.remove('descurtido')
             } else {
-                likeBtn.classList.remove('curtido');
+                likeBtn.classList.add('descurtido');
+                likeBtn.classList.remove('curtido')
             }
         });
 
         likeBtn.onclick = async () => {
             const snapshot = await get(curtidaRef);
             if (snapshot.exists()) {
-                await remove(curtidaRef); // Descurtir
+                await remove(curtidaRef);
             } else {
-                await set(curtidaRef, true); // Curtir (sem timestamp)
+                await set(curtidaRef, true);
             }
         };
     }

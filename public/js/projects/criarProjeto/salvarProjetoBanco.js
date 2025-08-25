@@ -88,6 +88,19 @@ export async function salvarProjetoFirebase(editId = null) {
             } else if (tipo === 'paleta') {
                 conteudo = pegarCoresDaPaleta();
             }
+            else if (tipo === 'galeria'){
+                const galeria = componente.querySelector('.galeria-imagens')
+                const gridType = galeria.getAttribute('data-gridtype')
+
+                const slots = []
+
+                galeria.querySelectorAll('.slot-imagem').forEach(div => {
+                    const id = div.style.gridArea || div.getAttribute('data-slot') || null
+                    const img = div.querySelector('img')?.src || null
+                    slots.push({id, img})
+                })
+                conteudo = {gridType, slots}
+            }
 
             if (!conteudo || (Array.isArray(conteudo) && conteudo.length === 0)) {
                 console.warn('Conteúdo vazio, pulando componente.');
