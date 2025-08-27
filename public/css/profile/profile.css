@@ -1,6 +1,6 @@
 @import "../globals/globals.css";
 @import "../index/partials/card.css";
-@import "../index/partials/modals.css";
+@import "../components/modals.css";
 @import "proposal.css";
 
 @import "partials/layout.css";

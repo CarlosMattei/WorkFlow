@@ -896,7 +896,7 @@ async function abrirModalProjeto(projetoId) {
 
         modalBody.innerHTML = `
             ${cabecalhoHTML}
-            <div class="modal-componentes">
+            <div class="modal-componentes pd-x-10">
                 ${componentesHTML}
             </div>
             ${blocoExtraHTML}
