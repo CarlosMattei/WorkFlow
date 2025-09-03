@@ -22,6 +22,7 @@ const btnRegister = document.getElementById('btnCriarConta');
 const aRegister = document.getElementById('aRegister');
 const aLogin = document.getElementById('aLogin');
 const userControls = document.getElementById('userControls');
+const containerButtonSm = document.getElementById('containerButtonSm');
 const userPhoto = document.getElementById('userPhoto');
 const userPhotoDrop = document.getElementById('userPhotoDrop')
 const btnAdd = document.getElementById('btnAdd');
@@ -53,6 +54,7 @@ onAuthStateChanged(auth, async (user) => {
         if (btnLogin) btnLogin.style.display = 'none';
         if (btnRegister) btnRegister.style.display = 'none';
         if (userControls) userControls.style.display = 'flex';
+        if (containerButtonSm) containerButtonSm.style.display = 'flex';
 
         if (userPhoto) {
             const db = getDatabase();
@@ -152,6 +154,7 @@ onAuthStateChanged(auth, async (user) => {
         if (aLogin) aLogin.style.display = 'inline-block';
         if (aRegister) aRegister.style.display = 'inline-block';
         if (userControls) userControls.style.display = 'none';
+        if (containerButtonSm) containerButtonSm.style.display = 'none';
 
         if (userPhoto) {
             userPhoto.style.backgroundImage = `url('${DEFAULT_USER_PHOTO}')`;
