@@ -465,6 +465,27 @@ async function abrirModalProjeto(idProjeto, titulo, descricao, dataCriacao, user
                         else if (comp.tipo === 'galeria') {
                             exibirGaleria(compDiv, comp.conteudo)
                         }
+                        else if (comp.tipo === 'link') {
+                            const linkData = comp.conteudo;
+
+                            const a = document.createElement('a');
+                            a.textContent = linkData.texto || 'Novo link';
+                            a.href = linkData.url || '#';
+                            a.target = '_blank';
+                            a.rel = 'noopener noreferrer';
+                            a.style.color = '#3B82F6';
+                            a.style.textDecoration = 'underline';
+                            a.style.cursor = 'pointer';
+                            a.style.display = 'inline-block';
+                            a.style.marginBottom = '10px';
+
+                            a.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                window.open(linkData.url, '_blank');
+                            });
+
+                            compDiv.appendChild(a);
+                        }
 
                         else {
                             compDiv.textContent = `Tipo: ${comp.tipo || 'N/A'} - Conteúdo: ${comp.conteudo || 'Sem conteúdo'}`;

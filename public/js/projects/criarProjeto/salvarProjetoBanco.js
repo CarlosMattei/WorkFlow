@@ -1,5 +1,5 @@
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, push, set,get, update ,serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, set, get, update, serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { capaUrlGlobal } from "./criarComponente.js";
 
 
@@ -60,7 +60,7 @@ export async function salvarProjetoFirebase(editId = null) {
         titulo,
         tags,
         capaUrl: capaUrlGlobal,
-        dataCriacao,               
+        dataCriacao,
         dataAtualizacao: new Date().toISOString()
     };
 
@@ -88,7 +88,7 @@ export async function salvarProjetoFirebase(editId = null) {
             } else if (tipo === 'paleta') {
                 conteudo = pegarCoresDaPaleta();
             }
-            else if (tipo === 'galeria'){
+            else if (tipo === 'galeria') {
                 const galeria = componente.querySelector('.galeria-imagens')
                 const gridType = galeria.getAttribute('data-gridtype')
 
@@ -97,9 +97,15 @@ export async function salvarProjetoFirebase(editId = null) {
                 galeria.querySelectorAll('.slot-imagem').forEach(div => {
                     const id = div.style.gridArea || div.getAttribute('data-slot') || null
                     const img = div.querySelector('img')?.src || null
-                    slots.push({id, img})
+                    slots.push({ id, img })
                 })
-                conteudo = {gridType, slots}
+                conteudo = { gridType, slots }
+            }
+            else if (tipo === 'link') {
+                const p = componente.querySelector('p')
+                const texto = p?.textContent.trim() || ''
+                const url = p?.textContent.trim() || ''
+                conteudo = { texto, url }
             }
 
             if (!conteudo || (Array.isArray(conteudo) && conteudo.length === 0)) {

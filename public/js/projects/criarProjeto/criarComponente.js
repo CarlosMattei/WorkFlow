@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case '2x1':
                 galeria.style.gridTemplateColumns = '1fr 1fr';
                 galeria.style.gridAutoRows = '240px';
-                galeria.style.gridTemplateRows = 'none';   
-                galeria.style.gridTemplateAreas = 'none';  
+                galeria.style.gridTemplateRows = 'none';
+                galeria.style.gridTemplateAreas = 'none';
                 slots = [1, 1];
                 break;
 
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'mosaico':
                 galeria.style.gridTemplateColumns = '2fr 1fr';
                 galeria.style.gridTemplateRows = '200px 200px 200px';
-                galeria.style.gridAutoRows = 'unset'; 
+                galeria.style.gridAutoRows = 'unset';
                 galeria.style.gridTemplateAreas = `
                     "grande pequeno1"
                     "grande pequeno2"
@@ -480,6 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
             }
+            if (type === 'link') configurarEdicaoLink(novaComp.querySelector('p'));
 
 
 
@@ -497,6 +498,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+
+    function AtivarModoEdicaoLink(pElement) {
+        const textoAtual = pElement.textContent;
+
+        const textArea = document.createElement('textarea');
+        textArea.className = 'text-blue-400 underline cursor-pointer';
+        textArea.value = textoAtual;
+        textArea.style.width = '100%';
+        textArea.style.minHeight = '60px';
+
+        pElement.replaceWith(textArea);
+        textArea.focus();
+
+        function salvarEdicao() {
+            const novoTexto = textArea.value.trim() || 'Novo link';
+
+            const novoP = document.createElement('p');
+            novoP.className = 'text-blue-400 underline cursor-pointer';
+            novoP.textContent = novoTexto;
+
+            const urlAtual = pElement.getAttribute('data-url') || '#';
+            novoP.setAttribute('data-url', urlAtual);
+
+            textArea.replaceWith(novoP);
+            configurarEdicaoLink(novoP);
+
+        }
+
+        textArea.addEventListener('blur', salvarEdicao);
+        textArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                textArea.blur();
+            }
+        });
+    }
+
+    function configurarEdicaoLink(pElement) {
+        pElement.addEventListener('dblclick', () => AtivarModoEdicaoLink(pElement));
+    }
 
     function AtivarModoEdicaoTexto(pElement) {
         const textoAtual = pElement.textContent;

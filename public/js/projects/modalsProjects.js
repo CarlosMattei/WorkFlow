@@ -9,6 +9,7 @@ cards.forEach(card => {
 
 const modal = document.getElementById('modal');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalCLosebtnIsland = document.getElementById('modalCloseBtnIsland')
 const floatingIsland = document.getElementById('floatingIsland');
 const commentBtn = document.getElementById('commentBtn');
 const likeBtn = document.getElementById('likeBtn');
@@ -58,7 +59,7 @@ modal.addEventListener('click', (event) => {
 
 // Fechar ao clicar no botão
 modalCloseBtn.addEventListener('click', closeModal);
-
+modalCLosebtnIsland.addEventListener('click', closeModal)
 // Botão de comentar
 commentBtn.addEventListener('click', scrollToComments);
 
