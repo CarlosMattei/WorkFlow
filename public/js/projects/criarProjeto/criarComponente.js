@@ -840,6 +840,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>`;
                         break;
+                    case 'galeria':
+                        html = `<div class="componente-galeria-wrapper"></div>`;
+                        break;
                     default:
                         console.warn("Tipo de componente desconhecido:", tipo);
                         continue;
@@ -871,6 +874,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         handle: '.drag-handle-cor'
                     });
                 }
+                if(tipo === 'galeria'){
+                    carregarGaleriaExistente(novoComponente, conteudo)
+                }
 
                 const btnRemover = novoComponente.querySelector('.btn-remover');
                 btnRemover.addEventListener('click', () => {
@@ -890,3 +896,156 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarProjetoExistente(editId);
     }
 });
+
+function carregarGaleriaExistente(novoComponente, conteudo) {
+    const html = `
+<div class="PGaleria componente-removivel w-full" data-tipo="galeria" style="position: relative; z-index: 9999">
+  <button class="btn-remover absolute top-2 right-2 w-6 h-6 rounded text-xs z-10 transition-all duration-200" title="Remover componente">&times;</button>
+  <span class="drag-handle absolute top-2 right-10 px-1 py-1 rounded text-xs cursor-move z-10 transition-all duration-200">≡</span>
+  
+  <div class="pd-y-3">
+    <h1 class="text-lg mg-b-2 font-medium" style="color: #D9D9D9;">Galeria Personalizada</h1>
+    
+    <div class="opcoes-grid flex gap-2 mg-b-3">
+      <button class="btn-grid btn btn-primary px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="2x1">2×1</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="2x2">2×2</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="1+2">1+2 Vertical</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="3x1">3x1</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="topo-grande">1+2 Horizontal</button>
+      <button class="btn-grid btn btn-gray px-3 py-1.5 text-sm flex items-center gap-1 rounded border transition-all duration-200" data-grid="mosaico">Mosaico</button>
+    </div>
+
+    <div class="galeria-imagens rounded-lg p-3 border" style="background: rgba(22, 22, 23, 0.8); border-color: #414141;"></div>
+  </div>
+
+  <style>
+    .slot-imagem:hover {
+      background: linear-gradient(135deg, #2C2C2C, #414141) !important;
+      border-color: #D9D9D9 !important;
+      color: #D9D9D9 !important;
+    }
+  </style>
+</div>`;
+
+    novoComponente.innerHTML = html;
+
+    const galeria = novoComponente.querySelector('.galeria-imagens');
+    let imagensExistentes = conteudo?.slots?.map(slot => slot.img) || [];
+    let gridType = conteudo?.gridType || '2x1';
+
+    // Reaplicar layout de grid
+    let slots = [];
+    switch (gridType) {
+        case '2x1':
+            galeria.style.display = 'grid';
+            galeria.style.gridTemplateColumns = '1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            slots = [1, 1];
+            break;
+        case '2x2':
+            galeria.style.display = 'grid';
+            galeria.style.gridTemplateColumns = '1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            slots = [1, 1, 1, 1];
+            break;
+        case '3x1':
+            galeria.style.display = 'grid';
+            galeria.style.gridTemplateColumns = '1fr 1fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            slots = [1, 1, 1];
+            break;
+        case '1+2':
+        case 'topo-grande':
+            galeria.style.display = 'grid';
+            galeria.style.gridTemplateColumns = '2fr 1fr';
+            galeria.style.gridAutoRows = '240px';
+            slots = ['grande', 'pequeno', 'pequeno'];
+            break;
+        case 'mosaico':
+            galeria.style.display = 'grid';
+            galeria.style.gridTemplateColumns = '2fr 1fr';
+            galeria.style.gridTemplateRows = '200px 200px 200px';
+            slots = ['grande', 'pequeno1', 'pequeno2', 'baixo1', 'baixo2'];
+            break;
+    }
+
+    galeria.setAttribute('data-gridtype', gridType);
+
+    // Preencher slots com imagens existentes
+    slots.forEach((tipo, index) => {
+        const div = document.createElement('div');
+        div.classList.add(
+            'slot-imagem', 'flex', 'flex-col', 'items-center', 'justify-center',
+            'text-xs', 'rounded', 'border', 'border-dashed', 'transition-all', 'duration-200', 'cursor-pointer'
+        );
+        div.style.background = 'linear-gradient(135deg, #1E1E1E, #2C2C2C)';
+        div.style.color = 'rgba(217, 217, 217, 0.7)';
+        div.style.position = 'relative';
+
+        if (tipo === 'grande') {
+            div.style.gridRow = 'span 2';
+            if (gridType === 'topo-grande') div.style.gridColumn = '1 / -1';
+        }
+
+        div.innerHTML = `
+            <ion-icon name="image-outline" size="large" style="color:#D9D9D9; pointer-events:none; user-select:none;"></ion-icon>
+            <span style="user-select:none; pointer-events:none;">Clique duas vezes para escolher</span>
+            <div class="tooltip-recomendacao" style="pointer-events:none; user-select:none;"></div>
+        `;
+
+        const tooltip = div.querySelector('.tooltip-recomendacao');
+        tooltip.style.position = 'absolute';
+        tooltip.style.top = '-24px';
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translateX(-50%)';
+        tooltip.style.background = '#A06420';
+        tooltip.style.color = '#fff';
+        tooltip.style.padding = '2px 6px';
+        tooltip.style.borderRadius = '3px';
+        tooltip.style.fontSize = '10px';
+        tooltip.style.whiteSpace = 'nowrap';
+        tooltip.style.opacity = '0';
+        tooltip.style.transition = 'opacity 0.2s';
+
+        switch (tipo) {
+            case 'grande':
+                tooltip.textContent = 'Tamanho recomendado: 800x800px';
+                break;
+            case 'medio':
+                tooltip.textContent = 'Tamanho recomendado: 800x400px';
+                break;
+            case 'pequeno':
+                tooltip.textContent = 'Tamanho recomendado: 600x600px';
+                break;
+            default:
+                tooltip.textContent = 'Tamanho recomendado: 800x600px';
+        }
+
+        div.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+        div.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+
+        const img = document.createElement('img');
+        img.style.display = 'none';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        if (imagensExistentes[index]) {
+            img.src = imagensExistentes[index];
+            img.style.display = 'block';
+            div.querySelector('ion-icon').style.display = 'none';
+            div.querySelector('span').style.display = 'none';
+        }
+
+        div.appendChild(img);
+
+        div.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            configurarEdicaoImagem(img);
+            img.dispatchEvent(new Event('dblclick'));
+        });
+
+        galeria.appendChild(div);
+    });
+}
+

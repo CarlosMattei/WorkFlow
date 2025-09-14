@@ -77,12 +77,16 @@ function exibirGaleria(container, conteudo) {
 
         case 'topo-grande':
             galeria.style.gridTemplateColumns = '1fr 1fr';
-            galeria.style.gridAutoRows = '240px';
-            galeria.style.gridTemplateRows = 'none';
-            galeria.style.gridTemplateAreas = 'none';
+            galeria.style.gridTemplateRows = '480px 240px';
+            galeria.style.gridAutoRows = 'unset';
+            galeria.style.gridTemplateAreas = `
+                "grande grande"
+                "pequeno1 pequeno2"
+            `;
             slots = [
                 { id: 'grande', img: originalSlots[0]?.img || null },
-                { id: 'pequeno1', img: originalSlots[1]?.img || null }
+                { id: 'pequeno1', img: originalSlots[1]?.img || null },
+                { id: 'pequeno2', img: originalSlots[2]?.img || null }
             ];
             break;
 

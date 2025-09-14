@@ -71,9 +71,11 @@ onAuthStateChanged(auth, async (user) => {
                 }
                 else {
                     snapshot = await get(contratanteRef)
-                    btnAdd.textContent = 'Criar Proposta'
                     if (snapshot.exists()) {
+                        btnAdd.textContent = 'Criar Proposta'
                         userData = snapshot.val()
+
+                        carregarNotificacoesCandidaturas(uid)
                     }
                 }
                 const userNameSpan = document.querySelector(".user-name");
@@ -258,12 +260,14 @@ async function escutarMensagensNaoLidasNavbar(uid) {
 
 let totalMensagensNaoLidas = 0;
 let totalNotificacoesProjeto = 0;
+let totalCandidaturasNaoVistas = 0;
 
 function atualizarBadgeNavbar() {
     const badge = document.getElementById('badge-mensagens');
     if (!badge) return;
 
-    const total = totalMensagensNaoLidas + totalNotificacoesProjeto;
+    const total = totalMensagensNaoLidas + totalNotificacoesProjeto + totalCandidaturasNaoVistas
+
     if (total > 0) {
         badge.style.display = 'flex';
         badge.textContent = total > 99 ? '99+' : total;
@@ -344,4 +348,76 @@ function criarNotificacaoInfo(projeto) {
         </div>
     `;
     container.appendChild(notificacao);
+}
+const candidaturasNotificadas = new Set()
+function carregarNotificacoesCandidaturas(uidContratante) {
+    const container = document.querySelector('.notficacoesContent');
+
+    const propostasRef = ref(db, 'Propostas');
+    onValue(propostasRef, async (snapPropostas) => {
+        if (!snapPropostas.exists()) {
+            atualizarBadgeNavbar();
+            return;
+        }
+
+        const propostas = snapPropostas.val();
+
+        // Filtra apenas propostas do contratante logado
+        const minhasPropostas = Object.entries(propostas)
+            .filter(([propostaId, proposta]) => proposta.autorId === uidContratante);
+
+        totalCandidaturasNaoVistas = 0; // reseta contagem
+        container.innerHTML = ''; // limpa temporariamente para recarregar notificações
+
+        for (const [propostaId, proposta] of minhasPropostas) {
+            const candidaturasRef = ref(db, `Candidaturas/${propostaId}`);
+            const snapCandidaturas = await get(candidaturasRef);
+            const candidaturas = snapCandidaturas.exists() ? snapCandidaturas.val() : {};
+            const totalCandidaturas = Object.keys(candidaturas).length;
+
+            if (totalCandidaturas === 0 || candidaturasNotificadas.has(propostaId)) continue;
+
+            totalCandidaturasNaoVistas++; // conta para o badge
+
+            const notificacao = document.createElement('div');
+            notificacao.className = 'notificacaoItem info rounded-lg pd-1 cursor-pointer justify-center items-center flex flex-row gap-2';
+            notificacao.innerHTML = `
+                <div class="icon bg-gray-50 rounded-xl" style="width: 60px; height: 55px; overflow: hidden;">
+                    <img src="${proposta.fotoAutorUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
+                         alt="Capa do Projeto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="notificationContent flex flex-col gap-0">
+                    <h1 class="text-base text-white mg-0 text-bold">Nova Candidatura!</h1>
+                    <p class="messagecontent text-xs text-white mg-0 text-regular">
+                        Sua proposta <strong>${proposta.titulo}</strong> recebeu <strong>${totalCandidaturas}</strong> candidatura(s).
+                    </p>
+                    <button class="confirmarCandidatura btn btn-primary text-xs bg-green-500 text-white rounded px-2 py-1 mt-1">
+                        Estou ciente
+                    </button>
+                </div>
+            `;
+
+            // Botão confirma a notificação
+            notificacao.querySelector('.confirmarCandidatura').addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificacao.remove();
+                candidaturasNotificadas.add(propostaId);
+                totalCandidaturasNaoVistas--;
+                atualizarBadgeNavbar();
+            });
+
+            // Clique na notificação leva para o perfil do contratante
+            notificacao.addEventListener('click', () => {
+                window.location.href = `/contratante/${uidContratante}`;
+            });
+
+            container.appendChild(notificacao);
+        }
+
+        atualizarBadgeNavbar(); // atualiza badge com o total correto
+
+        if (!container.hasChildNodes()) {
+            container.innerHTML = '<p class="text-white">Sem notificações</p>';
+        }
+    });
 }

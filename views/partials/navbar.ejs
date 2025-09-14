@@ -5,18 +5,19 @@
                 <img class="logo" src="/assets/image/logoWorkFlow-com-nome.svg" alt="logoWorkFlow">
             </a>
             <div class="flex flex-row gap-4 items-center mg-0">
-                    <div id="containerButtonSm" class="containerButtonSm" style="display: none;">
-                        <button id="btnProjetoTurboSM" class="btnProjetoTurbo sm btn sm-only" title="Impulsionar seu projeto">
-                            <p class="flex flex-row text-white text-sm mg-0 pd-x-1">
-                                <span>T</span>
-                                <span>u</span>
-                                <span>r</span>
-                                <span>b</span>
-                                <span>o</span>
-                            </p>
-                            <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon>
-                        </button>
-                    </div>
+                <div id="containerButtonSm" class="containerButtonSm" style="display: none;">
+                    <button id="btnProjetoTurboSM" class="btnProjetoTurbo sm btn sm-only"
+                        title="Impulsionar seu projeto">
+                        <p class="flex flex-row text-white text-sm mg-0 pd-x-1">
+                            <span>T</span>
+                            <span>u</span>
+                            <span>r</span>
+                            <span>b</span>
+                            <span>o</span>
+                        </p>
+                        <ion-icon name="flash-outline" class="text-white text-xl pd-x-1"></ion-icon>
+                    </button>
+                </div>
                 </button>
                 <div class="hamburger">
                     <span></span>
@@ -47,9 +48,10 @@
             </a>
             <a class="aRegister flex flex-row gap-2" id="aRegister" href="/register">
                 <button class="btn btn-purple text-sm registrar buttonNav" id="btnCriarConta">Criar Conta</button>
-                </a>
+            </a>
             <div id="userControls" class="userControls" style="display:none; align-items: center; gap: 12px;">
-                <button id="btnProjetoTurbo-lg" class="btnProjetoTurbo large btn lg-only" title="Impulsionar seu projeto">
+                <button id="btnProjetoTurbo-lg" class="btnProjetoTurbo large btn lg-only"
+                    title="Impulsionar seu projeto">
                     <p class="flex flex-row text-white text-sm mg-0 pd-x-1 underline-none">
                         Turbo
                     </p>
@@ -158,11 +160,11 @@
             <p class="mg-0 text-left text-xl">Benefícios</p>
             <div class="beneficios">
                 <ul class="flex flex-col gap-3" style="list-style-position: inside;">
-                    <li class="text-left text-white text-lg mg-0">Tenha seu projeto no topo da galeria de projetos.</li>
-                    <li class="text-left text-white text-lg mg-0">Seja visto por mais clientes e contratantes e
-                        freelancers.</li>
-                    <li class="text-left text-white text-lg mg-0">Seu projeto é colocado automaticamente no melhor
-                        horário.</li>
+                    <li class="text-left text-white text-lg mg-0">Coloque seu projeto no topo e destaque-se.
+                    </li>
+                    <li class="text-left text-white text-lg mg-0">Aumente suas chances de ser visto por mais clientes.
+                    </li>
+                    <li class="text-left text-white text-lg mg-0">Seu projeto será promovido automaticamente</li>
                 </ul>
             </div>
             <button class="btn btn-purple">Aproveitar</button>
@@ -571,13 +573,13 @@
 
 <script>
     const btnProjetoTurbo = document.getElementById('btnProjetoTurbo');
-const btnProjetoTurboLg = document.getElementById('btnProjetoTurbo-lg');
+    const btnProjetoTurboLg = document.getElementById('btnProjetoTurbo-lg');
 
-if (user) {
-    if (btnProjetoTurbo) btnProjetoTurbo.style.display = 'flex';
-    if (btnProjetoTurboLg) btnProjetoTurboLg.style.display = 'flex';
-} else {
-    if (btnProjetoTurbo) btnProjetoTurbo.style.display = 'none';
-    if (btnProjetoTurboLg) btnProjetoTurboLg.style.display = 'none';
-}
+    if (user) {
+        if (btnProjetoTurbo) btnProjetoTurbo.style.display = 'flex';
+        if (btnProjetoTurboLg) btnProjetoTurboLg.style.display = 'flex';
+    } else {
+        if (btnProjetoTurbo) btnProjetoTurbo.style.display = 'none';
+        if (btnProjetoTurboLg) btnProjetoTurboLg.style.display = 'none';
+    }
 </script>
