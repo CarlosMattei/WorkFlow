@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="css\projects\turbo.css">
+
+
+<div class="containerTurbo flex flex-row">
+    <section class="seletorDeProjetos flex">
+        <div class="projects-selector-header">
+            <h2 class="text-xl mg-0 text-white">Selecione os projetos para turbinar</h2>
+            <p class="text-sm text-gray-25">Escolha os projetos que deseja destacar</p>
+        </div>
+        
+        <div class="projects-list flex flex-col gap-2">
+            <!-- Projetos serão carregados aqui dinamicamente -->
+        </div>
+    </section>
+    
+    <section class="detalhesTurbo flex flex-col pd-4 bg-gray-75 overflow-y-auto">
+        <div class="containerProjetosSelecionados flex flex-col gap-4 mb-4">
+            <h1 class="text text-2xl mg-0">Projetos adicionados para o Turbo</h1>
+            
+            <div class="cardTurbo pd-3 border border-solid border-gray-50 flex rounded-xl">
+                <div class="thumbnail bg-gray-50"></div>
+                <div class="infos flex flex-col flex-1 pd-l-2">
+                    <h2 class="text text-xl mg-0">Nome do Projeto</h2>
+                    <p class="text text-sm mg-0">Descrição do projeto</p>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-warning" aria-label="Remover projeto">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <div class="containerFinalizar pd-4 flex flex-col bg-gray-50 rounded-xl gap-4">
+            <div class="precoTurbo flex flex-row justify-between align-center">
+                <h2 class="text text-white text-xl font-normal mg-0">Preço final</h2>
+                <h2 class="text text-white text-xl mg-0">R$ <span class="preco-turbo-final">150,00</span></h2>
+            </div>
+            <button class="btn btn-primary w-full">Finalizar</button>
+            <a href="/"><button class="btn btn-ghost btn-danger w-full">Cancelar</button></a>
+        </div>
+    </section>
+</div>
+
+<!-- Loader para carregamento de conteúdo -->
+<div class="loader-container" style="display: none;">
+    <div class="loader"></div>
+</div>

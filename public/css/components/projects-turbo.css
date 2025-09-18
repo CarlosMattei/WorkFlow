@@ -1,0 +1,17 @@
+
+.cardsTurbo {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: 10px;
+}
+
+.cardTurbinado {
+    aspect-ratio: 4 / 3;
+    grid-column-end: span 3;
+    border-radius: 12px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: var(--gray-75);
+}
