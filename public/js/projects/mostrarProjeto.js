@@ -29,6 +29,101 @@ const auth = getAuth();
 const container = document.getElementById("card-zone");
 const modal = document.getElementById("modal");
 
+async function carregarProjetosTurbinados() {
+    const dbRef = ref(db);
+    const containerTurbo = document.querySelector('.cardsTurbo');
+    containerTurbo.innerHTML = '';
+
+    try {
+        const snapshot = await get(child(dbRef, `Projetos`));
+        if (!snapshot.exists()) return console.log("Nenhum projeto encontrado.");
+
+        const projetos = snapshot.val();
+
+        for (const [id, dados] of Object.entries(projetos)) {
+            if (!dados.turbinado) continue;
+
+            // Pega dados do autor
+            let autorNome = 'Desconhecido';
+            let autorFoto = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+            if (dados.userId) {
+                const autorSnap = await get(child(dbRef, `Freelancer/${dados.userId}`));
+                if (autorSnap.exists()) {
+                    const autor = autorSnap.val();
+                    autorNome = autor.nome || autorNome;
+                    autorFoto = autor.foto_perfil || autorFoto;
+                }
+            }
+
+            const card = document.createElement('div');
+            card.className = 'cardTurbinado';
+            card.style.position = 'relative';
+            card.style.cursor = 'pointer';
+            card.style.borderRadius = '12px';
+            card.innerHTML = `
+                <div class="capaTurbo" style="background-image: url('${dados.capaUrl || ''}'); width: 100%; height: 250px; background-size: cover; background-position: center; border-radius: 12px;"></div>
+                
+                <div class="overlayTurbo" style="
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+                    color: white;
+                    padding: 10px;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    border-radius: 0 0 12px 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                ">
+                    <img src="${autorFoto}" alt="${autorNome}" style="
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        border: 2px solid #5274D9;
+                        object-fit: cover;
+                    ">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1rem;">${dados.titulo || 'Sem título'}</h3>
+                        <span style="font-size: 0.8rem;">${autorNome}</span>
+                    </div>
+                </div>
+            `;
+
+            // Exibe overlay ao passar o mouse
+            card.addEventListener('mouseenter', () => {
+                card.querySelector('.overlayTurbo').style.opacity = 1;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('.overlayTurbo').style.opacity = 0;
+            });
+
+            // Abre modal ao clicar
+            card.addEventListener('click', () => {
+                abrirModalProjeto(
+                    id,
+                    dados.titulo,
+                    dados.descricao,
+                    dados.dataCriacao,
+                    dados.userId,
+                    dados.tags || []
+                );
+            });
+
+            containerTurbo.appendChild(card);
+        }
+
+    } catch (error) {
+        console.error('Erro ao carregar projetos turbinados:', error);
+    }
+}
+
+carregarProjetosTurbinados();
+
+
 function exibirGaleria(container, conteudo) {
     const { gridType, slots: originalSlots } = conteudo;
     let slots = originalSlots;

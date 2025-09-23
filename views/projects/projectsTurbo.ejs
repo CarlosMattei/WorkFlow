@@ -21,7 +21,7 @@
                 <div class="thumbnail bg-gray-50"></div>
                 <div class="infos flex flex-col flex-1 pd-l-2">
                     <h2 class="text text-xl mg-0">Nome do Projeto</h2>
-                    <p class="text text-sm mg-0">Descrição do projeto</p>
+                    <p class="text text-sm mg-0">Data Criação: </p>
                 </div>
                 <div class="acoes">
                     <button class="btn btn-warning" aria-label="Remover projeto">
@@ -34,9 +34,9 @@
         <div class="containerFinalizar pd-4 flex flex-col bg-gray-50 rounded-xl gap-4">
             <div class="precoTurbo flex flex-row justify-between align-center">
                 <h2 class="text text-white text-xl font-normal mg-0">Preço final</h2>
-                <h2 class="text text-white text-xl mg-0">R$ <span class="preco-turbo-final">150,00</span></h2>
+                <h2 class="text text-white text-xl mg-0">R$ <span class="preco-turbo-final">30,00</span></h2>
             </div>
-            <button class="btn btn-primary w-full">Finalizar</button>
+            <button id="btnFinalizar" class="btn btn-primary w-full">Finalizar</button>
             <a href="/"><button class="btn btn-ghost btn-danger w-full">Cancelar</button></a>
         </div>
     </section>
@@ -46,3 +46,5 @@
 <div class="loader-container" style="display: none;">
     <div class="loader"></div>
 </div>
+
+<script type="module" src="/js/projetosTurbos/turbo.js"></script>
