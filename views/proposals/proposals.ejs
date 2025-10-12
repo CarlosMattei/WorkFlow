@@ -195,6 +195,10 @@ function formatarTempo(ms) {
 }
 
 function renderizarPropostas(propostasFiltradas) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
+
     propostasContainer.innerHTML = '';
     Object.values(countdownIntervals).forEach(clearInterval);
     countdownIntervals = {};
@@ -208,12 +212,11 @@ function renderizarPropostas(propostasFiltradas) {
 
     propostasFiltradas.forEach(p => {
         const dataExpiracao = p.dataExpiracao ? new Date(p.dataExpiracao) : null;
-        
-        if (dataExpiracao && agora > dataExpiracao) {
-            return; 
-        }
+        if (dataExpiracao && agora > dataExpiracao) return; 
 
-        const tagsHtml = Array.isArray(p.tags) ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
+        const tagsHtml = Array.isArray(p.tags)
+            ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+            : '';
 
         let iconesDeContatoHtml = '';
         if (p.meiosDeContato) {
@@ -225,9 +228,9 @@ function renderizarPropostas(propostasFiltradas) {
                 linkedin: 'logo-linkedin',
                 outro: 'ellipsis-horizontal-outline'
             };
-            
+
             iconesDeContatoHtml = Object.entries(p.meiosDeContato)
-                .filter(([, value]) => value) 
+                .filter(([, value]) => value)
                 .map(([key]) => {
                     const iconName = iconMap[key] || 'ellipsis-horizontal-outline';
                     const contatoDetalhe = p.contatosDetalhes?.[key] || '';
@@ -243,7 +246,7 @@ function renderizarPropostas(propostasFiltradas) {
         const card = document.createElement('div');
         card.classList.add('proposta-card');
         card.dataset.propostaId = p.id;
-        
+
         card.innerHTML = `
             <div class="card-header">
                 <div class="card-title">
@@ -251,16 +254,16 @@ function renderizarPropostas(propostasFiltradas) {
                     <div class="card-price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
                 </div>
                 <p class="card-date">Criado em ${formatarData(p.datacriacao)}</p>
-                    <div class="duration-info">
-                        <span id="countdown-${p.id}"></span>
-                    </div>
+                <div class="duration-info">
+                    <span id="countdown-${p.id}"></span>
+                </div>
             </div>
-            
+
             <div class="card-body">
                 <p class="card-description">${p.descricao || 'Nenhuma descrição fornecida.'}</p>
                 <div class="card-tags">${tagsHtml}</div>
             </div>
-            
+
             <div class="card-footer">
                 <div class="client-info">
                     <a href="/perfil?id=${p.autorId}" class="profile-link">
@@ -273,7 +276,11 @@ function renderizarPropostas(propostasFiltradas) {
                         ${iconesDeContatoHtml}
                     </div>
                 </div>
-                <button class="enviar">Se candidatar</button>
+                ${
+                    (p.autorId !== userId)
+                        ? `<button class="enviar">Se candidatar</button>`
+                        : ''
+                }
             </div>
         `;
 
@@ -292,17 +299,18 @@ function renderizarPropostas(propostasFiltradas) {
                     countdownEl.textContent = formatarTempo(tempoRestante) + ' para expirar';
                 }
             };
-            
+
             updateCountdown();
             countdownIntervals[p.id] = setInterval(updateCountdown, 1000);
         } else {
             document.getElementById(`countdown-${p.id}`).textContent = 'Tempo Indefinido';
         }
     });
-    
+
     adicionarEventoBotaoCandidatarse();
     adicionarEventosDeContato();
 }
+
 
 function adicionarEventosDeContato() {
     document.querySelectorAll('.contact-icon').forEach(icon => {
