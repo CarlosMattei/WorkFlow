@@ -34,50 +34,54 @@ const notificacoes = document.getElementById('notificacoes');
 const perfilLink = document.querySelector("#dropDownMenu a[href='/perfil']")
 
 onAuthStateChanged(auth, async (user) => {
-    const uid = user.uid
+    const uid = user?.uid;
+
+    const btnTurboSM = document.getElementById("btnProjetoTurboSM");
+    const btnTurboLG = document.getElementById("btnProjetoTurbo-lg");
 
     if (user) {
-        escutarMensagensNaoLidasNavbar(uid)
+        escutarMensagensNaoLidasNavbar(uid);
         carregarNotificacoesInfo(uid);
 
-
-        const statusRef = ref(db, 'status/' + uid)
+        const statusRef = ref(db, 'status/' + uid);
         await update(statusRef, {
             online: true,
             last_seen: Date.now()
-        })
+        });
 
         onDisconnect(statusRef).update({
             online: false,
             last_seen: Date.now()
-        })
+        });
+
         if (btnLogin) btnLogin.style.display = 'none';
         if (btnRegister) btnRegister.style.display = 'none';
         if (userControls) userControls.style.display = 'flex';
         if (containerButtonSm) containerButtonSm.style.display = 'flex';
 
         if (userPhoto) {
-            const db = getDatabase();
-
-            const freelancerRef = ref(db, 'Freelancer/' + uid);
-            const contratanteRef = ref(db, 'Contratante/' + uid);
             try {
-                let userData = null
+                const freelancerRef = ref(db, 'Freelancer/' + uid);
+                const contratanteRef = ref(db, 'Contratante/' + uid);
+
+                let userData = null;
+                let tipoUsuario = null;
+
                 let snapshot = await get(freelancerRef);
-
                 if (snapshot.exists()) {
-                    userData = snapshot.val()
-                    btnAdd.textContent = 'Criar Projeto'
-                }
-                else {
-                    snapshot = await get(contratanteRef)
+                    userData = snapshot.val();
+                    tipoUsuario = "Freelancer";
+                    btnAdd.textContent = 'Criar Projeto';
+                } else {
+                    snapshot = await get(contratanteRef);
                     if (snapshot.exists()) {
-                        btnAdd.textContent = 'Criar Proposta'
-                        userData = snapshot.val()
-
-                        carregarNotificacoesCandidaturas(uid)
+                        userData = snapshot.val();
+                        tipoUsuario = "Contratante";
+                        btnAdd.textContent = 'Criar Proposta';
+                        carregarNotificacoesCandidaturas(uid);
                     }
                 }
+
                 const userNameSpan = document.querySelector(".user-name");
                 if (userData?.nome && userNameSpan) {
                     userNameSpan.textContent = userData.nome;
@@ -88,15 +92,23 @@ onAuthStateChanged(auth, async (user) => {
                         uid,
                         nome: userData?.nome,
                         foto_perfil: userData?.foto_perfil
-                    }))
-                    localStorage.setItem('cacheUsuarioTempo', Date.now())
+                    }));
+                    localStorage.setItem('cacheUsuarioTempo', Date.now());
                 }
-                const photoUrl = userData?.foto_perfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
-                userPhoto.style.backgroundImage = `url('${photoUrl}')`
-                userPhoto.style.display = 'block'
+                const photoUrl = userData?.foto_perfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                userPhoto.style.backgroundImage = `url('${photoUrl}')`;
+                userPhoto.style.display = 'block';
+                if (userPhotoDrop) userPhotoDrop.src = photoUrl;
 
-                if (userPhotoDrop) userPhotoDrop.src = photoUrl
+                if (tipoUsuario === "Contratante") {
+                    if (btnTurboSM) btnTurboSM.remove();
+                    if (btnTurboLG) btnTurboLG.remove();
+                } else if (tipoUsuario === "Freelancer") {
+                    if (btnTurboSM) btnTurboSM.style.display = "flex";
+                    if (btnTurboLG) btnTurboLG.style.display = "flex";
+                }
+
             } catch (error) {
                 console.error("Erro ao buscar avatar:", error);
                 userPhoto.style.backgroundImage = `url('https://cdn-icons-png.flaticon.com/512/149/149071.png')`;
@@ -128,15 +140,13 @@ onAuthStateChanged(auth, async (user) => {
         if (btnAdd) {
             btnAdd.addEventListener('click', async () => {
                 try {
-                    const freelancerRef = ref(db, 'Freelancer/' + user.uid);
-                    const freelancerSnap = await get(freelancerRef);
-
+                    const freelancerSnap = await get(ref(db, 'Freelancer/' + uid));
                     if (freelancerSnap.exists()) {
                         window.location.href = '/criarProjeto';
-                        btnAdd.textContent = 'Criar Projeto'
+                        btnAdd.textContent = 'Criar Projeto';
                     } else {
                         window.location.href = '/criarProposta';
-                        btnAdd.textContent = 'Criar Proposta'
+                        btnAdd.textContent = 'Criar Proposta';
                     }
                 } catch (error) {
                     console.error('Erro ao verificar tipo de usuário:', error);
@@ -146,9 +156,8 @@ onAuthStateChanged(auth, async (user) => {
         }
 
         if (perfilLink) {
-            perfilLink.href = `/perfil?id=${uid}`
+            perfilLink.href = `/perfil?id=${uid}`;
         }
-
 
     } else {
         if (btnLogin) btnLogin.style.display = 'inline-block';
@@ -163,7 +172,8 @@ onAuthStateChanged(auth, async (user) => {
             userPhoto.style.display = 'none';
         }
 
-
+        if (btnTurboSM) btnTurboSM.remove();
+        if (btnTurboLG) btnTurboLG.remove();
     }
 
     onValue(ref(db, 'Projetos'), (snapshot) => {
@@ -180,7 +190,6 @@ onAuthStateChanged(auth, async (user) => {
         totalNotificacoesProjeto = projetosNotificados.size;
         atualizarBadgeNavbar();
     });
-
 });
 
 userPhoto.addEventListener('click', (e) => {
