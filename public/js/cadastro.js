@@ -28,15 +28,26 @@ const inputSenha = document.getElementById('txtSenha');
 const inputConfirmarSenha = document.getElementById('tConfirmarSenha');
 const inputDataNascimento = document.getElementById('txtData');
 const mensagemErro = document.getElementById('form-error');
+const googleBtn = document.querySelector('.auth-link.google');
+const githubBtn = document.querySelector('.auth-link.github');
 
-function mostrarPopup() {
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+function mostrarPopup(redirectUrl) {
     const popup = document.getElementById('popup');
     popup.classList.remove('popup-hidden');
 
     setTimeout(() => {
         popup.classList.add('popup-hidden');
-        window.location.href = '/login';
+        if(redirectUrl) window.location.href = redirectUrl;
     }, 2000);
+}
+
+async function registrarUsuario(uid, userData) {
+    await set(ref(database, `Freelancer/${uid}`), userData);
+    sessionStorage.setItem('primeirosPassosData', JSON.stringify({...userData, uid}));
+    mostrarPopup(`/freePassos?userId=${uid}`);
 }
 
 form.addEventListener('submit', async (event) => {
@@ -52,12 +63,13 @@ form.addEventListener('submit', async (event) => {
         inputEmail.focus();
         return;
     } 
-        
+      
     if (senha !== confirmarSenha) {
         mensagemErro.style.display = 'block';
         mensagemErro.textContent = 'As senhas não coincidem';
         return;
     }
+
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
         const firebaseUser = userCredential.user;
@@ -75,11 +87,10 @@ form.addEventListener('submit', async (event) => {
             Biografia: null,
             Foto_perfil: null
         };
-        await set(ref(database, `Freelancer/${uid}`), userData);
 
-        mostrarPopup();
-    }
-    catch (error) {
+        await registrarUsuario(uid, userData);
+
+    } catch (error) {
         let errorMessage = 'Erro no cadastro: ';
         switch (error.code) {
             case 'auth/email-already-in-use':
@@ -99,49 +110,50 @@ form.addEventListener('submit', async (event) => {
     }
 });
 
-
-const googleBtn = document.querySelector('.auth-link.google');
-const githubBtn = document.querySelector('.auth-link.github');
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
-
 async function cadastroSocial(provider) {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const userId = user.uid;
-    const email = user.email;
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const userId = user.uid;
+        const email = user.email;
 
-    const dbRef = ref(database);
-    const freelancerSnap = await get(child(dbRef, `Freelancer/${userId}`));
-    
-    if (freelancerSnap.exists()) {
-      alert("Conta já cadastrada. Por favor, faça login.");
-      await auth.signOut();  
-      window.location.href = '/login';
-    } else {
-      const userData = {
-        email: email,
-        dataCadastro: new Date().toISOString(),
-        emailVerificado: user.emailVerified || false,
-        tipoUsuario: 'freelancer',
-        CPF: null,
-        Nome_usuario: null,
-        Telefone: null,
-        Biografia: null,
-        Foto_perfil: user.photoURL || null
-      };
-      await set(ref(database, `Freelancer/${userId}`), userData);
+        const freelancerSnap = await get(child(ref(database), `Freelancer/${userId}`));
 
-      window.location.href = '/';
+        if (freelancerSnap.exists()) {
+            alert("Conta já cadastrada. Por favor, faça login.");
+            await auth.signOut();
+            window.location.href = '/login';
+            return;
+        }
+
+        const userData = {
+            email: email,
+            dataCadastro: new Date().toISOString(),
+            emailVerificado: user.emailVerified || false,
+            tipoUsuario: 'freelancer',
+            CPF: null,
+            Nome_usuario: user.displayName || null,
+            Telefone: null,
+            Biografia: null,
+            Foto_perfil: user.photoURL || null
+        };
+
+        await registrarUsuario(userId, userData);
+
+    } catch (error) {
+        console.error("Erro no cadastro social:", error);
+        alert("Erro ao cadastrar com login social. Tente novamente.");
     }
-  } catch (error) {
-    console.error("Erro no cadastro social:", error);
-    alert("Erro ao cadastrar com login social. Tente novamente.");
-  }
 }
-
 
 googleBtn.addEventListener('click', () => cadastroSocial(googleProvider));
 githubBtn.addEventListener('click', () => cadastroSocial(githubProvider));
+
+window.addEventListener('DOMContentLoaded', () => {
+    const dados = JSON.parse(sessionStorage.getItem('primeirosPassosData'));
+    if(dados) {
+        document.getElementById('inputNome').value = dados.Nome_usuario || '';
+        document.getElementById('inputEmail').value = dados.email || '';
+        document.getElementById('inputFoto').src = dados.Foto_perfil || '/img/default.png';
+    }
+});
