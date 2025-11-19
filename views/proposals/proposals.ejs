@@ -115,39 +115,41 @@
 
     <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
-    authDomain: "workflow-da28d.firebaseapp.com",
-    projectId: "workflow-da28d",
-    storageBucket: "workflow-da28d.appspot.com",
-    messagingSenderId: "939828605253",
-    appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
-    measurementId: "G-3LXB7BR5M1"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyAAtfGyZc3SLzdK10zdq-ALyTyIs1s4qwQ",
+        authDomain: "workflow-da28d.firebaseapp.com",
+        projectId: "workflow-da28d",
+        storageBucket: "workflow-da28d.appspot.com",
+        messagingSenderId: "939828605253",
+        appId: "1:939828605253:web:0a286fe00f1c29ba614e2c",
+        measurementId: "G-3LXB7BR5M1"
+    };
 
-let app;
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApps()[0];
-}
-const db = getDatabase(app);
-const auth = getAuth(app);
+    let app;
+    if (!getApps().length) {
+        app = initializeApp(firebaseConfig);
+    } else {
+        app = getApps()[0];
+    }
 
-const propostasContainer = document.querySelector('.section2 .propostas');
-const btnFiltrar = document.getElementById('btnFiltrar');
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-let propostas = [];
-let currentUserId = null;
-let currentUserName = '';
-let currentUserPhoto = '';
-let currentUserTag = '';
-let countdownIntervals = {};
+    const propostasContainer = document.querySelector('.section2 .propostas');
+    const btnFiltrar = document.getElementById('btnFiltrar');
 
-const modalCandidatarHtml = `
+    let propostas = [];
+    let currentUserId = null;
+    let currentUserName = '';
+    let currentUserPhoto = '';
+    let currentUserTag = '';
+    let currentUserTipo = "";   
+    let countdownIntervals = {};
+
+    const modalCandidatarHtml = `
     <div id="modalCandidatar" class="modal" style="display:none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: (0, 0, 0, 0.9); justify-content: center; align-items: center;">
         <div class="modal-content pd-3 bg-gray-75 border border-solid text-white border-gray-25 rounded-lg" style="margin: auto; width: 80%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
             <span class="modal-close" id="closeCandidatarModal" style="color: var(--white); float: right; font-size: 28px; cursor: pointer;">&times;</span>
@@ -157,432 +159,446 @@ const modalCandidatarHtml = `
             <button id="btnConfirmarCandidatura" class="btn btn-primary">Confirmar Candidatura</button>
         </div>
     </div>
-`;
-document.body.insertAdjacentHTML('beforeend', modalCandidatarHtml);
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalCandidatarHtml);
 
-const modalCandidatar = document.getElementById('modalCandidatar');
-const closeCandidatarModal = document.getElementById('closeCandidatarModal');
-const descricaoCandidaturaInput = document.getElementById('descricaoCandidatura');
-const btnConfirmarCandidatura = document.getElementById('btnConfirmarCandidatura');
+    const modalCandidatar = document.getElementById('modalCandidatar');
+    const closeCandidatarModal = document.getElementById('closeCandidatarModal');
+    const descricaoCandidaturaInput = document.getElementById('descricaoCandidatura');
+    const btnConfirmarCandidatura = document.getElementById('btnConfirmarCandidatura');
 
-let currentPropostaId = null;
+    let currentPropostaId = null;
 
-function formatarData(isoString) {
-    const data = new Date(isoString);
-    return isNaN(data) ? "Data inválida" : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-}
-
-function formatarTempo(ms) {
-    if (ms <= 0) return "Expirado";
-
-    const segundos = Math.floor(ms / 1000);
-    const minutos = Math.floor(segundos / 60);
-    const horas = Math.floor(minutos / 60);
-    const dias = Math.floor(horas / 24);
-
-    const s = segundos % 60;
-    const m = minutos % 60;
-    const h = horas % 24;
-
-    const partes = [];
-    if (dias > 0) partes.push(`${dias}d`);
-    if (h > 0) partes.push(`${h}h`);
-    if (m > 0) partes.push(`${m}m`);
-    if (s > 0 && dias === 0 && h === 0 && m === 0) partes.push(`${s}s`);
-
-    if (partes.length === 0) return "Menos de 1s";
-    return partes.join(' ');
-}
-
-function renderizarPropostas(propostasFiltradas) {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const userId = user ? user.uid : null;
-
-    propostasContainer.innerHTML = '';
-    Object.values(countdownIntervals).forEach(clearInterval);
-    countdownIntervals = {};
-
-    if (propostasFiltradas.length === 0) {
-        propostasContainer.innerHTML = '<p>Nenhuma proposta encontrada com os filtros selecionados.</p>';
-        return;
+    function formatarData(isoString) {
+        const data = new Date(isoString);
+        return isNaN(data)
+            ? "Data inválida"
+            : data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
     }
 
-    const agora = new Date();
+    function formatarTempo(ms) {
+        if (ms <= 0) return "Expirado";
 
-    propostasFiltradas.forEach(p => {
-        const dataExpiracao = p.dataExpiracao ? new Date(p.dataExpiracao) : null;
-        if (dataExpiracao && agora > dataExpiracao) return; 
+        const segundos = Math.floor(ms / 1000);
+        const minutos = Math.floor(segundos / 60);
+        const horas = Math.floor(minutos / 60);
+        const dias = Math.floor(horas / 24);
 
-        const tagsHtml = Array.isArray(p.tags)
-            ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
-            : '';
+        const s = segundos % 60;
+        const m = minutos % 60;
+        const h = horas % 24;
 
-        let iconesDeContatoHtml = '';
-        if (p.meiosDeContato) {
-            const iconMap = {
-                chat: 'chatbubbles-outline',
-                whatsapp: 'logo-whatsapp',
-                email: 'mail-outline',
-                github: 'logo-github',
-                linkedin: 'logo-linkedin',
-                outro: 'ellipsis-horizontal-outline'
-            };
+        const partes = [];
+        if (dias > 0) partes.push(`${dias}d`);
+        if (h > 0) partes.push(`${h}h`);
+        if (m > 0) partes.push(`${m}m`);
+        if (s > 0 && dias === 0 && h === 0 && m === 0) partes.push(`${s}s`);
 
-            iconesDeContatoHtml = Object.entries(p.meiosDeContato)
-                .filter(([, value]) => value)
-                .map(([key]) => {
-                    const iconName = iconMap[key] || 'ellipsis-horizontal-outline';
-                    const contatoDetalhe = p.contatosDetalhes?.[key] || '';
-                    return `<ion-icon name="${iconName}" class="contact-icon" data-contato="${contatoDetalhe}" title="${key}"></ion-icon>`;
-                })
-                .join('');
+        if (partes.length === 0) return "Menos de 1s";
+        return partes.join(' ');
+    }
+
+    function renderizarPropostas(propostasFiltradas) {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        const userId = user ? user.uid : null;
+
+        propostasContainer.innerHTML = '';
+        Object.values(countdownIntervals).forEach(clearInterval);
+        countdownIntervals = {};
+
+        if (propostasFiltradas.length === 0) {
+            propostasContainer.innerHTML = '<p>Nenhuma proposta encontrada com os filtros selecionados.</p>';
+            return;
         }
 
-        const fotoUrl = p.fotoAutorUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        const nomeAutor = p.nomeAutor || 'Nome não informado';
-        
-        const wrapper = document.createElement('div');
-        const card = document.createElement('div');
-        card.classList.add('proposta-card');
-        card.dataset.propostaId = p.id;
+        const agora = new Date();
 
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="card-title">
-                    <h3>${p.titulo || 'Sem título'}</h3>
-                    <div class="card-price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
-                </div>
-                <p class="card-date">Criado em ${formatarData(p.datacriacao)}</p>
-                <div class="duration-info">
-                    <span id="countdown-${p.id}"></span>
-                </div>
-            </div>
+        propostasFiltradas.forEach(p => {
+            const dataExpiracao = p.dataExpiracao ? new Date(p.dataExpiracao) : null;
+            if (dataExpiracao && agora > dataExpiracao) return;
 
-            <div class="card-body">
-                <p class="card-description">${p.descricao || 'Nenhuma descrição fornecida.'}</p>
-                <div class="card-tags">${tagsHtml}</div>
-            </div>
+            const tagsHtml = Array.isArray(p.tags)
+                ? p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+                : '';
 
-            <div class="card-footer">
-                <div class="client-info">
-                    <a href="/perfil?id=${p.autorId}" class="profile-link">
-                        <img class="profilePic" src="${fotoUrl}" alt="${nomeAutor}">
-                        <span class="client-name">${nomeAutor}</span>
-                    </a>
-                </div>
-                <div class="proposal-details">
-                    <div class="contact-icons">
-                        ${iconesDeContatoHtml}
+            let iconesDeContatoHtml = '';
+            if (p.meiosDeContato) {
+                const iconMap = {
+                    chat: 'chatbubbles-outline',
+                    whatsapp: 'logo-whatsapp',
+                    email: 'mail-outline',
+                    github: 'logo-github',
+                    linkedin: 'logo-linkedin',
+                    outro: 'ellipsis-horizontal-outline'
+                };
+
+                iconesDeContatoHtml = Object.entries(p.meiosDeContato)
+                    .filter(([, value]) => value)
+                    .map(([key]) => {
+                        const iconName = iconMap[key] || 'ellipsis-horizontal-outline';
+                        const contatoDetalhe = p.contatosDetalhes?.[key] || '';
+                        return `<ion-icon name="${iconName}" class="contact-icon" data-contato="${contatoDetalhe}" title="${key}"></ion-icon>`;
+                    })
+                    .join('');
+            }
+
+            const fotoUrl = p.fotoAutorUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            const nomeAutor = p.nomeAutor || 'Nome não informado';
+
+            const wrapper = document.createElement('div');
+            const card = document.createElement('div');
+            card.classList.add('proposta-card');
+            card.dataset.propostaId = p.id;
+
+            
+            const podeCandidatar =
+                (p.autorId !== userId) &&
+                (currentUserTipo !== "contratante");
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>${p.titulo || 'Sem título'}</h3>
+                        <div class="card-price">R$${p.precoMin || '-'} - R$${p.precoMax || '-'}</div>
+                    </div>
+                    <p class="card-date">Criado em ${formatarData(p.datacriacao)}</p>
+                    <div class="duration-info">
+                        <span id="countdown-${p.id}"></span>
                     </div>
                 </div>
-                ${
-                    (p.autorId !== userId)
-                        ? `<button class="enviar">Se candidatar</button>`
-                        : ''
-                }
-            </div>
-        `;
 
-        wrapper.appendChild(card);
-        propostasContainer.appendChild(wrapper);
+                <div class="card-body">
+                    <p class="card-description">${p.descricao || 'Nenhuma descrição fornecida.'}</p>
+                    <div class="card-tags">${tagsHtml}</div>
+                </div>
 
-        if (dataExpiracao) {
-            const countdownEl = document.getElementById(`countdown-${p.id}`);
-            const updateCountdown = () => {
-                const tempoRestante = dataExpiracao.getTime() - new Date().getTime();
-                if (tempoRestante <= 0) {
-                    countdownEl.textContent = "Expirado";
-                    clearInterval(countdownIntervals[p.id]);
-                    card.parentElement.remove(); 
-                } else {
-                    countdownEl.textContent = formatarTempo(tempoRestante) + ' para expirar';
-                }
-            };
+                <div class="card-footer">
+                    <div class="client-info">
+                        <a href="/perfil?id=${p.autorId}" class="profile-link">
+                            <img class="profilePic" src="${fotoUrl}" alt="${nomeAutor}">
+                            <span class="client-name">${nomeAutor}</span>
+                        </a>
+                    </div>
 
-            updateCountdown();
-            countdownIntervals[p.id] = setInterval(updateCountdown, 1000);
-        } else {
-            document.getElementById(`countdown-${p.id}`).textContent = 'Tempo Indefinido';
-        }
-    });
+                    <div class="proposal-details">
+                        <div class="contact-icons">
+                            ${iconesDeContatoHtml}
+                        </div>
+                    </div>
 
-    adicionarEventoBotaoCandidatarse();
-    adicionarEventosDeContato();
-}
+                    ${podeCandidatar ? `<button class="enviar">Se candidatar</button>` : ""}
+                </div>
+            `;
 
+            wrapper.appendChild(card);
+            propostasContainer.appendChild(wrapper);
 
-function adicionarEventosDeContato() {
-    document.querySelectorAll('.contact-icon').forEach(icon => {
-        const contato = icon.dataset.contato;
-        if (contato) {
-            const parent = icon.parentElement;
+            if (dataExpiracao) {
+                const countdownEl = document.getElementById(`countdown-${p.id}`);
+                const updateCountdown = () => {
+                    const tempoRestante = dataExpiracao.getTime() - new Date().getTime();
+                    if (tempoRestante <= 0) {
+                        countdownEl.textContent = "Expirado";
+                        clearInterval(countdownIntervals[p.id]);
+                        card.parentElement.remove();
+                    } else {
+                        countdownEl.textContent = formatarTempo(tempoRestante) + ' para expirar';
+                    }
+                };
 
-            const tooltip = document.createElement('span');
-            tooltip.classList.add('tooltip');
-            tooltip.textContent = contato;
-            parent.appendChild(tooltip);
+                updateCountdown();
+                countdownIntervals[p.id] = setInterval(updateCountdown, 1000);
+            } else {
+                document.getElementById(`countdown-${p.id}`).textContent = 'Tempo Indefinido';
+            }
+        });
 
-            icon.addEventListener('mouseover', () => {
-                tooltip.style.visibility = 'visible';
-                tooltip.style.opacity = '1';
-            });
+        adicionarEventoBotaoCandidatarse();
+        adicionarEventosDeContato();
+    }
 
-            icon.addEventListener('mouseout', () => {
-                tooltip.style.visibility = 'hidden';
-                tooltip.style.opacity = '0';
-            });
+    function adicionarEventosDeContato() {
+        document.querySelectorAll('.contact-icon').forEach(icon => {
+            const contato = icon.dataset.contato;
+            if (contato) {
+                const parent = icon.parentElement;
 
-            icon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (tooltip.style.visibility === 'visible') {
-                    tooltip.style.visibility = 'hidden';
-                    tooltip.style.opacity = '0';
-                } else {
-                    document.querySelectorAll('.tooltip').forEach(t => {
-                        t.style.visibility = 'hidden';
-                        t.style.opacity = '0';
-                    });
+                const tooltip = document.createElement('span');
+                tooltip.classList.add('tooltip');
+                tooltip.textContent = contato;
+                parent.appendChild(tooltip);
+
+                icon.addEventListener('mouseover', () => {
                     tooltip.style.visibility = 'visible';
                     tooltip.style.opacity = '1';
-                }
-            });
-        }
-    });
+                });
 
-    document.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('contact-icon')) {
-            document.querySelectorAll('.tooltip').forEach(t => {
-                t.style.visibility = 'hidden';
-                t.style.opacity = '0';
-            });
-        }
-    });
-}
+                icon.addEventListener('mouseout', () => {
+                    tooltip.style.visibility = 'hidden';
+                    tooltip.style.opacity = '0';
+                });
 
-function adicionarEventoBotaoCandidatarse() {
-    document.querySelectorAll('.enviar').forEach(botao => {
-        botao.removeEventListener('click', handleCandidatarClick);
-        botao.addEventListener('click', handleCandidatarClick);
-    });
-}
-
-async function handleCandidatarClick(event) {
-    if (!currentUserId) {
-        alert('Você precisa estar logado para se candidatar a uma proposta!');
-        return;
-    }
-
-    const card = event.target.closest('.proposta-card');
-    if (!card) return;
-
-    const propostaId = card.dataset.propostaId;
-    currentPropostaId = propostaId;
-
-    const candidaturaRef = ref(db, `Candidaturas/${propostaId}/${currentUserId}`);
-    const candidaturaSnap = await get(candidaturaRef);
-
-    if (candidaturaSnap.exists()) {
-        alert('Você já se candidatou para esta proposta!');
-        return;
-    }
-
-    modalCandidatar.style.display = 'flex';
-    descricaoCandidaturaInput.value = '';
-}
-
-closeCandidatarModal.addEventListener('click', () => {
-    modalCandidatar.style.display = 'none';
-});
-
-modalCandidatar.addEventListener('click', (e) => {
-    if (e.target === modalCandidatar) {
-        modalCandidatar.style.display = 'none';
-    }
-});
-
-btnConfirmarCandidatura.addEventListener('click', async () => {
-    const descricao = descricaoCandidaturaInput.value.trim();
-
-    if (!descricao) {
-        alert('Por favor, escreva uma descrição para sua candidatura.');
-        return;
-    }
-
-    if (!currentPropostaId || !currentUserId) {
-        alert('Erro: Proposta ou usuário não identificado. Tente novamente.');
-        return;
-    }
-
-    try {
-        const propostaRef = ref(db, `Propostas/${currentPropostaId}`);
-        const propostaSnap = await get(propostaRef);
-        const propostaData = propostaSnap.val();
-
-        if (!propostaData) {
-            alert('A proposta não existe mais.');
-            modalCandidatar.style.display = 'none';
-            return;
-        }
-
-        const candidaturaData = {
-            userId: currentUserId,
-            nome: currentUserName,
-            foto_perfil: currentUserPhoto,
-            tag: currentUserTag,
-            mensagem: descricao,
-            timestamp: Date.now()
-        };
-
-        await set(ref(db, `Candidaturas/${currentPropostaId}/${currentUserId}`), candidaturaData);
-
-        alert('Candidatura enviada com sucesso!');
-        modalCandidatar.style.display = 'none';
-
-        const cardEnviado = document.querySelector(`.proposta-card[data-proposta-id="${currentPropostaId}"] .enviar`);
-        if (cardEnviado) {
-            if (!cardEnviado.classList.contains('enviado')) {
-                cardEnviado.classList.add('enviado');
-                const check = document.createElement('span');
-                check.classList.add('checkmark');
-                cardEnviado.textContent = 'Enviado';
-                cardEnviado.appendChild(check);
-
-                setTimeout(() => {
-                    cardEnviado.classList.remove('enviado');
-                    check.remove();
-                    cardEnviado.textContent = 'Se candidatar';
-                }, 2000);
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (tooltip.style.visibility === 'visible') {
+                        tooltip.style.visibility = 'hidden';
+                        tooltip.style.opacity = '0';
+                    } else {
+                        document.querySelectorAll('.tooltip').forEach(t => {
+                            t.style.visibility = 'hidden';
+                            t.style.opacity = '0';
+                        });
+                        tooltip.style.visibility = 'visible';
+                        tooltip.style.opacity = '1';
+                    }
+                });
             }
-        }
-    } catch (error) {
-        console.error("Erro ao enviar candidatura:", error);
-        alert('Ocorreu um erro ao enviar sua candidatura. Tente novamente.');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('contact-icon')) {
+                document.querySelectorAll('.tooltip').forEach(t => {
+                    t.style.visibility = 'hidden';
+                    t.style.opacity = '0';
+                });
+            }
+        });
     }
-});
 
-function filtrarPropostas() {
-    const area = document.getElementById('area').value;
-    const periodo = document.getElementById('periodo').value;
-    const precoMin = parseFloat(document.getElementById('precomin').value) || 0;
-    const precoMax = parseFloat(document.getElementById('precomax').value) || Infinity;
-    const agora = new Date();
+    function adicionarEventoBotaoCandidatarse() {
+        document.querySelectorAll('.enviar').forEach(botao => {
+            botao.removeEventListener('click', handleCandidatarClick);
+            botao.addEventListener('click', handleCandidatarClick);
+        });
+    }
 
-    const propostasFiltradas = propostas.filter(p => {
-        const dataCriacao = new Date(p.datacriacao);
-        if (isNaN(dataCriacao)) return false;
-
-        const dentroDaArea = (area === "Todos") ? true : Array.isArray(p.tags) && p.tags.includes(area);
-
-        let dentroDoPeriodo = true;
-        if (periodo === 'hoje') {
-            dentroDoPeriodo = dataCriacao.toDateString() === agora.toDateString();
-        } else if (periodo === 'ultimaSemana') {
-            const seteDiasAtras = new Date(agora);
-            seteDiasAtras.setDate(agora.getDate() - 7);
-            dentroDoPeriodo = dataCriacao >= seteDiasAtras;
-        } else if (periodo === 'ultimoMes') {
-            const trintaDiasAtras = new Date(agora);
-            trintaDiasAtras.setDate(agora.getDate() - 30);
-            dentroDoPeriodo = dataCriacao >= trintaDiasAtras;
-        } else if (periodo === 'indefinido') {
-            dentroDoPeriodo = true;
-        }
-
-        const precoMinProposta = parseFloat(p.precoMin) || 0;
-        const precoMaxProposta = parseFloat(p.precoMax) || 0;
-        const dentroDoPreco = precoMinProposta >= precoMin && precoMaxProposta <= precoMax;
-        
-        return dentroDaArea && dentroDoPeriodo && dentroDoPreco;
-    });
-
-    renderizarPropostas(propostasFiltradas);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    btnFiltrar.addEventListener('click', (e) => {
-        e.preventDefault();
-        filtrarPropostas();
-    });
-
-    const searchInput = document.querySelector('.searchbar-input');
-    const aplicarFiltroPorTitulo = (busca) => {
-        if (!busca) {
-            renderizarPropostas(propostas);
+    async function handleCandidatarClick(event) {
+        if (!currentUserId) {
+            alert('Você precisa estar logado para se candidatar a uma proposta!');
             return;
         }
-        const filtradas = propostas.filter(p =>
-            p.titulo?.toLowerCase().includes(busca.toLowerCase())
-        );
-        renderizarPropostas(filtradas);
-    };
 
-    const params = new URLSearchParams(window.location.search);
-    const busca = params.get('busca') || '';
-    if (searchInput) {
-        searchInput.value = busca;
-        if (busca) aplicarFiltroPorTitulo(busca);
+        const card = event.target.closest('.proposta-card');
+        if (!card) return;
 
-        searchInput.addEventListener('input', (e) => {
-            aplicarFiltroPorTitulo(e.target.value.trim());
-        });
-    }
-});
+        const propostaId = card.dataset.propostaId;
+        currentPropostaId = propostaId;
 
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        currentUserId = user.uid;
+        const candidaturaRef = ref(db, `Candidaturas/${propostaId}/${currentUserId}`);
+        const candidaturaSnap = await get(candidaturaRef);
 
-        const freelancerSnap = await get(ref(db, `Freelancer/${currentUserId}`));
-        if (freelancerSnap.exists()) {
-            const userData = freelancerSnap.val();
-            currentUserName = userData.nome || 'Usuário Anônimo';
-            currentUserPhoto = userData.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            currentUserTag = userData.tag || 'Freelancer';
-        } else {
-            currentUserName = 'Usuário Logado';
-            currentUserPhoto = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            currentUserTag = 'Usuário';
+        if (candidaturaSnap.exists()) {
+            alert('Você já se candidatou para esta proposta!');
+            return;
         }
-    } else {
-        currentUserId = null;
-        currentUserName = '';
-        currentUserPhoto = '';
-        currentUserTag = '';
+
+        modalCandidatar.style.display = 'flex';
+        descricaoCandidaturaInput.value = '';
     }
 
-    onValue(ref(db, 'Propostas'), (snapshot) => {
-        propostas = [];
-        snapshot.forEach(childSnap => {
-            const propostaData = { id: childSnap.key, ...childSnap.val() };
-            propostas.push(propostaData);
+    closeCandidatarModal.addEventListener('click', () => {
+        modalCandidatar.style.display = 'none';
+    });
+
+    modalCandidatar.addEventListener('click', (e) => {
+        if (e.target === modalCandidatar) {
+            modalCandidatar.style.display = 'none';
+        }
+    });
+
+    btnConfirmarCandidatura.addEventListener('click', async () => {
+        const descricao = descricaoCandidaturaInput.value.trim();
+
+        if (!descricao) {
+            alert('Por favor, escreva uma descrição para sua candidatura.');
+            return;
+        }
+
+        if (!currentPropostaId || !currentUserId) {
+            alert('Erro: Proposta ou usuário não identificado. Tente novamente.');
+            return;
+        }
+
+        try {
+            const propostaRef = ref(db, `Propostas/${currentPropostaId}`);
+            const propostaSnap = await get(propostaRef);
+            const propostaData = propostaSnap.val();
+
+            if (!propostaData) {
+                alert('A proposta não existe mais.');
+                modalCandidatar.style.display = 'none';
+                return;
+            }
+
+            const candidaturaData = {
+                userId: currentUserId,
+                nome: currentUserName,
+                foto_perfil: currentUserPhoto,
+                tag: currentUserTag,
+                mensagem: descricao,
+                timestamp: Date.now()
+            };
+
+            await set(ref(db, `Candidaturas/${currentPropostaId}/${currentUserId}`), candidaturaData);
+
+            alert('Candidatura enviada com sucesso!');
+            modalCandidatar.style.display = 'none';
+
+            const cardEnviado = document.querySelector(`.proposta-card[data-proposta-id="${currentPropostaId}"] .enviar`);
+            if (cardEnviado) {
+                if (!cardEnviado.classList.contains('enviado')) {
+                    cardEnviado.classList.add('enviado');
+                    const check = document.createElement('span');
+                    check.classList.add('checkmark');
+                    cardEnviado.textContent = 'Enviado';
+                    cardEnviado.appendChild(check);
+
+                    setTimeout(() => {
+                        cardEnviado.classList.remove('enviado');
+                        check.remove();
+                        cardEnviado.textContent = 'Se candidatar';
+                    }, 2000);
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao enviar candidatura:", error);
+            alert('Ocorreu um erro ao enviar sua candidatura. Tente novamente.');
+        }
+    });
+
+    function filtrarPropostas() {
+        const area = document.getElementById('area').value;
+        const periodo = document.getElementById('periodo').value;
+        const precoMin = parseFloat(document.getElementById('precomin').value) || 0;
+        const precoMax = parseFloat(document.getElementById('precomax').value) || Infinity;
+        const agora = new Date();
+
+        const propostasFiltradas = propostas.filter(p => {
+            const dataCriacao = new Date(p.datacriacao);
+            if (isNaN(dataCriacao)) return false;
+
+            const dentroDaArea = (area === "Todos") ? true : Array.isArray(p.tags) && p.tags.includes(area);
+
+            let dentroDoPeriodo = true;
+            if (periodo === 'hoje') {
+                dentroDoPeriodo = dataCriacao.toDateString() === agora.toDateString();
+            } else if (periodo === 'ultimaSemana') {
+                const seteDiasAtras = new Date(agora);
+                seteDiasAtras.setDate(agora.getDate() - 7);
+                dentroDoPeriodo = dataCriacao >= seteDiasAtras;
+            } else if (periodo === 'ultimoMes') {
+                const trintaDiasAtras = new Date(agora);
+                trintaDiasAtras.setDate(agora.getDate() - 30);
+                dentroDoPeriodo = dataCriacao >= trintaDiasAtras;
+            } else if (periodo === 'indefinido') {
+                dentroDoPeriodo = true;
+            }
+
+            const precoMinProposta = parseFloat(p.precoMin) || 0;
+            const precoMaxProposta = parseFloat(p.precoMax) || 0;
+            const dentroDoPreco = precoMinProposta >= precoMin && precoMaxProposta <= precoMax;
+
+            return dentroDaArea && dentroDoPeriodo && dentroDoPreco;
         });
 
-        propostas.sort((a, b) => {
-            const dataA = new Date(a.datacriacao);
-            const dataB = new Date(b.datacriacao);
-            return dataB - dataA;
+        renderizarPropostas(propostasFiltradas);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        btnFiltrar.addEventListener('click', (e) => {
+            e.preventDefault();
+            filtrarPropostas();
         });
+
+        const searchInput = document.querySelector('.searchbar-input');
+        const aplicarFiltroPorTitulo = (busca) => {
+            if (!busca) {
+                renderizarPropostas(propostas);
+                return;
+            }
+            const filtradas = propostas.filter(p =>
+                p.titulo?.toLowerCase().includes(busca.toLowerCase())
+            );
+            renderizarPropostas(filtradas);
+        };
 
         const params = new URLSearchParams(window.location.search);
         const busca = params.get('busca') || '';
-        if (busca) {
-            const searchInput = document.querySelector('.searchbar-input');
-            if (searchInput) {
-                searchInput.value = busca;
-                const filtradas = propostas.filter(p =>
-                    p.titulo?.toLowerCase().includes(busca.toLowerCase())
-                );
-                renderizarPropostas(filtradas);
+        if (searchInput) {
+            searchInput.value = busca;
+            if (busca) aplicarFiltroPorTitulo(busca);
+
+            searchInput.addEventListener('input', (e) => {
+                aplicarFiltroPorTitulo(e.target.value.trim());
+            });
+        }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUserId = user.uid;
+
+            const freelancerSnap = await get(ref(db, `Freelancer/${currentUserId}`));
+            
+            if (freelancerSnap.exists()) {
+                const userData = freelancerSnap.val();
+                currentUserName = userData.nome || 'Usuário Anônimo';
+                currentUserPhoto = userData.foto_perfil || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                currentUserTag = userData.tag || 'Freelancer';
+                currentUserTipo = "freelancer";     
+            } else {
+
+                const contratanteSnap = await get(ref(db, `Contratante/${currentUserId}`));
+                if (contratanteSnap.exists()) {
+                    currentUserTipo = "contratante"; 
+                }
+
+                currentUserName = 'Usuário Logado';
+                currentUserPhoto = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                currentUserTag = 'Usuário';
+            }
+        } else {
+            currentUserId = null;
+            currentUserName = '';
+            currentUserPhoto = '';
+            currentUserTag = '';
+            currentUserTipo = ""; 
+        }
+
+        onValue(ref(db, 'Propostas'), (snapshot) => {
+            propostas = [];
+            snapshot.forEach(childSnap => {
+                const propostaData = { id: childSnap.key, ...childSnap.val() };
+                propostas.push(propostaData);
+            });
+
+            propostas.sort((a, b) => {
+                const dataA = new Date(a.datacriacao);
+                const dataB = new Date(b.datacriacao);
+                return dataB - dataA;
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const busca = params.get('busca') || '';
+            if (busca) {
+                const searchInput = document.querySelector('.searchbar-input');
+                if (searchInput) {
+                    searchInput.value = busca;
+                    const filtradas = propostas.filter(p =>
+                        p.titulo?.toLowerCase().includes(busca.toLowerCase())
+                    );
+                    renderizarPropostas(filtradas);
+                } else {
+                    renderizarPropostas(propostas);
+                }
             } else {
                 renderizarPropostas(propostas);
             }
-        } else {
-            renderizarPropostas(propostas);
-        }
+        });
     });
-});
-    </script>
+</script>
+
 
     <script>
         const buttonOpen = document.getElementById("btnFiltrarModal");
